@@ -1,0 +1,23 @@
+.button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px; /* Add spacing between the buttons */
+    margin-bottom: 20px;
+  }
+  
+  .action-btn {
+    background-color: black;
+    color: white;
+    border: none;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 12px;
+    cursor: pointer;
+    margin: 0 10px; /* Add spacing between the buttons */
+  }
+  
+  .action-btn:hover {
+    background-color: #0000FF;
+  }
+  

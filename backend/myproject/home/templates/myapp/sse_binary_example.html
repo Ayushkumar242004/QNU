@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SSE Binary Example</title>
+</head>
+<body>
+    <h1>Server-Sent Events Binary Data Example</h1>
+    <div id="binary-data"></div>
+    
+    <script>
+        var eventSource = new EventSource("{% url 'sse_binary_view' %}");
+
+        eventSource.onmessage = function(event) {
+            var binaryString = atob(event.data);  // Decode base64 to binary string
+            var binaryData = new Uint8Array(binaryString.length);
+            for (var i = 0; i < binaryString.length; i++) {
+                binaryData[i] = binaryString.charCodeAt(i);
+            }
+
+            // Render binary data (this example assumes it's text)
+            var newElement = document.createElement("div");
+            newElement.innerHTML = new TextDecoder("utf-8").decode(binaryData);
+            document.getElementById("binary-data").appendChild(newElement);
+        };
+
+        eventSource.onerror = function(event) {
+            console.error("EventSource failed:", event);
+        };
+    </script>
+</body>
+</html>
