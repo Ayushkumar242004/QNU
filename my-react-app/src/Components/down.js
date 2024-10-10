@@ -349,7 +349,7 @@ const GridContainer = ({ binaryData }) => {
       </div>
 
       {/* Content for the remaining grid cells */}
-      {Array.from({ length: 60 }).map((_, index) => {
+      {Array.from({ length: 48 }).map((_, index) => {
         if (index === 0) {
           // Check if it's the cell below "Test type"
           return (
@@ -361,12 +361,7 @@ const GridContainer = ({ binaryData }) => {
                 justifyContent: "center",
               }}
             >
-              <input
-                type="checkbox"
-                checked={frequencyTestChecked}
-                onChange={handleFrequencyTestCheckboxChange}
-                style={{ marginRight: "10px" }}
-              />
+               
               <div
                 style={{
                   display: "flex",
@@ -389,12 +384,7 @@ const GridContainer = ({ binaryData }) => {
                 justifyContent: "center",
               }}
             >
-              <input
-                type="checkbox"
-                checked={frequencyTestChecked}
-                onChange={handleFrequencyTestCheckboxChange}
-                style={{ marginRight: "10px" }}
-              />
+               
               <div
                 style={{
                   display: "flex",
@@ -417,12 +407,7 @@ const GridContainer = ({ binaryData }) => {
                 justifyContent: "center",
               }}
             >
-              <input
-                type="checkbox"
-                checked={frequencyTestChecked}
-                onChange={handleFrequencyTestCheckboxChange}
-                style={{ marginRight: "10px" }}
-              />
+               
               <div
                 style={{
                   display: "flex",
@@ -445,12 +430,7 @@ const GridContainer = ({ binaryData }) => {
                 justifyContent: "center",
               }}
             >
-              <input
-                type="checkbox"
-                checked={frequencyTestChecked}
-                onChange={handleFrequencyTestCheckboxChange}
-                style={{ marginRight: "10px" }}
-              />
+               
               <div
                 style={{
                   display: "flex",
@@ -473,12 +453,7 @@ const GridContainer = ({ binaryData }) => {
                 justifyContent: "center",
               }}
             >
-              <input
-                type="checkbox"
-                checked={frequencyTestChecked}
-                onChange={handleFrequencyTestCheckboxChange}
-                style={{ marginRight: "10px" }}
-              />
+               
               <div
                 style={{
                   display: "flex",
@@ -501,12 +476,7 @@ const GridContainer = ({ binaryData }) => {
                 justifyContent: "center",
               }}
             >
-              <input
-                type="checkbox"
-                checked={frequencyTestChecked}
-                onChange={handleFrequencyTestCheckboxChange}
-                style={{ marginRight: "10px" }}
-              />
+               
               <div
                 style={{
                   display: "flex",
@@ -515,6 +485,29 @@ const GridContainer = ({ binaryData }) => {
                 }}
               >
                 11. Serial Test
+              </div>
+            </div>
+          );
+        } else if (index === 33) {
+          // Check if it's the cell below "Test type"
+          return (
+            <div
+              style={{
+                border: "1px solid black",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+               
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                12. Approximate Entropy Test
               </div>
             </div>
           );
@@ -529,40 +522,7 @@ const GridContainer = ({ binaryData }) => {
                 justifyContent: "center",
               }}
             >
-              <input
-                type="checkbox"
-                checked={frequencyTestChecked}
-                onChange={handleFrequencyTestCheckboxChange}
-                style={{ marginRight: "10px" }}
-              />
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                12. Approximate Entropy Test
-              </div>
-            </div>
-          );
-        } else if (index === 42) {
-          // Check if it's the cell below "Test type"
-          return (
-            <div
-              style={{
-                border: "1px solid black",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <input
-                type="checkbox"
-                checked={frequencyTestChecked}
-                onChange={handleFrequencyTestCheckboxChange}
-                style={{ marginRight: "10px" }}
-              />
+               
               <div
                 style={{
                   display: "flex",
@@ -575,7 +535,7 @@ const GridContainer = ({ binaryData }) => {
             </div>
           );
         }
-        else if (index === 48) {
+        else if (index === 39) {
           // Check if it's the cell below "Test type"
           return (
             <div
@@ -586,12 +546,7 @@ const GridContainer = ({ binaryData }) => {
                 justifyContent: "center",
               }}
             >
-              <input
-                type="checkbox"
-                checked={frequencyTestChecked}
-                onChange={handleFrequencyTestCheckboxChange}
-                style={{ marginRight: "10px" }}
-              />
+               
               <div
                 style={{
                   display: "flex",
@@ -604,7 +559,7 @@ const GridContainer = ({ binaryData }) => {
             </div>
           );
         } 
-        else if (index === 54) {
+        else if (index === 42) {
           // Check if it's the cell below "Test type"
           return (
             <div
@@ -615,12 +570,7 @@ const GridContainer = ({ binaryData }) => {
                 justifyContent: "center",
               }}
             >
-              <input
-                type="checkbox"
-                checked={frequencyTestChecked}
-                onChange={handleFrequencyTestCheckboxChange}
-                style={{ marginRight: "10px" }}
-              />
+               
               <div
                 style={{
                   display: "flex",
@@ -644,12 +594,7 @@ const GridContainer = ({ binaryData }) => {
                 justifyContent: "center",
               }}
             >
-              <input
-                type="checkbox"
-                checked={frequencyTestChecked}
-                onChange={handleFrequencyTestCheckboxChange}
-                style={{ marginRight: "10px" }}
-              />
+               
               <div
                 style={{
                   display: "flex",
@@ -672,12 +617,7 @@ const GridContainer = ({ binaryData }) => {
                 justifyContent: "center",
               }}
             >
-              <input
-                type="checkbox"
-                checked={frequencyTestChecked}
-                onChange={handleFrequencyTestCheckboxChange}
-                style={{ marginRight: "10px" }}
-              />
+               
               <div
                 style={{
                   display: "flex",
@@ -700,12 +640,7 @@ const GridContainer = ({ binaryData }) => {
                 justifyContent: "center",
               }}
             >
-              <input
-                type="checkbox"
-                checked={frequencyTestChecked}
-                onChange={handleFrequencyTestCheckboxChange}
-                style={{ marginRight: "10px" }}
-              />
+               
               <div
                 style={{
                   display: "flex",
@@ -728,12 +663,7 @@ const GridContainer = ({ binaryData }) => {
                 justifyContent: "center",
               }}
             >
-              <input
-                type="checkbox"
-                checked={frequencyTestChecked}
-                onChange={handleFrequencyTestCheckboxChange}
-                style={{ marginRight: "10px" }}
-              />
+               
               <div
                 style={{
                   display: "flex",
@@ -756,12 +686,7 @@ const GridContainer = ({ binaryData }) => {
                 justifyContent: "center",
               }}
             >
-              <input
-                type="checkbox"
-                checked={frequencyTestChecked}
-                onChange={handleFrequencyTestCheckboxChange}
-                style={{ marginRight: "10px" }}
-              />
+               
               <div
                 style={{
                   display: "flex",
@@ -1063,7 +988,7 @@ const GridContainer = ({ binaryData }) => {
               </div>
             </div>
           );
-        } else if (index === 37) {
+        } else if (index === 34) {
           // Check if it's the cell below "Result"
           return (
             <div
@@ -1084,7 +1009,7 @@ const GridContainer = ({ binaryData }) => {
               </div>
             </div>
           );
-        } else if (index === 38) {
+        } else if (index === 35) {
           // Check if it's the cell below "Result"
           return (
             <div
@@ -1275,7 +1200,7 @@ const GridContainer = ({ binaryData }) => {
               </div>
             </div>
           );
-        } else if (index === 43) {
+        } else if (index === 37) {
           // Check if it's the cell below "Result"
           return (
             <div
@@ -1296,7 +1221,7 @@ const GridContainer = ({ binaryData }) => {
               </div>
             </div>
           );
-        } else if (index === 44) {
+        } else if (index === 38) {
           // Check if it's the cell below "Result"
           return (
             <div
@@ -1319,7 +1244,7 @@ const GridContainer = ({ binaryData }) => {
           );
         } 
         
-        else if (index === 49) {
+        else if (index === 40) {
           // Check if it's the cell below "Result"
           return (
             <div
@@ -1342,7 +1267,7 @@ const GridContainer = ({ binaryData }) => {
           );
         } 
         
-        else if (index === 50) {
+        else if (index === 41) {
           // Check if it's the cell below "Result"
           return (
             <div
@@ -1365,7 +1290,7 @@ const GridContainer = ({ binaryData }) => {
           );
         } 
 
-        else if (index === 55) {
+        else if (index === 43) {
           // Check if it's the cell below "Result"
           return (
             <div
@@ -1388,7 +1313,7 @@ const GridContainer = ({ binaryData }) => {
           );
         } 
         
-        else if (index === 56) {
+        else if (index === 44) {
           // Check if it's the cell below "Result"
           return (
             <div

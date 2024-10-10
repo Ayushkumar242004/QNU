@@ -11,8 +11,24 @@ from tests. random_excursions_test import RandomExcursions
 from tests.Matrix import Matrix
 from tests.spectral import SpectralTest
 
+
 from tests.autocorrelation_test import AutocorrelationTest
 from tests.adaptive_statistical_test import AdaptiveStatisticalTest
+
+
+from tests.Birthday_spacings_test import BirthdaySpacingsTest
+from tests.parking_lot_test import ParkingLotTest
+from tests.overlapping_5_permutation_test import Overlapping5PermutationTest
+from tests.minimum_distance_test import MinimumDistanceTest
+from tests.rank_31matrix_test import Ranks31x31MatricesTest
+from tests.spheres_test import Spheres3DTest
+from tests.rank_32matrix_test import Ranks32x32MatricesTest
+from tests.craps_test import CrapsTest
+from tests.bitstream_test import BitstreamTest
+from tests.gcd_test import MarsagliaTsangGCDTest
+from tests.opso_test import OPSOTest
+from tests.oqso_test import OQSOTest
+from tests.dna_test import DNATest
 
 from django.http import StreamingHttpResponse
 from reportlab.platypus import Image
@@ -525,6 +541,448 @@ def run_spectral_test(request):
 
     return JsonResponse(response_data)
 
+
+def run_birthday_spacings_test(request):
+    # Example binary data received from the request query parameters
+    binary_data_str = request.GET.get('binary_data', '')
+
+    # Print the request URL and parameters for debugging
+    print("Request URL:", request.get_full_path())
+    print("Request Parameters:", request.GET)
+
+    # Convert binary string to a list of integers
+    if binary_data_str:
+        # Ensure only '0' and '1' are considered
+        binary_data = [int(bit) for bit in binary_data_str if bit in '01']
+    else:
+        return JsonResponse({'error': 'Invalid or missing binary data.'}, status=400)
+
+    # Check if the converted data has at least two points
+    if len(binary_data) < 2:
+        return JsonResponse({'error': 'Insufficient data. At least two data points are required.'}, status=400)
+
+    # Call the Birthday Spacings Test method
+    p_value, result = BirthdaySpacingsTest.BirthdaySpacingsTest(binary_data)
+
+    print("p_value:", p_value)
+    print("Result:", result)
+
+    # Prepare the response data
+    result_text = "random number" if result else "non-random number"
+        
+    response_data = {
+        'p_value': p_value,
+        'result': result_text
+    }
+
+    return JsonResponse(response_data)
+
+
+def run_bitstream_test(request):
+    # Example binary data received from the request query parameters
+    binary_data = request.GET.get('binary_data', '')
+
+    # Print the request URL and parameters
+    print("Request URL:", request.get_full_path())
+    print("Request Parameters:", request.GET)
+
+    # Call the block_frequency method
+    p_value, result = BirthdaySpacingsTest.BirthdaySpacingsTest(binary_data)
+
+    print("p_value:", p_value)
+    print("Result:", result)
+    
+    # Prepare the response data
+    if result:
+        result_text = "random number"
+    else:
+        result_text = "non-random number"
+        
+    response_data = {
+        'p_value': p_value,
+        'result': result_text
+    }
+
+    return JsonResponse(response_data)
+
+
+def run_parking_lot_test(request):
+    # Example binary data received from the request query parameters
+    binary_data = request.GET.get('binary_data', '')
+
+    # Print the request URL and parameters
+    print("Request URL:", request.get_full_path())
+    print("Request Parameters:", request.GET)
+
+    # Call the block_frequency method
+    p_value, result = ParkingLotTest.ParkingLotTest(binary_data)
+
+    print("p_value:", p_value)
+    print("Result:", result)
+    
+    # Prepare the response data
+    if result:
+        result_text = "random number"
+    else:
+        result_text = "non-random number"
+        
+    response_data = {
+        'p_value': p_value,
+        'result': result_text
+    }
+
+    return JsonResponse(response_data)
+
+
+
+
+def run_overlapping_5_test(request):
+    # Example binary data received from the request query parameters
+    binary_data = request.GET.get('binary_data', '')
+
+    # Print the request URL and parameters
+    print("Request URL:", request.get_full_path())
+    print("Request Parameters:", request.GET)
+
+    # Call the block_frequency method
+    p_value, result = Overlapping5PermutationTest.Overlapping5PermutationTest(binary_data)
+
+    print("p_value:", p_value)
+    print("Result:", result)
+    
+    # Prepare the response data
+    if result:
+        result_text = "random number"
+    else:
+        result_text = "non-random number"
+        
+    response_data = {
+        'p_value': p_value,
+        'result': result_text
+    }
+
+    return JsonResponse(response_data)
+
+
+
+def run_minimum_distance_test(request):
+    # Example binary data received from the request query parameters
+    binary_data = request.GET.get('binary_data', '')
+
+    # Print the request URL and parameters
+    print("Request URL:", request.get_full_path())
+    print("Request Parameters:", request.GET)
+
+    # Call the block_frequency method
+    p_value, result = MinimumDistanceTest.MinimumDistanceTest(binary_data)
+
+    print("p_value:", p_value)
+    print("Result:", result)
+    
+    # Prepare the response data
+    if result:
+        result_text = "random number"
+    else:
+        result_text = "non-random number"
+        
+    response_data = {
+        'p_value': p_value,
+        'result': result_text
+    }
+
+    return JsonResponse(response_data)
+
+
+def run_31matrix_test(request):
+    # Example binary data received from the request query parameters
+    binary_data = request.GET.get('binary_data', '')
+
+    # Print the request URL and parameters
+    print("Request URL:", request.get_full_path())
+    print("Request Parameters:", request.GET)
+
+    # Call the block_frequency method
+    p_value, result = Ranks31x31MatricesTest.Ranks31x31MatricesTest(binary_data)
+
+    print("p_value:", p_value)
+    print("Result:", result)
+    
+    # Prepare the response data
+    if result:
+        result_text = "random number"
+    else:
+        result_text = "non-random number"
+        
+    response_data = {
+        'p_value': p_value,
+        'result': result_text
+    }
+
+    return JsonResponse(response_data)
+
+
+
+
+def run_spheres_test(request):
+    # Example binary data received from the request query parameters
+    binary_data = request.GET.get('binary_data', '')
+
+    # Print the request URL and parameters
+    print("Request URL:", request.get_full_path())
+    print("Request Parameters:", request.GET)
+
+    # Call the block_frequency method
+    p_value, result = Spheres3DTest.Spheres3DTest(binary_data)
+
+    print("p_value:", p_value)
+    print("Result:", result)
+    
+    # Prepare the response data
+    if result:
+        result_text = "random number"
+    else:
+        result_text = "non-random number"
+        
+    response_data = {
+        'p_value': p_value,
+        'result': result_text
+    }
+
+    return JsonResponse(response_data)
+
+
+
+
+def run_32matrix_test(request):
+    # Example binary data received from the request query parameters
+    binary_data = request.GET.get('binary_data', '')
+
+    # Print the request URL and parameters
+    print("Request URL:", request.get_full_path())
+    print("Request Parameters:", request.GET)
+
+    # Call the block_frequency method
+    p_value, result = Ranks32x32MatricesTest.Ranks32x32MatricesTest(binary_data)
+
+    print("p_value:", p_value)
+    print("Result:", result)
+    
+    # Prepare the response data
+    if result:
+        result_text = "random number"
+    else:
+        result_text = "non-random number"
+        
+    response_data = {
+        'p_value': p_value,
+        'result': result_text
+    }
+
+    return JsonResponse(response_data)
+
+
+
+def run_craps_test(request):
+    # Example binary data received from the request query parameters
+    binary_data = request.GET.get('binary_data', '')
+
+    # Print the request URL and parameters
+    print("Request URL:", request.get_full_path())
+    print("Request Parameters:", request.GET)
+
+    # Call the block_frequency method
+    p_value, result = CrapsTest.CrapsTest(binary_data)
+
+    print("p_value:", p_value)
+    print("Result:", result)
+    
+    # Prepare the response data
+    if result:
+        result_text = "random number"
+    else:
+        result_text = "non-random number"
+        
+    response_data = {
+        'p_value': p_value,
+        'result': result_text
+    }
+
+    return JsonResponse(response_data)
+
+
+
+def run_bitstream_test(request):
+    # Example binary data received from the request query parameters
+    binary_data = request.GET.get('binary_data', '')
+
+    # Print the request URL and parameters
+    print("Request URL:", request.get_full_path())
+    print("Request Parameters:", request.GET)
+
+    # Call the block_frequency method
+    p_value, result = BitstreamTest.BitstreamTest(binary_data)
+
+    print("p_value:", p_value)
+    print("Result:", result)
+    
+    # Prepare the response data
+    if result:
+        result_text = "random number"
+    else:
+        result_text = "non-random number"
+        
+    response_data = {
+        'p_value': p_value,
+        'result': result_text
+    }
+
+    return JsonResponse(response_data)
+
+
+
+
+
+def run_gcd_test(request):
+    # Example binary data received from the request query parameters
+    binary_data = request.GET.get('binary_data', '')
+
+    # Print the request URL and parameters
+    print("Request URL:", request.get_full_path())
+    print("Request Parameters:", request.GET)
+
+    # Call the block_frequency method
+    p_value, result = MarsagliaTsangGCDTest.MarsagliaTsangGCDTest(binary_data)
+
+    print("p_value:", p_value)
+    print("Result:", result)
+    
+    # Prepare the response data
+    if result:
+        result_text = "random number"
+    else:
+        result_text = "non-random number"
+        
+    response_data = {
+        'p_value': p_value,
+        'result': result_text
+    }
+
+    return JsonResponse(response_data)
+
+def run_opso_test(request):
+    # Example binary data received from the request query parameters
+    binary_data = request.GET.get('binary_data', '')
+
+    # Print the request URL and parameters
+    print("Request URL:", request.get_full_path())
+    print("Request Parameters:", request.GET)
+
+    # Call the block_frequency method
+    p_value, result = OPSOTest.OPSOTest(binary_data)
+
+    print("p_value:", p_value)
+    print("Result:", result)
+    
+    # Prepare the response data
+    if result:
+        result_text = "random number"
+    else:
+        result_text = "non-random number"
+        
+    response_data = {
+        'p_value': p_value,
+        'result': result_text
+    }
+
+    return JsonResponse(response_data)
+
+
+
+def run_oqso_test(request):
+    # Example binary data received from the request query parameters
+    binary_data = request.GET.get('binary_data', '')
+
+    # Print the request URL and parameters
+    print("Request URL:", request.get_full_path())
+    print("Request Parameters:", request.GET)
+
+    # Call the block_frequency method
+    p_value, result = OQSOTest.OQSOTest(binary_data)
+
+    print("p_value:", p_value)
+    print("Result:", result)
+    
+    # Prepare the response data
+    if result:
+        result_text = "random number"
+    else:
+        result_text = "non-random number"
+        
+    response_data = {
+        'p_value': p_value,
+        'result': result_text
+    }
+
+    return JsonResponse(response_data)
+
+
+
+def run_dna_test(request):
+    # Example binary data received from the request query parameters
+    binary_data = request.GET.get('binary_data', '')
+
+    # Print the request URL and parameters
+    print("Request URL:", request.get_full_path())
+    print("Request Parameters:", request.GET)
+
+    # Call the block_frequency method
+    p_value, result = DNATest.DNATest(binary_data)
+
+    print("p_value:", p_value)
+    print("Result:", result)
+    
+    # Prepare the response data
+    if result:
+        result_text = "random number"
+    else:
+        result_text = "non-random number"
+        
+    response_data = {
+        'p_value': p_value,
+        'result': result_text
+    }
+
+    return JsonResponse(response_data)
+
+
+
+
+def run_count_one_test(request):
+    # Example binary data received from the request query parameters
+    binary_data = request.GET.get('binary_data', '')
+
+    # Print the request URL and parameters
+    print("Request URL:", request.get_full_path())
+    print("Request Parameters:", request.GET)
+
+    # Call the block_frequency method
+    p_value, result = DNATest.DNATest(binary_data)
+
+    print("p_value:", p_value)
+    print("Result:", result)
+    
+    # Prepare the response data
+    if result:
+        result_text = "random number"
+    else:
+        result_text = "non-random number"
+        
+    response_data = {
+        'p_value': p_value,
+        'result': result_text
+    }
+
+    return JsonResponse(response_data)
 
 def send_binary_data(request):
     binary_data = '101010'  # Example binary data as a string

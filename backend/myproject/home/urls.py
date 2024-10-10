@@ -25,9 +25,26 @@ urlpatterns = [
     path('run_spectral_test/',views.run_spectral_test, name='run_spectral_test'),
 
     path('run_autocorrelation_test/',views.run_autocorrelation_test, name='run_autocorrelation_test'),
-    path('run_adaptive_statistical_test/',views.run_adaptive_statistical_test, name='adaptive_statistical_test'),
+    path('run_adaptive_statistical_test/',views.run_adaptive_statistical_test, name='adaptive_statistical_test'),   
 
-    path('binary-data/', views.send_binary_data, name='send_binary_data'),
+    # dieharder tests
+    path('run_binary_spacings_test/',views.run_birthday_spacings_test, name='binary_spacings_test'),  
+
+    path('run_parking_lot_test/',views.run_parking_lot_test, name='run_parking_lot_test'),  
+    path('run_overlapping_5_test/',views.run_overlapping_5_test, name='run_overlapping_5_test'),  
+    path('run_minimum_distance_test/',views.run_minimum_distance_test, name='run_minimum_distance_test'),  
+    path('run_31matrix_test/',views.run_31matrix_test, name='run_31matrix_test'),  
+    path('run_spheres_test/',views.run_spheres_test, name='run_spheres_test'),  
+    path('run_32matrix_test/',views.run_32matrix_test, name='run_32matrix_test'),  
+    path('run_craps_test/',views.run_craps_test, name='run_craps_test'),  
+    path('run_bitstream_test/',views.run_bitstream_test, name='run_bitstream_test'),  
+    path('run_gcd_test/',views.run_gcd_test, name='run_gcd_test'),  
+    path('run_opso_test/',views.run_opso_test, name='run_opso_test'),  
+    path('run_oqso_test/',views.run_oqso_test, name='run_oqso_test'),  
+    path('run_dna_test/',views.run_dna_test, name='run_dna_test'),  
+    path('run_count_one_test/',views.run_count_one_test, name='run_count_one_test'),  
+    
+    
 
     #live streaming
     path('stream-binary/', sse_binary_view, name='sse_binary_view'),

@@ -44,8 +44,8 @@ const Grid = ({binaryData}) => {
     }}>
       {/* First row */}
       <div style={{ border: '1px solid black', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <input type="checkbox" checked={isChecked} onChange={handleCheckboxChange} />
-        <div style={{ marginLeft: '5px', textAlign: 'center' }}>14. Random Excursion Test</div>
+       
+        <div style={{ marginLeft: '5px', textAlign: 'center' }}>16. Random Excursion Test</div>
       </div>
       {/* Second row */}
       <div style={{
