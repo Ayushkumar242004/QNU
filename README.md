@@ -31,8 +31,8 @@ The Randomness Detector is an application designed to analyze numbers and determ
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/Ayushkumar242004/QRNG-numbers-Randomness-Testing.git
-   cd QRNG-numbers-Randomness-Testing/my-react-app
+   git clone https://github.com/Ayushkumar242004/QNU.git ./
+   cd QNU Labs/my-react-app
 
   
 2. Install dependencies:
