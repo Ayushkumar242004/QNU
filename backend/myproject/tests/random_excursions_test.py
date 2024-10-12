@@ -82,6 +82,38 @@ class RandomExcursions:
 
     
     @staticmethod
+    def get_frequency(li_data, target_state):
+        """
+        Helper method to get the frequency of a given state in li_data.
+        :param li_data: List of data with cumulative sum counts
+        :param target_state: The state to find in li_data
+        :return: Frequency of the target state in li_data
+        """
+        for data in li_data:
+            if data[0] == target_state:
+                return data[1]
+        return 0  # Return 0 if the target state is not found
+
+    @staticmethod
+    def get_pi_value(index, target_state):
+        """
+        Returns the expected probability value (pi) for a given index and target state.
+        This is based on the target state for the random excursion variant test.
+        :param index: The current index of the state
+        :param target_state: The state being tested
+        :return: The expected pi value
+        """
+        # Expected probabilities for target states
+        pi_table = {
+            -9: 0.00526, -8: 0.01053, -7: 0.01579, -6: 0.02105,
+            -5: 0.02632, -4: 0.07895, -3: 0.15789, -2: 0.31579,
+            -1: 0.5, 1: 0.5, 2: 0.31579, 3: 0.15789,
+            4: 0.07895, 5: 0.02632, 6: 0.02105, 7: 0.01579,
+            8: 0.01053, 9: 0.00526
+        }
+        return pi_table.get(target_state, 0)  # Return 0 if target_state is not in pi_table
+
+    @staticmethod
     def variant_test(binary_data: str, target_state=1, verbose=False):
         """
         Performs the variant of the random excursions test for a specific target state.
@@ -91,104 +123,69 @@ class RandomExcursions:
         :param verbose: Whether to print debug information
         :return: A tuple containing the chi_sq, p_value, and result for the target state
         """
-        length_of_binary_data = len(binary_data)
-        int_data = zeros(length_of_binary_data)
+        try:
+            # Remove any invalid characters (anything other than 0 or 1)
+            binary_data = ''.join([char for char in binary_data if char in '01'])
 
-        for count in range(length_of_binary_data):
-            int_data[count] = int(binary_data[count])
+            # Check if binary_data is empty after sanitizing
+            if not binary_data:
+                raise ValueError("Input binary_data contains no valid binary characters (0 or 1)")
 
-        sum_int = (2 * int_data) - ones(len(int_data))
-        cumulative_sum = cumsum(sum_int)
+            length_of_binary_data = len(binary_data)
+            int_data = zeros(length_of_binary_data)
 
-        li_data = []
-        index = []
-        for count in sorted(set(cumulative_sum)):
-            if abs(count) <= 9:
-                index.append(count)
-                li_data.append([count, len(where(cumulative_sum == count)[0])])
+            for count in range(length_of_binary_data):
+                int_data[count] = int(binary_data[count])
 
-        j = RandomExcursions.get_frequency(li_data, 0) + 1
+            sum_int = (2 * int_data) - ones(len(int_data))
+            cumulative_sum = cumsum(sum_int)
 
-        p_values = []
-        for count in (sorted(set(index))):
-            if not count == 0:
-                den = sqrt(2 * j * (4 * abs(count) - 2))
-                p_values.append(erfc(abs(RandomExcursions.get_frequency(li_data, count) - j) / den))
+            li_data = []
+            index = []
+            for count in sorted(set(cumulative_sum)):
+                if abs(count) <= 9:
+                    index.append(count)
+                    li_data.append([count, len(where(cumulative_sum == count)[0])])
 
-        count = 0
-        # Remove 0 from li_data so the number of elements will be equal to p_values
-        for data in li_data:
-            if data[0] == 0:
-                li_data.remove(data)
-                index.remove(0)
-                break
-            count += 1
+            # Get frequency for state 0 and add 1
+            j = RandomExcursions.get_frequency(li_data, 0) + 1
 
-        if verbose:
-            print('Random Excursion Variant Test:')
-            # print("\tLength of input:\t", length_of_binary_data)
-            # print('\tValue of j:\t\t', j)
-            print('\tP-Values:')
-            # print('\t\t STATE \t\t COUNTS \t\t P-Value \t\t Conclusion')
+            p_values = []
+            for count in (sorted(set(index))):
+                if not count == 0:
+                    den = sqrt(2 * j * (4 * abs(count) - 2))
+                    p_values.append(erfc(abs(RandomExcursions.get_frequency(li_data, count) - j) / den))
+
             count = 0
-            for item in p_values:
-                print('\t\t', repr(li_data[count][0]).rjust(4), '\t\t', li_data[count][1], '\t\t', repr(item).ljust(14), '\t\t', (item >= 0.01))
-                count += 1
-            # print('DEBUG END.')
+            for data in li_data:
+                if data[0] == 0:
+                    li_data.remove(data)
+                    index.remove(0)
+                    break
 
-        states = []
-        for item in index:
-            if item < 0:
-                states.append(str(int(item)))  # Convert negative floats to integers
-            else:
-                states.append('+' + str(int(item)))  # Convert positive floats to integers
+            if verbose:
+                print('Random Excursion Variant Test:')
+                count = 0
+                for item in p_values:
+                    print('\t\t', repr(li_data[count][0]).rjust(4), '\t\t', li_data[count][1], '\t\t', repr(item).ljust(14), '\t\t', (item >= 0.01))
+                    count += 1
 
-        result = []
-        count = 0
-        for item in p_values:
-            if int(states[count]) == target_state:
-                result.append((states[count], li_data[count][0], li_data[count][1], item, (item >= 0.01)))
-                break
-            count += 1
+            # Calculate chi_sq and p_value
+            state_count = []
+            for cycle in range(6):
+                state_count.append([sct[1] for sct in li_data].count(cycle))  # Count occurrences of the cycle
+            state_count = transpose([state_count])  # Transpose to get a column matrix
 
-        # Calculate chi_sq and p_value
-        state_count = []
-        for cycle in range(6):
-            state_count.append([sct[1] for sct in li_data].count(cycle))  # Count occurrences of the cycle
-        state_count = transpose([state_count])  # Transpose to get a column matrix
+            num_cycles = len(li_data)
+            pi = ([([RandomExcursions.get_pi_value(uu, target_state) for uu in range(6)])])
+            inner_term = num_cycles * array(pi)
+            xObs = sum(1.0 * (array(state_count) - inner_term) ** 2 / inner_term, axis=1)
+            chi_sq = xObs[0]
+            p_value = gammaincc(2.5, xObs[0] / 2.0)
 
-        num_cycles = len(li_data)
+            result = p_value >= 0.01
 
-        pi = ([([RandomExcursions.get_pi_value(uu, target_state) for uu in range(6)])])
-        inner_term = num_cycles * array(pi)
-        xObs = sum(1.0 * (array(state_count) - inner_term) ** 2 / inner_term, axis=1)
-        chi_sq = xObs[0]
-        p_value = gammaincc(2.5, xObs[0] / 2.0)
-
-        return chi_sq, p_value, result
-
-
-
-    @staticmethod
-    def get_pi_value(k, x):
-        """
-        This method is used by the random_excursions method to get expected probabilities
-        """
-        if k == 0:
-            out = 1 - 1.0 / (2 * abs(x))
-        elif k >= 5:
-            out = (1.0 / (2 * abs(x))) * (1 - 1.0 / (2 * abs(x))) ** 4
-        else:
-            out = (1.0 / (4 * x * x)) * (1 - 1.0 / (2 * abs(x))) ** (k - 1)
-        return out
-
-    @staticmethod
-    def get_frequency(list_data, trigger):
-        """
-        This method is used by the random_excursions_variant method to get frequencies
-        """
-        frequency = 0
-        for (x, y) in list_data:
-            if x == trigger:
-                frequency = y
-        return frequency
+            return chi_sq, p_value, result
+        except Exception as e:
+            # In case of any error, return -1, False
+            return -1, False

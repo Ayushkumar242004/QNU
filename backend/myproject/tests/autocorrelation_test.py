@@ -5,7 +5,7 @@ import numpy as np
 class AutocorrelationTest:
 
     @staticmethod
-    def autocorrelation_test(binary_data: str, max_lag: int, verbose=False):
+    def autocorrelation_test(binary_data: str, max_lag: int = 20, verbose=False):
         """
         Perform the Autocorrelation Test on a binary sequence to check for randomness.
         
@@ -23,7 +23,7 @@ class AutocorrelationTest:
         n = len(binary_data)
         
         if n <= max_lag:
-            raise ValueError("The length of the binary sequence must be greater than the maximum lag.")
+            return -1, False
         
         # Convert binary string to array of integers
         data = np.array([int(bit) for bit in binary_data])

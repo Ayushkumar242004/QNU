@@ -5,7 +5,7 @@ import Navbar from './Components/Navbar';
 import Up from './Components/up';
 import End from './Components/End';
 import DieharderTest from './Components/DieharderTest';
-
+import ServerLink from './Components/Server_link'
 function App() {
   return (
     <Router>
@@ -14,9 +14,11 @@ function App() {
         <Navbar />
         <Routes>
           {/* Home route */}
-          <Route path="/" element={<><Up /><End /></>} />
+          <Route path="/" element={<><Up /></>} />
           {/* DieHarder Test route */}
-          <Route path="/dieharder_test" element={<><DieharderTest /><End /></>} />
+          <Route path="/dieharder_test" element={<><DieharderTest /></>} />
+          
+          <Route path="/server_link" element={<><ServerLink /></>} />
           
         </Routes>
       </div>

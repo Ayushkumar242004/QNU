@@ -4,8 +4,12 @@ from scipy.stats import norm
 class ParkingLotTest:
     @staticmethod
     def ParkingLotTest(data, verbose=False):
+        if not data:
+            return -1, False
         # Sanitize the input to remove any non-binary characters like ',' or spaces
         data = data.replace(',', '').strip()
+        
+        
         
         if len(data) % 2 != 0:
             return -1, False

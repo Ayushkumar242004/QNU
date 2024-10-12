@@ -43,6 +43,41 @@ const GridContainer1 = ({ getData, onBinaryDataChange }) => {
     reader.readAsArrayBuffer(selectedFile);
   };
 
+
+  const handleButtonClickGraph = (buttonName) => {
+    // Handle button click actions
+    
+    if (buttonName === 'Report generation') {
+      
+        // Optionally, you can then redirect the user or perform other actions
+        window.location.href = `http://localhost:8000/pdf-report/?binary_data=${encodeURIComponent(initialInputData[0])}`;
+       
+      
+    }
+    else if (buttonName === 'Graph generation') {
+      // Example binary data
+    //   const binaryData = '1101010101010101'; // Replace with actual binary data
+      
+      // Redirect with binary data as query parameter
+      console.log("hi my binary data is: ",initialInputData[0])
+      window.location.href = `http://localhost:8000/graph-generation/?binary_data=${encodeURIComponent(initialInputData[0])}`;
+    }
+    
+   
+  };
+
+  // Define button names
+  const buttonNamesGraph = [
+    
+    // 'Execute Test',
+    // 'Reset',
+    // 'Exit Program'
+    'Graph generation',
+    'Report generation'
+  ];
+  
+
+
   return (
     <div className="grid-container">
       {/* Input Data in the first row */}
@@ -93,6 +128,18 @@ const GridContainer1 = ({ getData, onBinaryDataChange }) => {
       { <Down binaryData={initialInputData[0]} />}
       { <RandomTest binaryData={initialInputData[0]} />}
       { <RandomVariantTest binaryData={initialInputData[0]} />}
+
+      <div className="button-container">
+        {buttonNamesGraph.map((name, index) => (
+          <button
+            key={index}
+            className="action-btn"
+            onClick={() => handleButtonClickGraph(name)}
+          >
+            {name}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }

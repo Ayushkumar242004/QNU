@@ -43,7 +43,12 @@ urlpatterns = [
     path('run_oqso_test/',views.run_oqso_test, name='run_oqso_test'),  
     path('run_dna_test/',views.run_dna_test, name='run_dna_test'),  
     path('run_count_one_test/',views.run_count_one_test, name='run_count_one_test'),  
-    
+    path('run_count_one_byte_test/',views.run_count_one_byte_test, name='run_count_one_byte_test'),  
+    path('run_simple_gcd_test/',views.run_simple_gcd_test, name='run_simple_gcd_test'),  
+    path('run_general_minimum_distance_test/',views.run_general_minimum_distance_test, name='run_general_minimum_distance_test'),  
+    path('run_u01_linear_complexity_test/',views.run_u01_linear_complexity_test, name='run_u01_linear_complexity_test'),  
+    path('run_u01_longest_repeated_substring_test/',views.run_u01_longest_repeated_substring_test, name='run_u01_longest_repeated_substring_test'),  
+    path('run_matrix_rank_test/',views.run_matrix_rank_test, name='run_matrix_rank_test'),  
     
 
     #live streaming
@@ -52,8 +57,11 @@ urlpatterns = [
     
     #report generation
     path('pdf-report/', views.generate_pdf_report, name='generate_pdf_report'),
+    path('pdf-report-dieharder/', views.generate_pdf_report_dieharder, name='generate_pdf_report_dieharder'),
+   
     #graph generation
     path('graph-generation/', views.create_graph, name='create_graph'),
+    path('graph-generaion-dieharder/', views.create_graph_dieharder, name='create_graph_dieharder'),
 ]
 
 # http://127.0.0.1:8000/sse_binary_example/

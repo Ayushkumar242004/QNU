@@ -261,7 +261,11 @@ const GridContainer = ({ binaryData }) => {
     fetchrunAdaptiveStatisticalTestData();
   }, [binaryData]);
 
+  
   return (
+    <div>
+
+   
     <div
       style={{
         display: "grid",
@@ -1357,6 +1361,9 @@ const GridContainer = ({ binaryData }) => {
           );
         }
       })}
+    </div>
+
+   
     </div>
   );
 };

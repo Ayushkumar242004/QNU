@@ -29,6 +29,9 @@ const Navbar = () => {
             <li className="nav-item">
               <a className="nav-link" href="/dieharder_test">DieHarder Tests</a>
             </li>
+            <li className="nav-item">
+              <a className="nav-link" href="/server_link">QRNG Server Link</a>
+            </li>
           </ul>
         </div>
       </div>
