@@ -5,6 +5,12 @@ from math import gcd  # Import gcd from the math module
 class MarsagliaTsangGCDTest:
     @staticmethod
     def MarsagliaTsangGCDTest(data, verbose=False):
+        
+        data = data.replace(',', '').strip()
+
+        if not data:
+            return None 
+        
         # Clean the input string: keep only '0' and '1'
         clean_data = ''.join(filter(lambda x: x in '01', data))
         

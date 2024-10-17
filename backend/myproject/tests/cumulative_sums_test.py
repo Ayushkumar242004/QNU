@@ -72,9 +72,6 @@ class CumulativeSums:
 
         if verbose:
             print('Cumulative Sums Test: ')
-            # print("\tLength of input:\t", length_of_binary_data)
-            # print('\tMode:\t\t\t\t', mode)
-            # print('\tValue of z:\t\t\t', abs_max)
             print('\tP-Value:\t\t\t', p_value)
             # print('DEBUG END.')
 

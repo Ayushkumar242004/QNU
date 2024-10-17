@@ -27,18 +27,28 @@ const GridContainer1 = ({ getData, onBinaryDataChange }) => {
     }
   };
 
+
+
   const handleFileInputChange = (event, index) => {
     const selectedFile = event.target.files[0];
     if (selectedFile.size > MAX_STACK_SIZE_ESTIMATE) {
-      // Display a warning message to the user
       alert('Warning: The selected file is too large. Please choose a smaller file.');
       return;
-  }
-    // Do something with the selected file
+    }
+  
     const reader = new FileReader();
     reader.onload = (e) => {
-      const binaryData = e.target.result;
-      handleInputChange(index, binaryData); // Update the input value with the binary data
+      const binaryData = e.target.result; // ArrayBuffer
+      const byteArray = new Uint8Array(binaryData); // Convert ArrayBuffer to Uint8Array
+      
+      const decoder = new TextDecoder(); // Create a TextDecoder to interpret the data
+      const textData = decoder.decode(byteArray).trim(); // Convert Uint8Array to string
+  
+      console.log(textData); // Logs "100" (or whatever the content of the file is)
+  
+      
+      
+      handleInputChange(0, textData); // Update input value with the binary data
     };
     reader.readAsArrayBuffer(selectedFile);
   };

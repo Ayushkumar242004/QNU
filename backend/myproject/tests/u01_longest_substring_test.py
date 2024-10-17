@@ -5,6 +5,11 @@ import numpy as np
 class TestU01LongestRepeatedSubstringTest:
     @staticmethod
     def TestU01LongestRepeatedSubstringTest(data, verbose=False):
+        data = data.replace(',', '').strip()
+
+        if not data:
+            return None 
+        
         longest_repeat = max([len(sub) for sub in set(data) if data.count(sub) > 1], default=0)
         expected = np.log2(len(data))
         variance = np.log2(len(data)) ** 2

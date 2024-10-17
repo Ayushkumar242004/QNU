@@ -4,6 +4,12 @@ from scipy.stats import chi2
 class Ranks31x31MatricesTest:
     @staticmethod
     def Ranks31x31MatricesTest(data, verbose=False):
+
+        data = data.replace(',', '').strip()
+
+        if not data:
+            return None 
+        
         # Check if data has at least 31x31 elements
         if len(data) < 31 * 31:
             return -1, False  # Return (-1, False) if insufficient data
@@ -30,7 +36,7 @@ class Ranks31x31MatricesTest:
                 counts[2] += 1
 
         # Debugging: print counts
-        print(f"Counts: {counts}")
+        # print(f"Counts: {counts}")
 
         # Expected proportions for rank 31, 30, and less
         expected_proportions = np.array([0.2888, 0.5776, 0.1336])

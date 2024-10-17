@@ -25,18 +25,28 @@ const DieharderTest = ({ getData, onBinaryDataChange }) => {
     }
   };
 
+
+
   const handleFileInputChange = (event, index) => {
     const selectedFile = event.target.files[0];
     if (selectedFile.size > MAX_STACK_SIZE_ESTIMATE) {
-      // Display a warning message to the user
       alert('Warning: The selected file is too large. Please choose a smaller file.');
       return;
     }
-    // Do something with the selected file
+  
     const reader = new FileReader();
     reader.onload = (e) => {
-      const binaryData = e.target.result;
-      handleInputChange(index, binaryData); // Update the input value with the binary data
+      const binaryData = e.target.result; // ArrayBuffer
+      const byteArray = new Uint8Array(binaryData); // Convert ArrayBuffer to Uint8Array
+      
+      const decoder = new TextDecoder(); // Create a TextDecoder to interpret the data
+      const textData = decoder.decode(byteArray).trim(); // Convert Uint8Array to string
+  
+      console.log(textData); // Logs "100" (or whatever the content of the file is)
+  
+      
+      
+      handleInputChange(0, textData); // Update input value with the binary data
     };
     reader.readAsArrayBuffer(selectedFile);
   };
@@ -403,7 +413,7 @@ const DieharderTest = ({ getData, onBinaryDataChange }) => {
     if (buttonName === 'Report generation') {
       
         // Optionally, you can then redirect the user or perform other actions
-        window.location.href = `http://localhost:8000/pdf-report-dieharder/?binary_data=${encodeURIComponent(initialInputData)}`;
+        window.location.href = `http://localhost:8000/pdf-report-dieharder/?binary_data=${encodeURIComponent(initialInputData[0])}`;
        
       
     }
@@ -412,11 +422,13 @@ const DieharderTest = ({ getData, onBinaryDataChange }) => {
     //   const binaryData = '1101010101010101'; // Replace with actual binary data
       
       // Redirect with binary data as query parameter
-      window.location.href = `http://localhost:8000/graph-generaion-dieharder/?binary_data=${encodeURIComponent(initialInputData)}`;
+      console.log("hi my binary data is: ",initialInputData[0])
+      window.location.href = `http://localhost:8000/graph-generaion-dieharder/?binary_data=${encodeURIComponent(initialInputData[0])}`;
     }
     
    
   };
+
 
   // Define button names
   const buttonNamesGraph = [
@@ -1168,7 +1180,7 @@ const DieharderTest = ({ getData, onBinaryDataChange }) => {
                 </div>
               );
             } else if (index === 8) {
-              // Check if it's the cell below "Result"
+              
               return (
                 <div
                   key={index}

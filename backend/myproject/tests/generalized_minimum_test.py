@@ -5,6 +5,12 @@ import numpy as np
 class GeneralizedMinimumDistanceTest:
     @staticmethod
     def GeneralizedMinimumDistanceTest(data, d=2, verbose=False):
+
+        data = data.replace(',', '').strip()
+
+        if not data:
+            return None 
+        
         try:
             # Convert input data to numeric values (float) if they are in string format
             cleaned_data = []

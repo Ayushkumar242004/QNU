@@ -5,6 +5,11 @@ import numpy as np
 class TestU01LinearComplexityTest:
     @staticmethod
     def TestU01LinearComplexityTest(data, m=500, verbose=False):
+        data = data.replace(',', '').strip()
+
+        if not data:
+            return None 
+        
         try:
             # Ensure the input data length is sufficient for block size 'm'
             n = len(data)
@@ -16,12 +21,18 @@ class TestU01LinearComplexityTest:
             if block_count == 0:
                 return -1, False  # Prevent division by zero
 
-            # Split data into blocks of size 'm'
-            blocks = [data[i * m:(i + 1) * m] for i in range(block_count)]
+            total_complexity = 0  # To keep a running total of complexities
             
-            # Compute the linear complexity (rank) of each block
-            complexities = [np.linalg.matrix_rank(np.array(block).reshape(m, -1)) for block in blocks]
-            mean_complexity = np.mean(complexities)
+            # Process data in blocks
+            for i in range(block_count):
+                block = data[i * m:(i + 1) * m]
+                # Convert the block into a numpy array
+                block_array = np.array(list(map(int, block)), dtype=int).reshape(m, -1)
+                complexity = np.linalg.matrix_rank(block_array)  # Compute the rank (complexity)
+                total_complexity += complexity  # Update running total
+            
+            # Calculate mean complexity
+            mean_complexity = total_complexity / block_count
 
             # Expected values and variance for the test
             expected = m / 2
@@ -43,3 +54,5 @@ class TestU01LinearComplexityTest:
         except Exception as e:
             print(f"Error: {e}")
             return -1, False  # Return -1 for any other error
+
+

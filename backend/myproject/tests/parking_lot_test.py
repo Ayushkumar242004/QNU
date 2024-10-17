@@ -4,32 +4,43 @@ from scipy.stats import norm
 class ParkingLotTest:
     @staticmethod
     def ParkingLotTest(data, verbose=False):
-        if not data:
-            return -1, False
-        # Sanitize the input to remove any non-binary characters like ',' or spaces
         data = data.replace(',', '').strip()
+
+        if not data:
+            return None 
         
-        
-        
-        if len(data) % 2 != 0:
+        # Step 1: Sanitize and validate input
+        if not data or len(data.strip()) % 2 != 0:
             return -1, False
+
+        # Remove commas or spaces, then convert to numpy array of integers (0 or 1)
+        data = np.fromiter(map(int, data.replace(',', '').strip()), dtype=np.int8)
+
+        n = len(data) // 2  # Each pair represents coordinates
+        if n == 0:
+            return -1, False  # Not enough data to form even a single point
+
+        # Step 2: Reshape the data into coordinates (2D array with two columns)
+        coordinates = data.reshape(n, 2)
         
-        n = len(data) // 2  # Assume each pair represents coordinates
-        
-        # Convert binary data pairs into numeric coordinates (0 or 1)
-        coordinates = [(int(data[2 * i]), int(data[2 * i + 1])) for i in range(n)]
-        
-        parked = 0
-        for coord in coordinates:
-            if np.linalg.norm(coord) < 1:  # Check if inside a unit circle
-                parked += 1
-        
+        # Step 3: Efficient distance calculation (vectorized)
+        distances = np.linalg.norm(coordinates, axis=1)  # Calculate distance for each point
+
+        # Count points inside the unit circle (radius <= 1)
+        parked = np.sum(distances < 1)
+
+        # Step 4: Statistical analysis
         expected = n * np.pi / 4
         variance = n * (np.pi / 4) * (1 - (np.pi / 4))
+        
+        if variance == 0:
+            return -1, False  # Avoid division by zero if variance is zero
+        
         z_statistic = (parked - expected) / np.sqrt(variance)
         p_value = 2 * (1 - norm.cdf(abs(z_statistic)))
-        
+
+        # Step 5: Verbose output (optional)
         if verbose:
             print(f"Parking Lot Test - Z-statistic: {z_statistic}, p-value: {p_value}")
-        
+
         return p_value, (p_value >= 0.01)

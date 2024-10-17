@@ -75,14 +75,8 @@ class Matrix:
 
             if verbose:
                 print('Binary Matrix Rank Test: ')
-                # print("\tLength of input:\t", length_of_binary_data)
-                # print("\tSize of Row:\t\t", rows_in_matrix)
-                # print("\tSize of Column:\t\t", columns_in_matrix)
-                # print('\tValue of N:\t\t\t', number_of_block)
-                # print('\tValue of Pi:\t\t', pi)
-                # print('\tValue of xObs:\t\t', xObs)
                 print('\tP-Value:\t\t\t', p_value)
-                # print('DEBUG END.')
+                
 
             return (p_value, (p_value >= 0.01))
         else:

@@ -4,7 +4,11 @@ from scipy.stats import chi2
 class CountThe1sByteTest:
     @staticmethod
     def CountThe1sByteTest(data, verbose=False):
+        data = data.replace(',', '').strip()
 
+        if not data:
+            return None 
+        
         if data is None or len(data) == 0:
             return -1, False
         

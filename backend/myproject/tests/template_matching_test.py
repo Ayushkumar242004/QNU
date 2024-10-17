@@ -67,13 +67,7 @@ class TemplateMatching:
 
         if verbose:
             print('Non-Overlapping Template Test DEBUG BEGIN:')
-            # print("\tLength of input:\t\t", length_of_binary)
-            # print('\tValue of Mean (µ):\t\t', mean)
-            # print('\tValue of Variance(σ):\t', variance)
-            # print('\tValue of W:\t\t\t\t', pattern_counts)
-            # print('\tValue of xObs:\t\t\t', xObs)
             print('\tP-Value:\t\t\t\t', p_value)
-            # print('DEBUG END.')
 
         return (p_value, (p_value >= 0.01))
 

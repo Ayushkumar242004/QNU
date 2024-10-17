@@ -30,9 +30,7 @@ class RandomExcursions:
         """
 
         length_of_binary_data = len(binary_data)
-        length_of_binary_data = len(binary_data)
-        # print('Length of binary string: ', length_of_binary_data)
-
+       
         # Initialized k, m. n, pi and v_values
         if length_of_binary_data == 0:
             # Not enough data to run this test
@@ -167,7 +165,7 @@ class RandomExcursions:
                 print('Random Excursion Variant Test:')
                 count = 0
                 for item in p_values:
-                    print('\t\t', repr(li_data[count][0]).rjust(4), '\t\t', li_data[count][1], '\t\t', repr(item).ljust(14), '\t\t', (item >= 0.01))
+                    # print('\t\t', repr(li_data[count][0]).rjust(4), '\t\t', li_data[count][1], '\t\t', repr(item).ljust(14), '\t\t', (item >= 0.01))
                     count += 1
 
             # Calculate chi_sq and p_value

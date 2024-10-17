@@ -4,6 +4,12 @@ from scipy.stats import chi2
 class BitstreamTest:
     @staticmethod
     def BitstreamTest(data, verbose=False):
+        
+        data = data.replace(',', '').strip()
+
+        if not data:
+            return None 
+        
         # Clean the input string: keep only '0' and '1'
         clean_data = ''.join(filter(lambda x: x in '01', data))
         

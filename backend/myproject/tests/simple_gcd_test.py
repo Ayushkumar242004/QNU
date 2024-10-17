@@ -6,6 +6,11 @@ class MarsagliaTsangSimpleGCDTest:
     @staticmethod
     def MarsagliaTsangSimpleGCDTest(data, verbose=False):
 
+        data = data.replace(',', '').strip()
+
+        if not data:
+            return None 
+
         if data is None or len(data) == 0:
             return -1, False
         try:
@@ -48,7 +53,7 @@ class MarsagliaTsangSimpleGCDTest:
 
             if verbose:
                 print(f"Marsaglia-Tsang Simple GCD Test - Chi-square: {chi_square}, p-value: {p_value}")
-                print(f"Observed GCD=1 Count: {observed_gcd_1}, Expected: {expected_gcd_1}")
+                # print(f"Observed GCD=1 Count: {observed_gcd_1}, Expected: {expected_gcd_1}")
 
             # Return p-value and whether the test passes (p-value >= 0.01 for randomness)
             return p_value, (p_value >= 0.01)

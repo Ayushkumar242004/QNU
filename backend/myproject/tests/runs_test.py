@@ -53,7 +53,7 @@ class RunTest:
             return (-1, False)
 
         if verbose:
-            print('Run Test DEBUG BEGIN:')
+           
             print('\tP-Value:\t\t\t\t\t\t', p_value)
 
         # Return the p_value and whether the test passed (p_value > 0.01)

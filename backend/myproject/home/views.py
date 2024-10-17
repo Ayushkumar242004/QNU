@@ -77,14 +77,14 @@ def run_frequency_test(request):
     binary_data = request.GET.get('binary_data', '')
 
     # Print the request URL and parameters
-    print("Request URL:", request.get_full_path())
-    print("Request Parameters:", request.GET)
+    # print("Request URL:", request.get_full_path())
+    # print("Request Parameters:", request.GET)
 
     # Call the monobit_test method from the FrequencyTest class
     p_value, result = FrequencyTest.monobit_test(binary_data)
 
-    print("p_value:", p_value)
-    print("Result:", result)
+    print("FrequencyTest p_value:", p_value)
+    print("FrequencyTest Result:", result)
     
     # Prepare the response data
     if result == 1:
@@ -103,14 +103,19 @@ def run_frequency_block_test(request):
     binary_data = request.GET.get('binary_data', '')
 
     # Print the request URL and parameters
-    print("Request URL:", request.get_full_path())
-    print("Request Parameters:", request.GET)
+    # print("Request URL:", request.get_full_path())
+    # print("Request Parameters:", request.GET)
 
+
+    if not binary_data:
+        # If there's no binary data, return an empty JsonResponse with status code 204 (No Content)
+        return JsonResponse({}, status=204)
+    
     # Call the block_frequency method
     p_value, result = FrequencyTest.block_frequency(binary_data)
 
-    print("p_value:", p_value)
-    print("Result:", result)
+    print("run_frequency_block_test p_value:", p_value)
+    print("run_frequency_block_test Result:", result)
     
     # Prepare the response data
     if result:
@@ -131,14 +136,14 @@ def run_runs_test(request):
     binary_data = request.GET.get('binary_data', '')
 
     # Print the request URL and parameters
-    print("Request URL:", request.get_full_path())
-    print("Request Parameters:", request.GET)
+    # print("Request URL:", request.get_full_path())
+    # print("Request Parameters:", request.GET)
 
     # Call the block_frequency method
     p_value, result = RunTest.run_test(binary_data)
 
-    print("p_value:", p_value)
-    print("Result:", result)
+    print("run_runs_test p_value:", p_value)
+    print("run_runs_test Result:", result)
     
     # Prepare the response data
     if result:
@@ -158,15 +163,20 @@ def run_longest_one_block_test(request):
     # Example binary data received from the request query parameters
     binary_data = request.GET.get('binary_data', '')
 
+    if not binary_data:
+        # If there's no binary data, return an empty JsonResponse with status code 204 (No Content)
+        return JsonResponse({}, status=204)
+
     # Print the request URL and parameters
-    print("Request URL:", request.get_full_path())
-    print("Request Parameters:", request.GET)
+    # print("Request URL:", request.get_full_path())
+    # print("Request Parameters:", request.GET)
 
     # Call the block_frequency method
     p_value, result, error_message = RunTest.longest_one_block_test(binary_data)
 
-    print("p_value:", p_value)
-    print("Result:", result)
+    
+    print("run_longest_one_block_test p_value:", p_value)
+    print("run_longest_one_block_test Result:", result)
     
     # Prepare the response data
     if result:
@@ -185,15 +195,19 @@ def run_approximate_entropy_test(request):
     # Example binary data received from the request query parameters
     binary_data = request.GET.get('binary_data', '')
 
+    if not binary_data:
+        # If there's no binary data, return an empty JsonResponse with status code 204 (No Content)
+        return JsonResponse({}, status=204)
+
     # Print the request URL and parameters
-    print("Request URL:", request.get_full_path())
-    print("Request Parameters:", request.GET)
+    # print("Request URL:", request.get_full_path())
+    # print("Request Parameters:", request.GET)
 
     # Call the block_frequency method
     p_value, result = ApproximateEntropy.approximate_entropy_test(binary_data)
 
-    print("p_value:", p_value)
-    print("Result:", result)
+    print("run_approximate_entropy_test p_value:", p_value)
+    print("run_approximate_entropy_test Result:", result)
     
     # Prepare the response data
     if result:
@@ -213,14 +227,14 @@ def run_linear_complexity_test(request):
     binary_data = request.GET.get('binary_data', '')
 
     # Print the request URL and parameters
-    print("Request URL:", request.get_full_path())
-    print("Request Parameters:", request.GET)
+    # print("Request URL:", request.get_full_path())
+    # print("Request Parameters:", request.GET)
 
     # Call the block_frequency method
     p_value, result = ComplexityTest.linear_complexity_test(binary_data)
 
-    print("p_value:", p_value)
-    print("Result:", result)
+    print("run_linear_complexity_test p_value:", p_value)
+    print("run_linear_complexity_test Result:", result)
     
     # Prepare the response data
     if result:
@@ -239,15 +253,15 @@ def run_non_overlapping_test(request):
     # Example binary data received from the request query parameters
     binary_data = request.GET.get('binary_data', '')
 
-    # Print the request URL and parameters
-    print("Request URL:", request.get_full_path())
-    print("Request Parameters:", request.GET)
+    # # Print the request URL and parameters
+    # print("Request URL:", request.get_full_path())
+    # print("Request Parameters:", request.GET)
 
     # Call the block_frequency method
     p_value, result = TemplateMatching.non_overlapping_test(binary_data)
 
-    print("p_value:", p_value)
-    print("Result:", result)
+    print("run_non_overlapping_test p_value:", p_value)
+    print("run_non_overlapping_test Result:", result)
     
     # Prepare the response data
     if result:
@@ -269,14 +283,14 @@ def run_overlapping_test(request):
     binary_data = request.GET.get('binary_data', '')
 
     # Print the request URL and parameters
-    print("Request URL:", request.get_full_path())
-    print("Request Parameters:", request.GET)
+    # print("Request URL:", request.get_full_path())
+    # print("Request Parameters:", request.GET)
 
     # Call the block_frequency method
     p_value, result = TemplateMatching.overlapping_patterns(binary_data)
 
-    print("p_value:", p_value)
-    print("Result:", result)
+    print("run_overlapping_test p_value:", p_value)
+    print("run_overlapping_test Result:", result)
     
     # Prepare the response data
     if result:
@@ -297,14 +311,14 @@ def run_statistical_test(request):
     binary_data = request.GET.get('binary_data', '')
 
     # Print the request URL and parameters
-    print("Request URL:", request.get_full_path())
-    print("Request Parameters:", request.GET)
+    # print("Request URL:", request.get_full_path())
+    # print("Request Parameters:", request.GET)
 
     # Call the block_frequency method
     p_value, result = Universal.statistical_test(binary_data)
 
-    print("p_value:", p_value)
-    print("Result:", result)
+    print("run_statistical_test p_value:", p_value)
+    print("run_statistical_test Result:", result)
     
     # Prepare the response data
     if result:
@@ -324,15 +338,19 @@ def run_serial_test(request):
     # Example binary data received from the request query parameters
     binary_data = request.GET.get('binary_data', '')
 
+    if not binary_data:
+        # If there's no binary data, return an empty JsonResponse with status code 204 (No Content)
+        return JsonResponse({}, status=204)
+
     # Print the request URL and parameters
-    print("Request URL:", request.get_full_path())
-    print("Request Parameters:", request.GET)
+    # print("Request URL:", request.get_full_path())
+    # print("Request Parameters:", request.GET)
 
     # Call the block_frequency method
     p_value, result = Serial.serial_test(binary_data)
 
-    print("p_value:", p_value)
-    print("Result:", result)
+    print("run_serial_test p_value:", p_value)
+    print("run_serial_test Result:", result)
     
     # Prepare the response data
     if result:
@@ -353,15 +371,15 @@ def run_cumulative_sums_test(request):
     # Example binary data received from the request query parameters
     binary_data = request.GET.get('binary_data', '')
 
-    # Print the request URL and parameters
-    print("Request URL:", request.get_full_path())
-    print("Request Parameters:", request.GET)
+    # # Print the request URL and parameters
+    # print("Request URL:", request.get_full_path())
+    # print("Request Parameters:", request.GET)
 
     # Call the block_frequency method
     p_value, result = CumulativeSums.cumulative_sums_test(binary_data)
 
-    print("p_value:", p_value)
-    print("Result:", result)
+    print("run_cumulative_sums_test p_value:", p_value)
+    print("run_cumulative_sums_test Result:", result)
     
     # Prepare the response data
     if result:
@@ -381,17 +399,22 @@ def run_autocorrelation_test(request):
     # Example binary data received from the request query parameters
     binary_data = request.GET.get('binary_data', '')
 
+    if not binary_data:
+        # If there's no binary data, return an empty JsonResponse with status code 204 (No Content)
+        return JsonResponse({}, status=204)
+
+
     max_lag = 10 
 
     # Print the request URL and parameters
-    print("Request URL:", request.get_full_path())
-    print("Request Parameters:", request.GET)
+    # print("Request URL:", request.get_full_path())
+    # print("Request Parameters:", request.GET)
 
     # Call the block_frequency method
     p_value, result = AutocorrelationTest.autocorrelation_test(binary_data, max_lag, verbose=True)
 
-    print("p_value:", p_value)
-    print("Result:", result)
+    print("run_autocorrelation_test p_value:", p_value)
+    print("run_autocorrelation_test Result:", result)
     
     # Prepare the response data
     if result:
@@ -411,15 +434,19 @@ def run_adaptive_statistical_test(request):
     # Example binary data received from the request query parameters
     binary_data = request.GET.get('binary_data', '')
 
+    if not binary_data:
+        # If there's no binary data, return an empty JsonResponse with status code 204 (No Content)
+        return JsonResponse({}, status=204)
+
     # Print the request URL and parameters
-    print("Request URL:", request.get_full_path())
-    print("Request Parameters:", request.GET)
+    # print("Request URL:", request.get_full_path())
+    # print("Request Parameters:", request.GET)
 
     # Call the block_frequency method
     p_value, result = AdaptiveStatisticalTest.adaptive_statistical_test(binary_data)
 
-    print("p_value:", p_value)
-    print("Result:", result)
+    print("run_adaptive_statistical_test p_value:", p_value)
+    print("run_adaptive_statistical_test Result:", result)
     
     # Prepare the response data
     if result:
@@ -440,15 +467,15 @@ def run_random_excursions_test(request):
     binary_data = request.GET.get('binary_data', '')
    
     # Print the request URL and parameters
-    print("Request URL:", request.get_full_path())
-    print("Request Parameters:", request.GET)
+    # print("Request URL:", request.get_full_path())
+    # print("Request Parameters:", request.GET)
 
     # Call the block_frequency method
     chi_sq, p_value, result = RandomExcursions.random_excursions_test(binary_data)
 
-    print("chi^2:", chi_sq)
-    print("p_value:", p_value)
-    print("Result:", result)
+    print("run_random_excursions_test chi^2:", chi_sq)
+    print("run_random_excursions_test p_value:", p_value)
+    print("run_random_excursions_test Result:", result)
     
     # Prepare the response data
     if result:
@@ -469,15 +496,15 @@ def random_excursions_variant_test(request):
     binary_data = request.GET.get('binary_data', '')
 
     # Print the request URL and parameters
-    print("Request URL:", request.get_full_path())
-    print("Request Parameters:", request.GET)
+    # print("Request URL:", request.get_full_path())
+    # print("Request Parameters:", request.GET)
 
     # Call the block_frequency method
     chi_sq, p_value, result = RandomExcursions.variant_test(binary_data)
 
-    print("chi^2:", chi_sq)
-    print("p_value:", p_value)
-    print("Result:", result)
+    print("random_excursions_variant_test chi^2:", chi_sq)
+    print("random_excursions_variant_test p_value:", p_value)
+    print("random_excursions_variant_test Result:", result)
     
     # Prepare the response data
     if result:
@@ -498,15 +525,15 @@ def run_binary_matrix_rank_text(request):
     # Example binary data received from the request query parameters
     binary_data = request.GET.get('binary_data', '')
 
-    # Print the request URL and parameters
-    print("Request URL:", request.get_full_path())
-    print("Request Parameters:", request.GET)
+    # # Print the request URL and parameters
+    # print("Request URL:", request.get_full_path())
+    # print("Request Parameters:", request.GET)
 
     # Call the block_frequency method
     p_value, result = Matrix.binary_matrix_rank_text(binary_data)
 
-    print("p_value:", p_value)
-    print("Result:", result)
+    print("run_binary_matrix_rank_text p_value:", p_value)
+    print("run_binary_matrix_rank_text Result:", result)
     
     # Prepare the response data
     if result:
@@ -526,15 +553,19 @@ def run_spectral_test(request):
     # Example binary data received from the request query parameters
     binary_data = request.GET.get('binary_data', '')
 
+    if not binary_data:
+        # If there's no binary data, return an empty JsonResponse with status code 204 (No Content)
+        return JsonResponse({}, status=204)
+    
     # Print the request URL and parameters
-    print("Request URL:", request.get_full_path())
-    print("Request Parameters:", request.GET)
+    # print("Request URL:", request.get_full_path())
+    # print("Request Parameters:", request.GET)
 
     # Call the block_frequency method
     p_value, result = SpectralTest.spectral_test(binary_data)
 
-    print("p_value:", p_value)
-    print("Result:", result)
+    print("run_spectral_test p_value:", p_value)
+    print("run_spectral_test Result:", result)
     
     # Prepare the response data
     if result:
@@ -555,8 +586,8 @@ def run_birthday_spacings_test(request):
     binary_data_str = request.GET.get('binary_data', '')
 
     # Print the request URL and parameters for debugging
-    print("Request URL:", request.get_full_path())
-    print("Request Parameters:", request.GET)
+    # print("Request URL:", request.get_full_path())
+    # print("Request Parameters:", request.GET)
 
     # Convert binary string to a list of integers
     if binary_data_str:
@@ -572,8 +603,8 @@ def run_birthday_spacings_test(request):
     # Call the Birthday Spacings Test method
     p_value, result = BirthdaySpacingsTest.BirthdaySpacingsTest(binary_data)
 
-    print("p_value:", p_value)
-    print("Result:", result)
+    print("run_birthday_spacings_test p_value:", p_value)
+    print("run_birthday_spacings_test Result:", result)
 
     # Prepare the response data
     result_text = "random number" if result else "non-random number"
@@ -590,15 +621,19 @@ def run_bitstream_test(request):
     # Example binary data received from the request query parameters
     binary_data = request.GET.get('binary_data', '')
 
+    if not binary_data:
+        # If there's no binary data, return an empty JsonResponse with status code 204 (No Content)
+        return JsonResponse({}, status=204)
+    
     # Print the request URL and parameters
-    print("Request URL:", request.get_full_path())
-    print("Request Parameters:", request.GET)
+    # print("Request URL:", request.get_full_path())
+    # print("Request Parameters:", request.GET)
 
     # Call the block_frequency method
     p_value, result = BirthdaySpacingsTest.BirthdaySpacingsTest(binary_data)
 
-    print("p_value:", p_value)
-    print("Result:", result)
+    print("run_bitstream_test p_value:", p_value)
+    print("run_bitstream_test Result:", result)
     
     # Prepare the response data
     if result:
@@ -619,14 +654,14 @@ def run_parking_lot_test(request):
     binary_data = request.GET.get('binary_data', '')
 
     # Print the request URL and parameters
-    print("Request URL:", request.get_full_path())
-    print("Request Parameters:", request.GET)
+    # print("Request URL:", request.get_full_path())
+    # print("Request Parameters:", request.GET)
 
     # Call the block_frequency method
     p_value, result = ParkingLotTest.ParkingLotTest(binary_data)
 
-    print("p_value:", p_value)
-    print("Result:", result)
+    print("run_parking_lot_test p_value:", p_value)
+    print("run_parking_lot_test Result:", result)
     
     # Prepare the response data
     if result:
@@ -648,15 +683,19 @@ def run_overlapping_5_test(request):
     # Example binary data received from the request query parameters
     binary_data = request.GET.get('binary_data', '')
 
+    if not binary_data:
+        # If there's no binary data, return an empty JsonResponse with status code 204 (No Content)
+        return JsonResponse({}, status=204)
+    
     # Print the request URL and parameters
-    print("Request URL:", request.get_full_path())
-    print("Request Parameters:", request.GET)
+    # print("Request URL:", request.get_full_path())
+    # print("Request Parameters:", request.GET)
 
     # Call the block_frequency method
     p_value, result = Overlapping5PermutationTest.Overlapping5PermutationTest(binary_data)
 
-    print("p_value:", p_value)
-    print("Result:", result)
+    print("run_overlapping_5_test p_value:", p_value)
+    print("run_overlapping_5_test Result:", result)
     
     # Prepare the response data
     if result:
@@ -677,15 +716,19 @@ def run_minimum_distance_test(request):
     # Example binary data received from the request query parameters
     binary_data = request.GET.get('binary_data', '')
 
+    if not binary_data:
+        # If there's no binary data, return an empty JsonResponse with status code 204 (No Content)
+        return JsonResponse({}, status=204)
+    
     # Print the request URL and parameters
-    print("Request URL:", request.get_full_path())
-    print("Request Parameters:", request.GET)
+    # print("Request URL:", request.get_full_path())
+    # print("Request Parameters:", request.GET)
 
     # Call the block_frequency method
     p_value, result = MinimumDistanceTest.MinimumDistanceTest(binary_data)
 
-    print("p_value:", p_value)
-    print("Result:", result)
+    print("run_minimum_distance_test p_value:", p_value)
+    print("run_minimum_distance_test Result:", result)
     
     # Prepare the response data
     if result:
@@ -705,15 +748,19 @@ def run_31matrix_test(request):
     # Example binary data received from the request query parameters
     binary_data = request.GET.get('binary_data', '')
 
+    if not binary_data:
+        # If there's no binary data, return an empty JsonResponse with status code 204 (No Content)
+        return JsonResponse({}, status=204)
+
     # Print the request URL and parameters
-    print("Request URL:", request.get_full_path())
-    print("Request Parameters:", request.GET)
+    # print("Request URL:", request.get_full_path())
+    # print("Request Parameters:", request.GET)
 
     # Call the block_frequency method
     p_value, result = Ranks31x31MatricesTest.Ranks31x31MatricesTest(binary_data)
 
-    print("p_value:", p_value)
-    print("Result:", result)
+    print("run_31matrix_test p_value:", p_value)
+    print("run_31matrix_test Result:", result)
     
     # Prepare the response data
     if result:
@@ -735,15 +782,19 @@ def run_spheres_test(request):
     # Example binary data received from the request query parameters
     binary_data = request.GET.get('binary_data', '')
 
+    if not binary_data:
+        # If there's no binary data, return an empty JsonResponse with status code 204 (No Content)
+        return JsonResponse({}, status=204)
+    
     # Print the request URL and parameters
-    print("Request URL:", request.get_full_path())
-    print("Request Parameters:", request.GET)
+    # print("Request URL:", request.get_full_path())
+    # print("Request Parameters:", request.GET)
 
     # Call the block_frequency method
     p_value, result = Spheres3DTest.Spheres3DTest(binary_data)
 
-    print("p_value:", p_value)
-    print("Result:", result)
+    print("run_spheres_test p_value:", p_value)
+    print("run_spheres_test Result:", result)
     
     # Prepare the response data
     if result:
@@ -766,14 +817,14 @@ def run_32matrix_test(request):
     binary_data = request.GET.get('binary_data', '')
 
     # Print the request URL and parameters
-    print("Request URL:", request.get_full_path())
-    print("Request Parameters:", request.GET)
+    # print("Request URL:", request.get_full_path())
+    # print("Request Parameters:", request.GET)
 
     # Call the block_frequency method
     p_value, result = Ranks32x32MatricesTest.Ranks32x32MatricesTest(binary_data)
 
-    print("p_value:", p_value)
-    print("Result:", result)
+    print("run_32matrix_test p_value:", p_value)
+    print("run_32matrix_test Result:", result)
     
     # Prepare the response data
     if result:
@@ -795,14 +846,14 @@ def run_craps_test(request):
     binary_data = request.GET.get('binary_data', '')
 
     # Print the request URL and parameters
-    print("Request URL:", request.get_full_path())
-    print("Request Parameters:", request.GET)
+    # print("Request URL:", request.get_full_path())
+    # print("Request Parameters:", request.GET)
 
     # Call the block_frequency method
     p_value, result = CrapsTest.CrapsTest(binary_data)
 
-    print("p_value:", p_value)
-    print("Result:", result)
+    print("run_craps_test p_value:", p_value)
+    print("run_craps_test Result:", result)
     
     # Prepare the response data
     if result:
@@ -824,14 +875,14 @@ def run_bitstream_test(request):
     binary_data = request.GET.get('binary_data', '')
 
     # Print the request URL and parameters
-    print("Request URL:", request.get_full_path())
-    print("Request Parameters:", request.GET)
+    # print("Request URL:", request.get_full_path())
+    # print("Request Parameters:", request.GET)
 
     # Call the block_frequency method
     p_value, result = BitstreamTest.BitstreamTest(binary_data)
 
-    print("p_value:", p_value)
-    print("Result:", result)
+    print("run_bitstream_test p_value:", p_value)
+    print("run_bitstream_test Result:", result)
     
     # Prepare the response data
     if result:
@@ -855,14 +906,14 @@ def run_gcd_test(request):
     binary_data = request.GET.get('binary_data', '')
 
     # Print the request URL and parameters
-    print("Request URL:", request.get_full_path())
-    print("Request Parameters:", request.GET)
+    # print("Request URL:", request.get_full_path())
+    # print("Request Parameters:", request.GET)
 
     # Call the block_frequency method
     p_value, result = MarsagliaTsangGCDTest.MarsagliaTsangGCDTest(binary_data)
 
-    print("p_value:", p_value)
-    print("Result:", result)
+    print("run_gcd_test p_value:", p_value)
+    print("run_gcd_test Result:", result)
     
     # Prepare the response data
     if result:
@@ -882,14 +933,14 @@ def run_opso_test(request):
     binary_data = request.GET.get('binary_data', '')
 
     # Print the request URL and parameters
-    print("Request URL:", request.get_full_path())
-    print("Request Parameters:", request.GET)
+    # print("Request URL:", request.get_full_path())
+    # print("Request Parameters:", request.GET)
 
     # Call the block_frequency method
     p_value, result = OPSOTest.OPSOTest(binary_data)
 
-    print("p_value:", p_value)
-    print("Result:", result)
+    print("run_opso_test p_value:", p_value)
+    print("run_opso_test Result:", result)
     
     # Prepare the response data
     if result:
@@ -911,14 +962,14 @@ def run_oqso_test(request):
     binary_data = request.GET.get('binary_data', '')
 
     # Print the request URL and parameters
-    print("Request URL:", request.get_full_path())
-    print("Request Parameters:", request.GET)
+    # print("Request URL:", request.get_full_path())
+    # print("Request Parameters:", request.GET)
 
     # Call the block_frequency method
     p_value, result = OQSOTest.OQSOTest(binary_data)
 
-    print("p_value:", p_value)
-    print("Result:", result)
+    print("run_oqso_test p_value:", p_value)
+    print("run_oqso_test Result:", result)
     
     # Prepare the response data
     if result:
@@ -940,14 +991,14 @@ def run_dna_test(request):
     binary_data = request.GET.get('binary_data', '')
 
     # Print the request URL and parameters
-    print("Request URL:", request.get_full_path())
-    print("Request Parameters:", request.GET)
+    # print("Request URL:", request.get_full_path())
+    # print("Request Parameters:", request.GET)
 
     # Call the block_frequency method
     p_value, result = DNATest.DNATest(binary_data)
 
-    print("p_value:", p_value)
-    print("Result:", result)
+    print("run_dna_test p_value:", p_value)
+    print("run_dna_test Result:", result)
     
     # Prepare the response data
     if result:
@@ -970,14 +1021,14 @@ def run_count_one_test(request):
     binary_data = request.GET.get('binary_data', '')
 
     # Print the request URL and parameters
-    print("Request URL:", request.get_full_path())
-    print("Request Parameters:", request.GET)
+    # print("Request URL:", request.get_full_path())
+    # print("Request Parameters:", request.GET)
 
     # Call the block_frequency method
     p_value, result = CountThe1sStreamTest.CountThe1sStreamTest(binary_data)
 
-    print("p_value:", p_value)
-    print("Result:", result)
+    print("run_count_one_test p_value:", p_value)
+    print("run_count_one_test Result:", result)
     
     # Prepare the response data
     if result:
@@ -1000,14 +1051,14 @@ def run_count_one_byte_test(request):
     binary_data = request.GET.get('binary_data', '')
 
     # Print the request URL and parameters
-    print("Request URL:", request.get_full_path())
-    print("Request Parameters:", request.GET)
+    # print("Request URL:", request.get_full_path())
+    # print("Request Parameters:", request.GET)
 
     # Call the block_frequency method
     p_value, result = CountThe1sByteTest.CountThe1sByteTest(binary_data)
 
-    print("p_value:", p_value)
-    print("Result:", result)
+    print("run_count_one_byte_test p_value:", p_value)
+    print("run_count_one_byte_test Result:", result)
     
     # Prepare the response data
     if result:
@@ -1028,14 +1079,14 @@ def run_simple_gcd_test(request):
     binary_data = request.GET.get('binary_data', '')
 
     # Print the request URL and parameters
-    print("Request URL:", request.get_full_path())
-    print("Request Parameters:", request.GET)
+    # print("Request URL:", request.get_full_path())
+    # print("Request Parameters:", request.GET)
 
     # Call the block_frequency method
     p_value, result = MarsagliaTsangSimpleGCDTest.MarsagliaTsangSimpleGCDTest(binary_data)
 
-    print("p_value:", p_value)
-    print("Result:", result)
+    print("run_simple_gcd_test p_value:", p_value)
+    print("run_simple_gcd_test Result:", result)
     
     # Prepare the response data
     if result:
@@ -1057,14 +1108,14 @@ def run_general_minimum_distance_test(request):
     binary_data = request.GET.get('binary_data', '')
 
     # Print the request URL and parameters
-    print("Request URL:", request.get_full_path())
-    print("Request Parameters:", request.GET)
+    # print("Request URL:", request.get_full_path())
+    # print("Request Parameters:", request.GET)
 
     # Call the block_frequency method
     p_value, result = GeneralizedMinimumDistanceTest.GeneralizedMinimumDistanceTest(binary_data)
 
-    print("p_value:", p_value)
-    print("Result:", result)
+    print("run_general_minimum_distance_test p_value:", p_value)
+    print("run_general_minimum_distance_test Result:", result)
     
     # Prepare the response data
     if result:
@@ -1086,14 +1137,14 @@ def run_u01_linear_complexity_test(request):
     binary_data = request.GET.get('binary_data', '')
 
     # Print the request URL and parameters
-    print("Request URL:", request.get_full_path())
-    print("Request Parameters:", request.GET)
+    # print("Request URL:", request.get_full_path())
+    # print("Request Parameters:", request.GET)
 
     # Call the block_frequency method
     p_value, result = TestU01LinearComplexityTest.TestU01LinearComplexityTest(binary_data)
 
-    print("p_value:", p_value)
-    print("Result:", result)
+    print("run_u01_linear_complexity_test p_value:", p_value)
+    print("run_u01_linear_complexity_test Result:", result)
     
     # Prepare the response data
     if result:
@@ -1116,14 +1167,14 @@ def run_u01_longest_repeated_substring_test(request):
     binary_data = request.GET.get('binary_data', '')
 
     # Print the request URL and parameters
-    print("Request URL:", request.get_full_path())
-    print("Request Parameters:", request.GET)
+    # print("Request URL:", request.get_full_path())
+    # print("Request Parameters:", request.GET)
 
     # Call the block_frequency method
     p_value, result = TestU01LongestRepeatedSubstringTest.TestU01LongestRepeatedSubstringTest(binary_data)
 
-    print("p_value:", p_value)
-    print("Result:", result)
+    print("run_u01_longest_repeated_substring_test p_value:", p_value)
+    print("run_u01_longest_repeated_substring_test Result:", result)
     
     # Prepare the response data
     if result:
@@ -1145,14 +1196,14 @@ def run_matrix_rank_test(request):
     binary_data = request.GET.get('binary_data', '')
 
     # Print the request URL and parameters
-    print("Request URL:", request.get_full_path())
-    print("Request Parameters:", request.GET)
+    # print("Request URL:", request.get_full_path())
+    # print("Request Parameters:", request.GET)
 
     # Call the block_frequency method
     p_value, result = TestU01MatrixRankTest.TestU01MatrixRankTest(binary_data)
 
-    print("p_value:", p_value)
-    print("Result:", result)
+    print("run_matrix_rank_test p_value:", p_value)
+    print("run_matrix_rank_test Result:", result)
     
     # Prepare the response data
     if result:
@@ -1460,7 +1511,8 @@ def create_graph_dieharder(request):
 
     binary_data = request.GET.get('binary_data', '')
 
-   
+    binary_data = binary_data.replace('%0A', '').replace('%20', '').replace(' ', '').replace('\n', '').replace('\r', '')
+    
     if not binary_data:
         return HttpResponse("Binary data is required.", status=400)
 
@@ -1577,6 +1629,7 @@ def generate_pdf_report(request):
 
     binary_data = request.GET.get('binary_data', '')
 
+    
     # Create an HttpResponse object with PDF headers
     graph_response = create_graph(request)
     graph_buffer = graph_response.content
@@ -1768,6 +1821,9 @@ def generate_pdf_report_dieharder(request):
     global global_graph_image
 
     binary_data = request.GET.get('binary_data', '')
+
+    binary_data = binary_data.replace('%0A', '').replace('%20', '').replace(' ', '').replace('\n', '').replace('\r', '')
+
 
     # Create a HttpResponse object with PDF headers
     graph_response = create_graph_dieharder(request)
