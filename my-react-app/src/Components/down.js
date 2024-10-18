@@ -270,87 +270,105 @@ const GridContainer = ({ binaryData }) => {
       style={{
         display: "grid",
         gridTemplateColumns: "20% 20% auto 20% 20%  auto", // 6 columns of equal width
-        gridTemplateRows: "repeat(10, 1fr)", // 10 rows of equal height (added one extra row)
+        gridTemplateRows: "repeat(10, 100px)", // 10 rows of equal height (added one extra row)
         width: "100%", // Set width to 100%
         height: "100vh",
       }}
     >
       {/* Row with "Randomness testing" */}
       <div
-        style={{
-          gridColumn: "1 / -1", // Span the entire grid width
-          gridRow: "1", // First row
-          background: "black",
-          color: "white",
-          height: "10vh",
-          textAlign: "center",
-          lineHeight: "60px", // Adjust as needed for vertical centering
-        }}
-      >
-        Randomness testing
-      </div>
+            style={{
+              gridColumn: "1 / -1", // Span the entire grid width
+              gridRow: "1", // First row
+              background: "black",
+              color: "white",
+              
+              textAlign: "center",
+              
+            }}
+          >
+            <div style={{ marginTop:'37px'}}>
+
+              Randomness testing
+            </div>
+          </div>
 
       {/* Header cells for Test type, p-value, and Result */}
       <div
-        style={{
-          textAlign: "center",
-          border: "1px solid black",
-          color: "white",
-          backgroundColor: "blue",
-        }}
-      >
-        Test type
-      </div>
-      <div
-        style={{
-          textAlign: "center",
-          border: "1px solid black",
-          color: "white",
-          backgroundColor: "blue",
-        }}
-      >
-        p-value
-      </div>
-      <div
-        style={{
-          textAlign: "center",
-          border: "1px solid black",
-          color: "white",
-          backgroundColor: "blue",
-        }}
-      >
-        Result
-      </div>
-      <div
-        style={{
-          textAlign: "center",
-          border: "1px solid black",
-          color: "white",
-          backgroundColor: "blue",
-        }}
-      >
-        Test type
-      </div>
-      <div
-        style={{
-          textAlign: "center",
-          border: "1px solid black",
-          color: "white",
-          backgroundColor: "blue",
-        }}
-      >
-        p-value
-      </div>
-      <div
-        style={{
-          textAlign: "center",
-          border: "1px solid black",
-          color: "white",
-          backgroundColor: "blue",
-        }}
-      >
-        Result
-      </div>
+                        style={{
+                            textAlign: "center",
+                            border: "1px solid black",
+                            color: "white",
+                            backgroundColor: "blue",
+                            
+                        }}
+                    >
+                        <div style={{marginTop:'37px'}}>
+                            Test Type
+                        </div>
+                    </div>
+                    <div
+                        style={{
+                            textAlign: "center",
+                            border: "1px solid black",
+                            color: "white",
+                            backgroundColor: "blue",
+                        }}
+                    >
+                        <div style={{marginTop:'37px'}}>
+                           p-value
+                        </div>
+                    </div>
+                    <div
+                        style={{
+                            textAlign: "center",
+                            border: "1px solid black",
+                            color: "white",
+                            backgroundColor: "blue",
+                        }}
+                    >
+                        <div style={{marginTop:'37px'}}>
+                           Result
+                        </div>
+                    </div>
+                    <div
+                        style={{
+                            textAlign: "center",
+                            border: "1px solid black",
+                            color: "white",
+                            backgroundColor: "blue",
+                        }}
+                    >
+                        <div style={{marginTop:'37px'}}>
+                            Test Type
+                        </div>
+                    </div>
+                    <div
+                        style={{
+                            textAlign: "center",
+                            border: "1px solid black",
+                            color: "white",
+                            backgroundColor: "blue",
+                        }}
+                    >
+                        <div style={{marginTop:'37px'}}>
+                           p-value
+                        </div>
+                    </div>
+                    <div
+                        style={{
+                            textAlign: "center",
+                            border: "1px solid black",
+                            color: "white",
+                            backgroundColor: "blue",
+                        }}
+                    >
+                        <div style={{marginTop:'37px'}}>
+                           Result
+                        </div>
+                    </div>
+
+
 
       {/* Content for the remaining grid cells */}
       {Array.from({ length: 48 }).map((_, index) => {

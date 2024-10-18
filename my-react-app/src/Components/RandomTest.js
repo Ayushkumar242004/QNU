@@ -39,8 +39,8 @@ const Grid = ({binaryData}) => {
     <div style={{
       display: 'grid',
       gridTemplateColumns: '1fr', // One column in the first row
-      gridTemplateRows: '1fr 1fr', // Two rows, first row with one row, second and third rows with four columns each
-      // black border
+      gridTemplateRows: '1fr 1fr', 
+      marginTop:'-82px'
     }}>
       {/* First row */}
       <div style={{ border: '1px solid black', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -95,10 +95,6 @@ const Grid = ({binaryData}) => {
     }
   })}
         
-        <div style={{ border: '1px solid black' }}></div>
-        <div style={{ border: '1px solid black' }}></div>
-        <div style={{ border: '1px solid black' }}></div>
-        <div style={{ border: '1px solid black' }}></div>
       </div>
     </div>
   );

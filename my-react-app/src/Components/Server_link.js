@@ -805,7 +805,7 @@ const ServerLink = ({ getData, onBinaryDataChange }) => {
 
     return (
 
-        <div>
+        <div >
             <div style={{ textAlign: "center", justifyContent: 'center', marginTop: '30px', height: '150px' }}>
                 <h1>Random Number Generator</h1>
                 <input
@@ -820,15 +820,15 @@ const ServerLink = ({ getData, onBinaryDataChange }) => {
             </div>
 
 
-            <div className="grid-container">
+            <div className="gridContainer">
 
                 <div
                     style={{
                         display: "grid",
                         gridTemplateColumns: "20% 20% auto 20% 20%  auto", // 6 columns of equal width
-                        gridTemplateRows: "repeat(10, 1fr)", // 10 rows of equal height (added one extra row)
+                        gridTemplateRows: "repeat(21, 100px)", // 10 rows of equal height (added one extra row)
                         width: "100%", // Set width to 100%
-
+                      
                     }}
                 >
                     {/* Row with "Randomness testing" */}
@@ -838,12 +838,15 @@ const ServerLink = ({ getData, onBinaryDataChange }) => {
                             gridRow: "1", // First row
                             background: "black",
                             color: "white",
-                            height: "7vh",
+                            
                             textAlign: "center",
-                            lineHeight: "60px", // Adjust as needed for vertical centering
+                           
                         }}
                     >
-                        Randomness testing
+                        <div style={{ marginTop:'37px'}}>
+
+                            Randomness testing
+                        </div>
                     </div>
 
                     {/* Header cells for Test type, p-value, and Result */}
@@ -853,9 +856,12 @@ const ServerLink = ({ getData, onBinaryDataChange }) => {
                             border: "1px solid black",
                             color: "white",
                             backgroundColor: "blue",
+                            
                         }}
                     >
-                        Test type
+                        <div style={{marginTop:'37px'}}>
+                            Test Type
+                        </div>
                     </div>
                     <div
                         style={{
@@ -865,7 +871,9 @@ const ServerLink = ({ getData, onBinaryDataChange }) => {
                             backgroundColor: "blue",
                         }}
                     >
-                        p-value
+                        <div style={{marginTop:'37px'}}>
+                           p-value
+                        </div>
                     </div>
                     <div
                         style={{
@@ -875,7 +883,9 @@ const ServerLink = ({ getData, onBinaryDataChange }) => {
                             backgroundColor: "blue",
                         }}
                     >
-                        Result
+                        <div style={{marginTop:'37px'}}>
+                           Result
+                        </div>
                     </div>
                     <div
                         style={{
@@ -885,7 +895,9 @@ const ServerLink = ({ getData, onBinaryDataChange }) => {
                             backgroundColor: "blue",
                         }}
                     >
-                        Test type
+                        <div style={{marginTop:'37px'}}>
+                            Test Type
+                        </div>
                     </div>
                     <div
                         style={{
@@ -895,7 +907,9 @@ const ServerLink = ({ getData, onBinaryDataChange }) => {
                             backgroundColor: "blue",
                         }}
                     >
-                        p-value
+                        <div style={{marginTop:'37px'}}>
+                           p-value
+                        </div>
                     </div>
                     <div
                         style={{
@@ -905,10 +919,12 @@ const ServerLink = ({ getData, onBinaryDataChange }) => {
                             backgroundColor: "blue",
                         }}
                     >
-                        Result
+                        <div style={{marginTop:'37px'}}>
+                           Result
+                        </div>
                     </div>
 
-                    {/* Content for the remaining grid cells */}
+                   
                     {Array.from({ length: 114 }).map((_, index) => {
                         if (index === 0) {
                             // Check if it's the cell below "Test type"
@@ -1252,6 +1268,7 @@ const ServerLink = ({ getData, onBinaryDataChange }) => {
                                         display: "flex",
                                         alignItems: "center",
                                         justifyContent: "center",
+                                        
                                     }}
                                 >
 
@@ -1277,6 +1294,7 @@ const ServerLink = ({ getData, onBinaryDataChange }) => {
                                         display: "flex",
                                         alignItems: "center",
                                         justifyContent: "center",
+                                        
                                     }}
                                 >
 
@@ -1304,6 +1322,7 @@ const ServerLink = ({ getData, onBinaryDataChange }) => {
                                         display: "flex",
                                         alignItems: "center",
                                         justifyContent: "center",
+                                       
                                     }}
                                 >
 
@@ -1330,7 +1349,7 @@ const ServerLink = ({ getData, onBinaryDataChange }) => {
                                         display: "flex",
                                         alignItems: "center",
                                         justifyContent: "center",
-                                        height: "60px",
+                                        
                                     }}
                                 >
 
@@ -1358,7 +1377,7 @@ const ServerLink = ({ getData, onBinaryDataChange }) => {
                                         display: "flex",
                                         alignItems: "center",
                                         justifyContent: "center",
-                                        height: "60px",
+                                        
                                     }}
                                 >
 
@@ -1385,7 +1404,7 @@ const ServerLink = ({ getData, onBinaryDataChange }) => {
                                         display: "flex",
                                         alignItems: "center",
                                         justifyContent: "center",
-
+                                        
                                     }}
                                 >
 
@@ -1420,6 +1439,7 @@ const ServerLink = ({ getData, onBinaryDataChange }) => {
                                         display: "flex",
                                         alignItems: "center",
                                         justifyContent: "center",
+                                        
                                     }}
                                 >
 
@@ -1443,6 +1463,7 @@ const ServerLink = ({ getData, onBinaryDataChange }) => {
                                         display: "flex",
                                         alignItems: "center",
                                         justifyContent: "center",
+                                        
                                     }}
                                 >
 
@@ -1466,6 +1487,7 @@ const ServerLink = ({ getData, onBinaryDataChange }) => {
                                         display: "flex",
                                         alignItems: "center",
                                         justifyContent: "center",
+                                        
                                     }}
                                 >
 
@@ -1489,6 +1511,7 @@ const ServerLink = ({ getData, onBinaryDataChange }) => {
                                         display: "flex",
                                         alignItems: "center",
                                         justifyContent: "center",
+                                       
                                     }}
                                 >
 
@@ -1512,6 +1535,7 @@ const ServerLink = ({ getData, onBinaryDataChange }) => {
                                         display: "flex",
                                         alignItems: "center",
                                         justifyContent: "center",
+                                        
                                     }}
                                 >
 
@@ -1535,6 +1559,7 @@ const ServerLink = ({ getData, onBinaryDataChange }) => {
                                         display: "flex",
                                         alignItems: "center",
                                         justifyContent: "center",
+                                        
                                     }}
                                 >
 
@@ -1558,6 +1583,7 @@ const ServerLink = ({ getData, onBinaryDataChange }) => {
                                         display: "flex",
                                         alignItems: "center",
                                         justifyContent: "center",
+                                        
                                     }}
                                 >
 
@@ -1581,6 +1607,7 @@ const ServerLink = ({ getData, onBinaryDataChange }) => {
                                         display: "flex",
                                         alignItems: "center",
                                         justifyContent: "center",
+                                        
                                     }}
                                 >
 
@@ -1605,6 +1632,7 @@ const ServerLink = ({ getData, onBinaryDataChange }) => {
                                         display: "flex",
                                         alignItems: "center",
                                         justifyContent: "center",
+                                       
                                     }}
                                 >
 
@@ -1629,6 +1657,7 @@ const ServerLink = ({ getData, onBinaryDataChange }) => {
                                         display: "flex",
                                         alignItems: "center",
                                         justifyContent: "center",
+                                        
                                     }}
                                 >
 
@@ -1653,6 +1682,7 @@ const ServerLink = ({ getData, onBinaryDataChange }) => {
                                         display: "flex",
                                         alignItems: "center",
                                         justifyContent: "center",
+                                        
                                     }}
                                 >
 
@@ -1676,6 +1706,7 @@ const ServerLink = ({ getData, onBinaryDataChange }) => {
                                         display: "flex",
                                         alignItems: "center",
                                         justifyContent: "center",
+                                        
                                     }}
                                 >
 
@@ -1699,6 +1730,7 @@ const ServerLink = ({ getData, onBinaryDataChange }) => {
                                         display: "flex",
                                         alignItems: "center",
                                         justifyContent: "center",
+                                        
                                     }}
                                 >
 
@@ -1722,6 +1754,7 @@ const ServerLink = ({ getData, onBinaryDataChange }) => {
                                         display: "flex",
                                         alignItems: "center",
                                         justifyContent: "center",
+                                        
                                     }}
                                 >
 
@@ -1745,6 +1778,7 @@ const ServerLink = ({ getData, onBinaryDataChange }) => {
                                         display: "flex",
                                         alignItems: "center",
                                         justifyContent: "center",
+                                        
                                     }}
                                 >
 
@@ -3294,6 +3328,7 @@ const ServerLink = ({ getData, onBinaryDataChange }) => {
                                         display: "flex",
                                         alignItems: "center",
                                         justifyContent: "center",
+                                        
                                     }}
                                 >
 
@@ -3313,6 +3348,7 @@ const ServerLink = ({ getData, onBinaryDataChange }) => {
 
                         else if (index === 106) {
                             return (
+                                
                                 <div key={index} style={{ border: '1px solid black', textAlign: 'center', color: 'red', }}>
                                     {runRandomExcursionsVariantTestResponse ? runRandomExcursionsVariantTestResponse.p_value : ''}
                                 </div>
@@ -3331,12 +3367,13 @@ const ServerLink = ({ getData, onBinaryDataChange }) => {
                             // Check if it's the cell below "Test type"
                             return (
                                 <div
-                                    style={{
-                                        border: "1px solid black",
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                    }}
+                                style={{
+                                    border: "1px solid black",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    height:'100px'
+                                }}
                                 >
 
                                     <div
@@ -3378,7 +3415,7 @@ const ServerLink = ({ getData, onBinaryDataChange }) => {
                                     }}
                                 >
                                     <div
-                                        style={{ width: "100%", height: "50px", textAlign: "center" }}
+                                        style={{ width: "100%", textAlign: "center" }}
                                     >
                                         <span style={{ color: "red" }}></span>
                                     </div>
@@ -3397,14 +3434,12 @@ const ServerLink = ({ getData, onBinaryDataChange }) => {
 
 
             <div>
-      {/* Render buttons */}
-      
-      
 
-      
-    </div>
- 
-        
+
+
+            </div>
+
+
         </div>
     );
 }
