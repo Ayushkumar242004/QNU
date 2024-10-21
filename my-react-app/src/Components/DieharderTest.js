@@ -2,7 +2,7 @@ import './GridContainerUp.css'; // Import CSS file for styling
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import End from "./End";
-const MAX_STACK_SIZE_ESTIMATE = 1 * 1024 * 1024;
+const MAX_STACK_SIZE_ESTIMATE = 1 * 1024 * 1024 ;
 const DieharderTest = ({ getData, onBinaryDataChange }) => {
   const [initialInputData, setInitialInputData] = useState(['', '', '']); // Initialize with 3 empty strings
   const fileInputRefs = useRef([null, null, null]);
