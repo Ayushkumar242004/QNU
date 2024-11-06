@@ -1,23 +1,13 @@
-from math import fabs
-from math import floor
-from math import log
-from math import sqrt
-from numpy import where
+from math import fabs, floor, log, sqrt
+from concurrent.futures import ThreadPoolExecutor
+from numpy import where, array, abs
 from scipy import fftpack as sff
 from scipy.special import erfc
 
 class SpectralTest:
-
     @staticmethod
     def spectral_test(binary_data: str, verbose=False):
-        """
-        Perform the Spectral Test on the binary sequence.
-
-        :param binary_data: The sequence of bits being tested.
-        :param verbose: True to display the debug message, False to turn off debug message.
-        :return: (p_value, bool) A tuple containing the p_value and result of the frequency test (True or False).
-        """
-        # Clean the binary_data to ensure it only contains '0's and '1's
+        # Clean binary_data to ensure it only contains '0's and '1's
         binary_data = ''.join(filter(lambda x: x in {'0', '1'}, binary_data))
         length_of_binary_data = len(binary_data)
 
@@ -25,21 +15,19 @@ class SpectralTest:
         if length_of_binary_data == 0:
             return -1, False  # Return (-1, False) if no valid input
 
-        plus_one_minus_one = []
-
-        # Convert '0's and '1's to -1 and +1
-        for char in binary_data:
-            if char == '0':
-                plus_one_minus_one.append(-1)
-            elif char == '1':
-                plus_one_minus_one.append(1)
+        # Convert '0's and '1's to -1 and +1 using numpy array for parallel operation
+        plus_one_minus_one = array([1 if char == '1' else -1 for char in binary_data])
 
         # Step 2 - Apply a Discrete Fourier Transform (DFT) on X
         spectral = sff.fft(plus_one_minus_one)
 
         # Step 3 - Calculate modulus
         slice_index = floor(length_of_binary_data / 2)
-        modulus = abs(spectral[0:slice_index])
+        modulus_values = spectral[0:slice_index]
+
+        # Use ThreadPoolExecutor to compute modulus in parallel and convert to numpy array
+        with ThreadPoolExecutor() as executor:
+            modulus = array(list(executor.map(abs, modulus_values)))
 
         # Step 4 - Compute the threshold value T
         tau = sqrt(log(1 / 0.05) * length_of_binary_data)

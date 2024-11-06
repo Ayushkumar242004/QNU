@@ -1,7 +1,13 @@
 import numpy as np
 from scipy.stats import norm
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 class ParkingLotTest:
+    @staticmethod
+    def _compute_distances(coordinates_chunk):
+        """Helper function to compute distances for a chunk of coordinates."""
+        return np.linalg.norm(coordinates_chunk, axis=1)
+
     @staticmethod
     def ParkingLotTest(data, verbose=False):
         data = data.replace(',', '').strip()
@@ -23,8 +29,22 @@ class ParkingLotTest:
         # Step 2: Reshape the data into coordinates (2D array with two columns)
         coordinates = data.reshape(n, 2)
         
-        # Step 3: Efficient distance calculation (vectorized)
-        distances = np.linalg.norm(coordinates, axis=1)  # Calculate distance for each point
+        # Step 3: Parallel distance calculation
+        num_chunks = min(4, n)  # Set number of chunks based on data length or desired parallelism
+        chunk_size = n // num_chunks
+
+        distances = []
+        with ThreadPoolExecutor() as executor:
+            futures = []
+            for i in range(num_chunks):
+                start = i * chunk_size
+                end = (i + 1) * chunk_size if i < num_chunks - 1 else n
+                futures.append(executor.submit(ParkingLotTest._compute_distances, coordinates[start:end]))
+
+            for future in as_completed(futures):
+                distances.extend(future.result())
+
+        distances = np.array(distances)
 
         # Count points inside the unit circle (radius <= 1)
         parked = np.sum(distances < 1)

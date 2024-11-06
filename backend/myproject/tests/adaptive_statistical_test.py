@@ -1,6 +1,14 @@
 import numpy as np
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 class AdaptiveStatisticalTest:
+
+    @staticmethod
+    def generate_random_deviation(sequence_length):
+        """Generate a random sequence and calculate its max deviation."""
+        random_sequence = np.random.choice([0, 1], size=sequence_length)
+        cumulative_sum_random = np.cumsum(random_sequence) - np.arange(1, sequence_length + 1) * (np.sum(random_sequence) / sequence_length)
+        return np.max(np.abs(cumulative_sum_random))
 
     @staticmethod
     def adaptive_statistical_test(sequence: str, significance_level=0.01, num_simulations=1000):
@@ -9,7 +17,7 @@ class AdaptiveStatisticalTest:
         
         Parameters:
             sequence (str): A binary sequence (0s and 1s).
-            significance_level (float): The significance level for the test (default 0.05).
+            significance_level (float): The significance level for the test (default 0.01).
             num_simulations (int): Number of random sequences to generate for p-value calculation.
             
         Returns:
@@ -20,7 +28,7 @@ class AdaptiveStatisticalTest:
         n = len(sequence)
         
         if n == 0:
-            return -1,False
+            return -1, False
         
         # Convert the sequence to an array of integers (0s and 1s)
         data = np.array([int(bit) for bit in sequence])
@@ -35,17 +43,16 @@ class AdaptiveStatisticalTest:
         cumulative_sum = np.cumsum(data) - np.arange(1, n + 1) * p_hat
         max_deviation = np.max(np.abs(cumulative_sum))
         
-        # Generate random sequences for p-value calculation
+        # Generate random sequences for p-value calculation in parallel
         random_deviations = []
-        for _ in range(num_simulations):
-            random_sequence = np.random.choice([0, 1], size=n)
-            cumulative_sum_random = np.cumsum(random_sequence) - np.arange(1, n + 1) * (np.sum(random_sequence) / n)
-            random_max_deviation = np.max(np.abs(cumulative_sum_random))
-            random_deviations.append(random_max_deviation)
+        with ThreadPoolExecutor() as executor:
+            futures = [executor.submit(AdaptiveStatisticalTest.generate_random_deviation, n) for _ in range(num_simulations)]
+            for future in as_completed(futures):
+                random_deviations.append(future.result())
 
         # Calculate p-value
         p_value = np.sum(np.array(random_deviations) >= max_deviation) / num_simulations
-
+        
         # Ensure p_value is accurate up to 16 digits
         p_value = round(p_value, 16)
 

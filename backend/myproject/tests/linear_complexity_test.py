@@ -3,6 +3,7 @@ from numpy import dot as dot
 from numpy import histogram as histogram
 from numpy import zeros as zeros
 from scipy.special import gammaincc as gammaincc
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 class ComplexityTest:
 
@@ -33,25 +34,23 @@ class ComplexityTest:
         number_of_block = int(length_of_binary_data / block_size)
 
         if number_of_block > 1:
-            block_end = block_size
-            block_start = 0
-            blocks = []
-            for i in range(number_of_block):
-                blocks.append(binary_data[block_start:block_end])
-                block_start += block_size
-                block_end += block_size
+            # Prepare to divide the binary data into blocks
+            blocks = [binary_data[i:i + block_size] for i in range(0, length_of_binary_data, block_size)][:number_of_block]
 
+            # Use ThreadPoolExecutor to calculate complexities in parallel
             complexities = []
-            for block in blocks:
-                complexities.append(ComplexityTest.berlekamp_massey_algorithm(block))
+            with ThreadPoolExecutor() as executor:
+                futures = {executor.submit(ComplexityTest.berlekamp_massey_algorithm, block): block for block in blocks}
+                for future in as_completed(futures):
+                    result = future.result()
+                    if isinstance(result, tuple) and result[0] != -1:  # Check if result is a tuple and valid
+                        complexities.append(result[0])  # Append the complexity value
 
             t = ([-1.0 * (((-1) ** block_size) * (chunk - mean) + 2.0 / 9) for chunk in complexities])
             vg = histogram(t, bins=[-9999999999, -2.5, -1.5, -0.5, 0.5, 1.5, 2.5, 9999999999])[0][::-1]
-            im = ([((vg[ii] - number_of_block * pi[ii]) ** 2) / (number_of_block * pi[ii]) for ii in range(7)])
+            im = [((vg[ii] - number_of_block * pi[ii]) ** 2) / (number_of_block * pi[ii]) for ii in range(7)]
 
-            xObs = 0.0
-            for i in range(len(pi)):
-                xObs += im[i]
+            xObs = sum(im)
 
             p_value = gammaincc(degree_of_freedom / 2.0, xObs / 2.0)
 
@@ -69,7 +68,7 @@ class ComplexityTest:
         Berlekamp-Massey Algorithm to find the shortest LFSR for a binary sequence.
 
         :param block_data: Binary sequence
-        :return: Minimal polynomial length (L)
+        :return: Minimal polynomial length (L) and a status indicator
         """
         n = len(block_data)
         c = zeros(n)
@@ -80,8 +79,8 @@ class ComplexityTest:
         try:
             int_data = [int(el) for el in block_data]  # Convert block data to integers
         except ValueError:
-            # In case of any error, return -1 and False
-            return -1, False
+            # In case of any error, return a tuple indicating failure
+            return (-1, False)
 
         while i < n:
             v = int_data[(i - l):i]
@@ -100,4 +99,5 @@ class ComplexityTest:
                     m = i
                     b = temp
             i += 1
-        return l
+        
+        return l, True  # Ensure we return a tuple with the complexity and a status

@@ -134,11 +134,15 @@ const GridContainer1 = ({ getData, onBinaryDataChange }) => {
         </div>
       ))}
       
-     
+    <div>
+      <div>
       { <Down binaryData={initialInputData[0]} />}
+      </div> 
+      <div>
       { <RandomTest binaryData={initialInputData[0]} />}
       { <RandomVariantTest binaryData={initialInputData[0]} />}
-
+      </div>
+    </div>
       <div className="button-container">
         {buttonNamesGraph.map((name, index) => (
           <button

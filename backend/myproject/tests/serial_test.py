@@ -1,5 +1,6 @@
 from numpy import zeros
 from scipy.special import gammaincc
+from concurrent.futures import ThreadPoolExecutor
 
 class Serial:
 
@@ -34,11 +35,33 @@ class Serial:
             vobs_02 = zeros(int(max_pattern[:pattern_length - 1], 2) + 1)
             vobs_03 = zeros(int(max_pattern[:pattern_length - 2], 2) + 1)
 
-            # Count occurrences of each pattern
-            for i in range(length_of_binary_data):
-                vobs_01[int(binary_data[i:i + pattern_length], 2)] += 1
-                vobs_02[int(binary_data[i:i + pattern_length - 1], 2)] += 1
-                vobs_03[int(binary_data[i:i + pattern_length - 2], 2)] += 1
+            # Define a function to count occurrences of each pattern in parallel
+            def count_patterns(start, end):
+                local_vobs_01 = zeros(int(max_pattern[:pattern_length], 2) + 1)
+                local_vobs_02 = zeros(int(max_pattern[:pattern_length - 1], 2) + 1)
+                local_vobs_03 = zeros(int(max_pattern[:pattern_length - 2], 2) + 1)
+
+                for i in range(start, end):
+                    local_vobs_01[int(binary_data[i:i + pattern_length], 2)] += 1
+                    local_vobs_02[int(binary_data[i:i + pattern_length - 1], 2)] += 1
+                    local_vobs_03[int(binary_data[i:i + pattern_length - 2], 2)] += 1
+                
+                return local_vobs_01, local_vobs_02, local_vobs_03
+
+            # Split the data into chunks for parallel processing
+            chunk_size = length_of_binary_data // 4  # Adjust number of chunks as needed
+            futures = []
+            with ThreadPoolExecutor() as executor:
+                for i in range(0, length_of_binary_data, chunk_size):
+                    end = min(i + chunk_size, length_of_binary_data)
+                    futures.append(executor.submit(count_patterns, i, end))
+
+            # Collect results from futures
+            for future in futures:
+                local_vobs_01, local_vobs_02, local_vobs_03 = future.result()
+                vobs_01 += local_vobs_01
+                vobs_02 += local_vobs_02
+                vobs_03 += local_vobs_03
 
             vobs = [vobs_01, vobs_02, vobs_03]
 

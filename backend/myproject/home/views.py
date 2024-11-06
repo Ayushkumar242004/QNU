@@ -404,7 +404,7 @@ def run_autocorrelation_test(request):
         return JsonResponse({}, status=204)
 
 
-    max_lag = 10 
+    max_lag = 20 
 
     # Print the request URL and parameters
     # print("Request URL:", request.get_full_path())

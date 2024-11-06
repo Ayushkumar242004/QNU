@@ -1,11 +1,21 @@
 import numpy as np
 from scipy.stats import norm
-from math import gcd  # Import gcd from the math module
+from math import gcd
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 class MarsagliaTsangGCDTest:
     @staticmethod
+    def calculate_gcd_pairs(data_array):
+        """
+        Calculate GCD of consecutive pairs in the data array.
+        """
+        return np.array([gcd(data_array[i], data_array[i + 1]) for i in range(len(data_array) - 1)])
+
+    @staticmethod
     def MarsagliaTsangGCDTest(data, verbose=False):
-        
+        """
+        Perform the Marsaglia-Tsang GCD Test on the provided binary data.
+        """
         data = data.replace(',', '').strip()
 
         if not data:
@@ -20,11 +30,26 @@ class MarsagliaTsangGCDTest:
             return -1, False  # Return (-1, False) if insufficient data for GCD calculation
         
         # Convert the cleaned string of binary data to a list of integers (0s and 1s)
-        data_array = np.array([int(bit) for bit in clean_data], dtype=int)  # Convert to integer array
+        data_array = np.array([int(bit) for bit in clean_data], dtype=int)
         
-        # Calculate GCD of consecutive elements
-        gcd_values = np.array([gcd(data_array[i], data_array[i + 1]) for i in range(n - 1)])
+        # Define the number of threads for parallel processing
+        num_threads = 4  # Adjust this based on your CPU capabilities
+        chunk_size = (n - 1) // num_threads + 1  # Size of each chunk
+
+        gcd_results = []
         
+        # Use ThreadPoolExecutor to parallelize the GCD calculation
+        with ThreadPoolExecutor(max_workers=num_threads) as executor:
+            futures = []
+            for i in range(0, n - 1, chunk_size):
+                futures.append(executor.submit(MarsagliaTsangGCDTest.calculate_gcd_pairs, data_array[i:i + chunk_size + 1]))
+
+            for future in as_completed(futures):
+                gcd_results.append(future.result())
+        
+        # Flatten the list of results into a single array
+        gcd_values = np.concatenate(gcd_results)
+
         expected = 1.0
         sample_mean = np.mean(gcd_values)
         variance = np.var(gcd_values)
@@ -40,4 +65,3 @@ class MarsagliaTsangGCDTest:
             print(f"Marsaglia-Tsang GCD Test - Z-statistic: {z_statistic}, p-value: {p_value}")
         
         return p_value, (p_value >= 0.01)
-

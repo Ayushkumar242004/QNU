@@ -1,5 +1,6 @@
-import numpy as np  # Import NumPy for numerical operations
-from scipy.stats import norm  # Import norm for normal distribution
+import numpy as np
+from scipy.stats import norm
+from concurrent.futures import ThreadPoolExecutor
 
 class Spheres3DTest:
     @staticmethod
@@ -28,11 +29,17 @@ class Spheres3DTest:
         # Reshape the data into an array of shape (n, 3), where each row is a 3D point
         points = data[:n * 3].reshape(n, 3)
 
-        # Step 5: Use vectorized operations to calculate the Euclidean norm (distance from the origin) for all points
-        distances = np.linalg.norm(points, axis=1)
+        # Step 5: Use ThreadPoolExecutor for parallel computation of Euclidean norms (distances from the origin)
+        with ThreadPoolExecutor() as executor:
+            distances = list(executor.map(np.linalg.norm, points))
 
-        # Step 6: Count points that are inside the unit sphere (distance <= 1)
-        inside_sphere = np.sum(distances <= 1)
+        distances = np.array(distances)  # Convert to numpy array for further calculations
+
+        # Step 6: Count points that are inside the unit sphere (distance <= 1) in parallel
+        with ThreadPoolExecutor() as executor:
+            inside_sphere_counts = list(executor.map(lambda d: d <= 1, distances))
+
+        inside_sphere = np.sum(inside_sphere_counts)  # Sum up the True counts
 
         # Step 7: Compute the expected number of points inside the sphere using volume of unit sphere
         expected = n * (4 / 3) * np.pi  # Volume of unit sphere (radius = 1)

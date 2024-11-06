@@ -68,9 +68,9 @@ const Grid = ({ binaryData }) => {
           if (index === 0) {
             return (
               <div key={index} style={{ border: '1px solid black', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                <button onClick={() => handleButtonClick('decrement')}>-</button>
-                <span style={{ border: '1px solid black', paddingLeft: '5px', paddingRight: '5px' }}>{digit}</span>
-                <button onClick={() => handleButtonClick('increment')}>+</button>
+                {/* <button onClick={() => handleButtonClick('decrement')}>-</button> */}
+                <span style={{ border: '1px solid black', paddingLeft: '5px', paddingRight: '5px' }}>1</span>
+                {/* <button onClick={() => handleButtonClick('increment')}>+</button> */}
               </div>
             );
           } else if (index === 1) {

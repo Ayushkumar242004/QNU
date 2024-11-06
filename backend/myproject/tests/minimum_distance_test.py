@@ -1,6 +1,7 @@
 import numpy as np
 from scipy.stats import norm
-from sklearn.neighbors import KDTree  # Use KDTree for nearest neighbor search
+from sklearn.neighbors import KDTree
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 class MinimumDistanceTest:
     @staticmethod
@@ -9,17 +10,16 @@ class MinimumDistanceTest:
         data = data.replace(',', '').replace(' ', '').strip()
 
         if not data:
-            return None 
+            return None
         
         # Ensure that data length is even (to split into 2D coordinates)
         if len(data) < 4 or len(data) % 2 != 0:
             return -1, False  # Not enough data to form at least 2 points
 
         try:
-            # No need to convert to integers, operate directly with binary string
             n = len(data) // 2  # Number of 2D points
 
-            # Create 2D points directly as numpy array (for efficient storage)
+            # Create 2D points directly as numpy array
             points = np.array([[int(data[2 * i]), int(data[2 * i + 1])] for i in range(n)])
         except ValueError:
             return -1, False  # Return failure if data contains invalid characters
@@ -28,11 +28,22 @@ class MinimumDistanceTest:
             # Use KDTree for efficient nearest neighbor search
             tree = KDTree(points)
 
-            # Query each point for its nearest neighbor
-            distances, _ = tree.query(points, k=2)  # k=2 to exclude the point itself
+            # Helper function to calculate nearest neighbor distances for a batch of points
+            def calculate_distances(indices):
+                distances, _ = tree.query(points[indices], k=2)
+                return distances[:, 1]
 
-            # The second column of distances gives the nearest neighbor (excluding the point itself)
-            min_distances = distances[:, 1]  # Take the nearest neighbor distance for each point
+            # Split indices into batches for parallel processing
+            batch_size = max(1, n // 8)  # Adjust batch size based on data size
+            indices_batches = [range(i, min(i + batch_size, n)) for i in range(0, n, batch_size)]
+
+            min_distances = []
+            with ThreadPoolExecutor() as executor:
+                futures = {executor.submit(calculate_distances, batch): batch for batch in indices_batches}
+                for future in as_completed(futures):
+                    min_distances.extend(future.result())
+
+            min_distances = np.array(min_distances)
 
             # Expected distance and variance from test literature
             expected = np.sqrt(2 / (np.pi * n))

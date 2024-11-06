@@ -1,10 +1,21 @@
 import numpy as np
 from scipy.stats import chi2  # Import chi2 for Chi-square distribution
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 class OQSOTest:
     @staticmethod
-    def OQSOTest(data, verbose=False):
+    def _compute_unique_quads(data_chunk):
+        """
+        Helper function to compute unique quadruples in a given data chunk.
+        """
+        unique_quads = set()
+        for i in range(len(data_chunk) - 3):
+            quad = (data_chunk[i], data_chunk[i + 1], data_chunk[i + 2], data_chunk[i + 3])
+            unique_quads.add(quad)
+        return unique_quads
 
+    @staticmethod
+    def OQSOTest(data, verbose=False):
         data = data.replace(',', '').strip()
 
         if not data:
@@ -19,15 +30,27 @@ class OQSOTest:
             return -1, False  # Return (-1, False) if insufficient data
         
         # Convert the cleaned string of binary data to a list of integers (0s and 1s)
-        data_array = np.array([int(bit) for bit in clean_data], dtype=int)  # Convert to integer array
+        data_array = np.array([int(bit) for bit in clean_data], dtype=int)
         
-        # Generate quadruples and count unique quadruples
-        quads = set()
-        for i in range(n - 3):
-            quad = (data_array[i], data_array[i + 1], data_array[i + 2], data_array[i + 3])
-            quads.add(quad)
+        # Define the number of chunks for parallel processing
+        num_chunks = min(4, (n - 3))  # Adjust number of threads based on data length
+        chunk_size = (n - 3) // num_chunks
         
-        observed = len(quads)  # Number of unique quadruples
+        # Split data into chunks and process in parallel
+        unique_quads = set()
+        with ThreadPoolExecutor() as executor:
+            futures = []
+            for i in range(num_chunks):
+                start = i * chunk_size
+                end = start + chunk_size + 3 if i < num_chunks - 1 else n
+                futures.append(executor.submit(OQSOTest._compute_unique_quads, data_array[start:end]))
+
+            # Collect results from futures and merge unique quadruples
+            for future in as_completed(futures):
+                unique_quads.update(future.result())
+
+        # Compute observed unique quadruples count
+        observed = len(unique_quads)
         expected = 16  # 2^4 = 16 possible binary quadruples
         chi_square = ((observed - expected) ** 2) / expected
         
@@ -38,5 +61,3 @@ class OQSOTest:
             print(f"OQSO Test - Chi-square: {chi_square}, p-value: {p_value}")
         
         return p_value, (p_value >= 0.01)
-
-
