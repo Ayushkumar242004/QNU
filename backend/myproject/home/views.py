@@ -70,402 +70,847 @@ from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfbase import pdfform
 # from reportlab.pdfimage import ImageReader
 from io import BytesIO
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
+
+# def run_frequency_test(request):
+#     # Example binary data received from the request query parameters
+#     binary_data = request.GET.get('binary_data', '')
+
+#     # Print the request URL and parameters
+#     # print("Request URL:", request.get_full_path())
+#     # print("Request Parameters:", request.GET)
+
+#     # Call the monobit_test method from the FrequencyTest class
+#     p_value, result = FrequencyTest.monobit_test(binary_data)
+
+#     print("FrequencyTest p_value:", p_value)
+#     print("FrequencyTest Result:", result)
+    
+#     # Prepare the response data
+#     if result == 1:
+#         result_text = "random number"
+#     else:
+#         result_text = "non-random number"
+        
+#     response_data = {
+#         'p_value': p_value,
+#         'result': result_text
+#     }
+
+#     return JsonResponse(response_data)
 
 
+
+@csrf_exempt  # Remove this in production, only for testing purposes
 def run_frequency_test(request):
-    # Example binary data received from the request query parameters
-    binary_data = request.GET.get('binary_data', '')
+    if request.method == 'POST':
+        try:
+            # Parse the binary data from the JSON body
+            data = json.loads(request.body)
+            binary_data = data.get('binary_data', '')
 
-    # Print the request URL and parameters
-    # print("Request URL:", request.get_full_path())
-    # print("Request Parameters:", request.GET)
+            # print("Received binary_data:", binary_data)  # Debugging line
 
-    # Call the monobit_test method from the FrequencyTest class
-    p_value, result = FrequencyTest.monobit_test(binary_data)
+            # Ensure binary_data is in the expected format, otherwise return an error
+            if not binary_data:
+                return JsonResponse({"error": "binary_data is missing or empty"}, status=400)
 
-    print("FrequencyTest p_value:", p_value)
-    print("FrequencyTest Result:", result)
-    
-    # Prepare the response data
-    if result == 1:
-        result_text = "random number"
-    else:
-        result_text = "non-random number"
+            # Call the monobit_test method from the FrequencyTest class
+            p_value, result = FrequencyTest.monobit_test(binary_data)
+
+            print("FrequencyTest p_value:", p_value)  # Debugging line
+            print("FrequencyTest Result:", result)    # Debugging line
+            
+            # Prepare the response data
+            result_text = "random number" if result == 1 else "non-random number"
+            response_data = {
+                'p_value': p_value,
+                'result': result_text
+            }
+
+            return JsonResponse(response_data)
         
-    response_data = {
-        'p_value': p_value,
-        'result': result_text
-    }
+        except json.JSONDecodeError:
+            print("JSON Decode Error")  # Debugging line
+            return JsonResponse({"error": "Invalid JSON data"}, status=400)
 
-    return JsonResponse(response_data)
+    else:
+        print("Invalid request method")  # Debugging line
+        return JsonResponse({"error": "Invalid request method. Use POST."}, status=405)
+
+
+# def run_frequency_block_test(request):
+#     # Example binary data received from the request query parameters
+#     binary_data = request.GET.get('binary_data', '')
+
+#     # Print the request URL and parameters
+#     # print("Request URL:", request.get_full_path())
+#     # print("Request Parameters:", request.GET)
+
+
+#     if not binary_data:
+#         # If there's no binary data, return an empty JsonResponse with status code 204 (No Content)
+#         return JsonResponse({}, status=204)
+    
+#     # Call the block_frequency method
+#     p_value, result = FrequencyTest.block_frequency(binary_data)
+
+#     print("run_frequency_block_test p_value:", p_value)
+#     print("run_frequency_block_test Result:", result)
+    
+#     # Prepare the response data
+#     if result:
+#         result_text = "random number"
+#     else:
+#         result_text = "non-random number"
+        
+#     response_data = {
+#         'p_value': p_value,
+#         'result': result_text
+#     }
+
+#     return JsonResponse(response_data)
+
+
+@csrf_exempt  # Remove this in production or secure with CSRF token handling
 def run_frequency_block_test(request):
-    # Example binary data received from the request query parameters
-    binary_data = request.GET.get('binary_data', '')
+    if request.method == 'POST':
+        try:
+            # Parse the binary data from the JSON body
+            data = json.loads(request.body)
+            binary_data = data.get('binary_data', '')
 
-    # Print the request URL and parameters
-    # print("Request URL:", request.get_full_path())
-    # print("Request Parameters:", request.GET)
+            if not binary_data:
+                # If there's no binary data, return an empty JsonResponse with status code 204 (No Content)
+                return JsonResponse({}, status=204)
 
+            # Call the block_frequency method from the FrequencyTest class
+            p_value, result = FrequencyTest.block_frequency(binary_data)
 
-    if not binary_data:
-        # If there's no binary data, return an empty JsonResponse with status code 204 (No Content)
-        return JsonResponse({}, status=204)
-    
-    # Call the block_frequency method
-    p_value, result = FrequencyTest.block_frequency(binary_data)
+            print("run_frequency_block_test p_value:", p_value)
+            print("run_frequency_block_test Result:", result)
+            
+            # Prepare the response data
+            result_text = "random number" if result else "non-random number"
+            response_data = {
+                'p_value': p_value,
+                'result': result_text
+            }
 
-    print("run_frequency_block_test p_value:", p_value)
-    print("run_frequency_block_test Result:", result)
-    
-    # Prepare the response data
-    if result:
-        result_text = "random number"
-    else:
-        result_text = "non-random number"
+            return JsonResponse(response_data)
         
-    response_data = {
-        'p_value': p_value,
-        'result': result_text
-    }
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON data"}, status=400)
 
-    return JsonResponse(response_data)
+    else:
+        return JsonResponse({"error": "Invalid request method. Use POST."}, status=405)
 
+# def run_runs_test(request):
+#     # Example binary data received from the request query parameters
+#     binary_data = request.GET.get('binary_data', '')
 
+#     # Print the request URL and parameters
+#     # print("Request URL:", request.get_full_path())
+#     # print("Request Parameters:", request.GET)
+
+#     # Call the block_frequency method
+#     p_value, result = RunTest.run_test(binary_data)
+
+#     print("run_runs_test p_value:", p_value)
+#     print("run_runs_test Result:", result)
+    
+#     # Prepare the response data
+#     if result:
+#         result_text = "random number"
+#     else:
+#         result_text = "non-random number"
+        
+#     response_data = {
+#         'p_value': p_value,
+#         'result': result_text
+#     }
+
+#     return JsonResponse(response_data)
+
+@csrf_exempt  # Remove this in production or secure with CSRF token handling
 def run_runs_test(request):
-    # Example binary data received from the request query parameters
-    binary_data = request.GET.get('binary_data', '')
+    if request.method == 'POST':
+        try:
+            # Parse the binary data from the JSON body
+            data = json.loads(request.body)
+            binary_data = data.get('binary_data', '')
 
-    # Print the request URL and parameters
-    # print("Request URL:", request.get_full_path())
-    # print("Request Parameters:", request.GET)
+            if not binary_data:
+                # If there's no binary data, return an empty JsonResponse with status code 204 (No Content)
+                return JsonResponse({}, status=204)
 
-    # Call the block_frequency method
-    p_value, result = RunTest.run_test(binary_data)
+            # Call the run_test method from the RunTest class
+            p_value, result = RunTest.run_test(binary_data)
 
-    print("run_runs_test p_value:", p_value)
-    print("run_runs_test Result:", result)
-    
-    # Prepare the response data
-    if result:
-        result_text = "random number"
-    else:
-        result_text = "non-random number"
+            print("run_runs_test p_value:", p_value)
+            print("run_runs_test Result:", result)
+            
+            # Prepare the response data
+            result_text = "random number" if result else "non-random number"
+            response_data = {
+                'p_value': p_value,
+                'result': result_text
+            }
+
+            return JsonResponse(response_data)
         
-    response_data = {
-        'p_value': p_value,
-        'result': result_text
-    }
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON data"}, status=400)
 
-    return JsonResponse(response_data)
+    else:
+        return JsonResponse({"error": "Invalid request method. Use POST."}, status=405)
 
+# def run_longest_one_block_test(request):
+#     # Example binary data received from the request query parameters
+#     binary_data = request.GET.get('binary_data', '')
 
+#     if not binary_data:
+#         # If there's no binary data, return an empty JsonResponse with status code 204 (No Content)
+#         return JsonResponse({}, status=204)
+
+#     # Print the request URL and parameters
+#     # print("Request URL:", request.get_full_path())
+#     # print("Request Parameters:", request.GET)
+
+#     # Call the block_frequency method
+#     p_value, result, error_message = RunTest.longest_one_block_test(binary_data)
+
+    
+#     print("run_longest_one_block_test p_value:", p_value)
+#     print("run_longest_one_block_test Result:", result)
+    
+#     # Prepare the response data
+#     if result:
+#         result_text = "random number"
+#     else:
+#         result_text = "non-random number"
+        
+#     response_data = {
+#         'p_value': p_value,
+#         'result': result_text
+#     }
+
+#     return JsonResponse(response_data)
+
+@csrf_exempt  # Remove this in production or secure with CSRF token handling
 def run_longest_one_block_test(request):
-    # Example binary data received from the request query parameters
-    binary_data = request.GET.get('binary_data', '')
+    if request.method == 'POST':
+        try:
+            # Parse the binary data from the JSON body
+            data = json.loads(request.body)
+            binary_data = data.get('binary_data', '')
 
-    if not binary_data:
-        # If there's no binary data, return an empty JsonResponse with status code 204 (No Content)
-        return JsonResponse({}, status=204)
+            if not binary_data:
+                # If there's no binary data, return an empty JsonResponse with status code 204 (No Content)
+                return JsonResponse({}, status=204)
 
-    # Print the request URL and parameters
-    # print("Request URL:", request.get_full_path())
-    # print("Request Parameters:", request.GET)
+            # Call the longest_one_block_test method from RunTest
+            p_value, result, error_message = RunTest.longest_one_block_test(binary_data)
 
-    # Call the block_frequency method
-    p_value, result, error_message = RunTest.longest_one_block_test(binary_data)
+            print("run_longest_one_block_test p_value:", p_value)
+            print("run_longest_one_block_test Result:", result)
+            
+            # Prepare the response data
+            result_text = "random number" if result else "non-random number"
+            response_data = {
+                'p_value': p_value,
+                'result': result_text,
+                'error_message': error_message  # Add error_message to response if needed
+            }
 
-    
-    print("run_longest_one_block_test p_value:", p_value)
-    print("run_longest_one_block_test Result:", result)
-    
-    # Prepare the response data
-    if result:
-        result_text = "random number"
-    else:
-        result_text = "non-random number"
+            return JsonResponse(response_data)
         
-    response_data = {
-        'p_value': p_value,
-        'result': result_text
-    }
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON data"}, status=400)
 
-    return JsonResponse(response_data)
+    else:
+        return JsonResponse({"error": "Invalid request method. Use POST."}, status=405)
 
+# def run_approximate_entropy_test(request):
+#     # Example binary data received from the request query parameters
+#     binary_data = request.GET.get('binary_data', '')
+
+#     if not binary_data:
+#         # If there's no binary data, return an empty JsonResponse with status code 204 (No Content)
+#         return JsonResponse({}, status=204)
+
+#     # Print the request URL and parameters
+#     # print("Request URL:", request.get_full_path())
+#     # print("Request Parameters:", request.GET)
+
+#     # Call the block_frequency method
+#     p_value, result = ApproximateEntropy.approximate_entropy_test(binary_data)
+
+#     print("run_approximate_entropy_test p_value:", p_value)
+#     print("run_approximate_entropy_test Result:", result)
+    
+#     # Prepare the response data
+#     if result:
+#         result_text = "random number"
+#     else:
+#         result_text = "non-random number"
+        
+#     response_data = {
+#         'p_value': p_value,
+#         'result': result_text
+#     }
+
+#     return JsonResponse(response_data)
+
+@csrf_exempt  # Remove this in production or secure with CSRF token handling
 def run_approximate_entropy_test(request):
-    # Example binary data received from the request query parameters
-    binary_data = request.GET.get('binary_data', '')
+    if request.method == 'POST':
+        try:
+            # Parse the binary data from the JSON body
+            data = json.loads(request.body)
+            binary_data = data.get('binary_data', '')
 
-    if not binary_data:
-        # If there's no binary data, return an empty JsonResponse with status code 204 (No Content)
-        return JsonResponse({}, status=204)
+            if not binary_data:
+                # If there's no binary data, return an empty JsonResponse with status code 204 (No Content)
+                return JsonResponse({}, status=204)
 
-    # Print the request URL and parameters
-    # print("Request URL:", request.get_full_path())
-    # print("Request Parameters:", request.GET)
+            # Call the approximate_entropy_test method from ApproximateEntropy
+            p_value, result = ApproximateEntropy.approximate_entropy_test(binary_data)
 
-    # Call the block_frequency method
-    p_value, result = ApproximateEntropy.approximate_entropy_test(binary_data)
+            print("run_approximate_entropy_test p_value:", p_value)
+            print("run_approximate_entropy_test Result:", result)
+            
+            # Prepare the response data
+            result_text = "random number" if result else "non-random number"
+            response_data = {
+                'p_value': p_value,
+                'result': result_text
+            }
 
-    print("run_approximate_entropy_test p_value:", p_value)
-    print("run_approximate_entropy_test Result:", result)
-    
-    # Prepare the response data
-    if result:
-        result_text = "random number"
-    else:
-        result_text = "non-random number"
+            return JsonResponse(response_data)
         
-    response_data = {
-        'p_value': p_value,
-        'result': result_text
-    }
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON data"}, status=400)
 
-    return JsonResponse(response_data)
+    else:
+        return JsonResponse({"error": "Invalid request method. Use POST."}, status=405)
 
+# def run_linear_complexity_test(request):
+#     # Example binary data received from the request query parameters
+#     binary_data = request.GET.get('binary_data', '')
+
+#     # Print the request URL and parameters
+#     # print("Request URL:", request.get_full_path())
+#     # print("Request Parameters:", request.GET)
+
+#     # Call the block_frequency method
+#     p_value, result = ComplexityTest.linear_complexity_test(binary_data)
+
+#     print("run_linear_complexity_test p_value:", p_value)
+#     print("run_linear_complexity_test Result:", result)
+    
+#     # Prepare the response data
+#     if result:
+#         result_text = "random number"
+#     else:
+#         result_text = "non-random number"
+        
+#     response_data = {
+#         'p_value': p_value,
+#         'result': result_text
+#     }
+
+#     return JsonResponse(response_data)
+
+@csrf_exempt  # Remove this in production or secure with CSRF token handling
 def run_linear_complexity_test(request):
-    # Example binary data received from the request query parameters
-    binary_data = request.GET.get('binary_data', '')
+    if request.method == 'POST':
+        try:
+            # Parse the binary data from the JSON body
+            data = json.loads(request.body)
+            binary_data = data.get('binary_data', '')
 
-    # Print the request URL and parameters
-    # print("Request URL:", request.get_full_path())
-    # print("Request Parameters:", request.GET)
+            if not binary_data:
+                # If there's no binary data, return an empty JsonResponse with status code 204 (No Content)
+                return JsonResponse({}, status=204)
 
-    # Call the block_frequency method
-    p_value, result = ComplexityTest.linear_complexity_test(binary_data)
+            # Call the linear_complexity_test method from ComplexityTest
+            p_value, result = ComplexityTest.linear_complexity_test(binary_data)
 
-    print("run_linear_complexity_test p_value:", p_value)
-    print("run_linear_complexity_test Result:", result)
-    
-    # Prepare the response data
-    if result:
-        result_text = "random number"
-    else:
-        result_text = "non-random number"
+            print("run_linear_complexity_test p_value:", p_value)
+            print("run_linear_complexity_test Result:", result)
+            
+            # Prepare the response data
+            result_text = "random number" if result else "non-random number"
+            response_data = {
+                'p_value': p_value,
+                'result': result_text
+            }
+
+            return JsonResponse(response_data)
         
-    response_data = {
-        'p_value': p_value,
-        'result': result_text
-    }
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON data"}, status=400)
 
-    return JsonResponse(response_data)
+    else:
+        return JsonResponse({"error": "Invalid request method. Use POST."}, status=405)
+    
+# def run_non_overlapping_test(request):
+#     # Example binary data received from the request query parameters
+#     binary_data = request.GET.get('binary_data', '')
 
+#     # # Print the request URL and parameters
+#     # print("Request URL:", request.get_full_path())
+#     # print("Request Parameters:", request.GET)
+
+#     # Call the block_frequency method
+#     p_value, result = TemplateMatching.non_overlapping_test(binary_data)
+
+#     print("run_non_overlapping_test p_value:", p_value)
+#     print("run_non_overlapping_test Result:", result)
+    
+#     # Prepare the response data
+#     if result:
+#         result_text = "random number"
+#     else:
+#         result_text = "non-random number"
+        
+#     response_data = {
+#         'p_value': p_value,
+#         'result': result_text
+#     }
+
+#     return JsonResponse(response_data)
+
+@csrf_exempt  # Remove this in production or secure with CSRF token handling
 def run_non_overlapping_test(request):
-    # Example binary data received from the request query parameters
-    binary_data = request.GET.get('binary_data', '')
+    if request.method == 'POST':
+        try:
+            # Parse the binary data from the JSON body
+            data = json.loads(request.body)
+            binary_data = data.get('binary_data', '')
 
-    # # Print the request URL and parameters
-    # print("Request URL:", request.get_full_path())
-    # print("Request Parameters:", request.GET)
+            if not binary_data:
+                # If there's no binary data, return an empty JsonResponse with status code 204 (No Content)
+                return JsonResponse({}, status=204)
 
-    # Call the block_frequency method
-    p_value, result = TemplateMatching.non_overlapping_test(binary_data)
+            # Call the non_overlapping_test method from TemplateMatching
+            p_value, result = TemplateMatching.non_overlapping_test(binary_data)
 
-    print("run_non_overlapping_test p_value:", p_value)
-    print("run_non_overlapping_test Result:", result)
-    
-    # Prepare the response data
-    if result:
-        result_text = "random number"
-    else:
-        result_text = "non-random number"
+            print("run_non_overlapping_test p_value:", p_value)
+            print("run_non_overlapping_test Result:", result)
+            
+            # Prepare the response data
+            result_text = "random number" if result else "non-random number"
+            response_data = {
+                'p_value': p_value,
+                'result': result_text
+            }
+
+            return JsonResponse(response_data)
         
-    response_data = {
-        'p_value': p_value,
-        'result': result_text
-    }
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON data"}, status=400)
 
-    return JsonResponse(response_data)
-
+    else:
+        return JsonResponse({"error": "Invalid request method. Use POST."}, status=405)
 
 
+
+# def run_overlapping_test(request):
+#     # Example binary data received from the request query parameters
+#     binary_data = request.GET.get('binary_data', '')
+
+#     # Print the request URL and parameters
+#     # print("Request URL:", request.get_full_path())
+#     # print("Request Parameters:", request.GET)
+
+#     # Call the block_frequency method
+#     p_value, result = TemplateMatching.overlapping_patterns(binary_data)
+
+#     print("run_overlapping_test p_value:", p_value)
+#     print("run_overlapping_test Result:", result)
+    
+#     # Prepare the response data
+#     if result:
+#         result_text = "random number"
+#     else:
+#         result_text = "non-random number"
+        
+#     response_data = {
+#         'p_value': p_value,
+#         'result': result_text
+#     }
+
+#     return JsonResponse(response_data)
+@csrf_exempt  # Remove this in production or secure with CSRF token handling
 def run_overlapping_test(request):
-    # Example binary data received from the request query parameters
-    binary_data = request.GET.get('binary_data', '')
+    if request.method == 'POST':
+        try:
+            # Parse the binary data from the JSON body
+            data = json.loads(request.body)
+            binary_data = data.get('binary_data', '')
 
-    # Print the request URL and parameters
-    # print("Request URL:", request.get_full_path())
-    # print("Request Parameters:", request.GET)
+            if not binary_data:
+                # If there's no binary data, return an empty JsonResponse with status code 204 (No Content)
+                return JsonResponse({}, status=204)
 
-    # Call the block_frequency method
-    p_value, result = TemplateMatching.overlapping_patterns(binary_data)
+            # Call the overlapping_patterns method from TemplateMatching
+            p_value, result = TemplateMatching.overlapping_patterns(binary_data)
 
-    print("run_overlapping_test p_value:", p_value)
-    print("run_overlapping_test Result:", result)
-    
-    # Prepare the response data
-    if result:
-        result_text = "random number"
-    else:
-        result_text = "non-random number"
+            print("run_overlapping_test p_value:", p_value)
+            print("run_overlapping_test Result:", result)
+            
+            # Prepare the response data
+            result_text = "random number" if result else "non-random number"
+            response_data = {
+                'p_value': p_value,
+                'result': result_text
+            }
+
+            return JsonResponse(response_data)
         
-    response_data = {
-        'p_value': p_value,
-        'result': result_text
-    }
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON data"}, status=400)
 
-    return JsonResponse(response_data)
+    else:
+        return JsonResponse({"error": "Invalid request method. Use POST."}, status=405)
 
 
+# def run_statistical_test(request):
+#     # Example binary data received from the request query parameters
+#     binary_data = request.GET.get('binary_data', '')
+
+#     # Print the request URL and parameters
+#     # print("Request URL:", request.get_full_path())
+#     # print("Request Parameters:", request.GET)
+
+#     # Call the block_frequency method
+#     p_value, result = Universal.statistical_test(binary_data)
+
+#     print("run_statistical_test p_value:", p_value)
+#     print("run_statistical_test Result:", result)
+    
+#     # Prepare the response data
+#     if result:
+#         result_text = "random number"
+#     else:
+#         result_text = "non-random number"
+        
+#     response_data = {
+#         'p_value': p_value,
+#         'result': result_text
+#     }
+
+#     return JsonResponse(response_data)
+
+@csrf_exempt  # Remove this in production or secure with CSRF token handling
 def run_statistical_test(request):
-    # Example binary data received from the request query parameters
-    binary_data = request.GET.get('binary_data', '')
+    if request.method == 'POST':
+        try:
+            # Parse the binary data from the JSON body
+            data = json.loads(request.body)
+            binary_data = data.get('binary_data', '')
 
-    # Print the request URL and parameters
-    # print("Request URL:", request.get_full_path())
-    # print("Request Parameters:", request.GET)
+            if not binary_data:
+                # If there's no binary data, return an empty JsonResponse with status code 204 (No Content)
+                return JsonResponse({}, status=204)
 
-    # Call the block_frequency method
-    p_value, result = Universal.statistical_test(binary_data)
+            # Call the statistical_test method from Universal
+            p_value, result = Universal.statistical_test(binary_data)
 
-    print("run_statistical_test p_value:", p_value)
-    print("run_statistical_test Result:", result)
-    
-    # Prepare the response data
-    if result:
-        result_text = "random number"
-    else:
-        result_text = "non-random number"
+            print("run_statistical_test p_value:", p_value)
+            print("run_statistical_test Result:", result)
+            
+            # Prepare the response data
+            result_text = "random number" if result else "non-random number"
+            response_data = {
+                'p_value': p_value,
+                'result': result_text
+            }
+
+            return JsonResponse(response_data)
         
-    response_data = {
-        'p_value': p_value,
-        'result': result_text
-    }
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON data"}, status=400)
 
-    return JsonResponse(response_data)
+    else:
+        return JsonResponse({"error": "Invalid request method. Use POST."}, status=405)
 
 
+# def run_serial_test(request):
+#     # Example binary data received from the request query parameters
+#     binary_data = request.GET.get('binary_data', '')
+
+#     if not binary_data:
+#         # If there's no binary data, return an empty JsonResponse with status code 204 (No Content)
+#         return JsonResponse({}, status=204)
+
+#     # Print the request URL and parameters
+#     # print("Request URL:", request.get_full_path())
+#     # print("Request Parameters:", request.GET)
+
+#     # Call the block_frequency method
+#     p_value, result = Serial.serial_test(binary_data)
+
+#     print("run_serial_test p_value:", p_value)
+#     print("run_serial_test Result:", result)
+    
+#     # Prepare the response data
+#     if result:
+#         result_text = "random number"
+#     else:
+#         result_text = "non-random number"
+        
+#     response_data = {
+#         'p_value': p_value,
+#         'result': result_text
+#     }
+
+#     return JsonResponse(response_data)
+
+@csrf_exempt  # Use this only in development; secure with CSRF token handling for production
 def run_serial_test(request):
-    # Example binary data received from the request query parameters
-    binary_data = request.GET.get('binary_data', '')
+    if request.method == 'POST':
+        try:
+            # Parse the binary data from the JSON body
+            data = json.loads(request.body)
+            binary_data = data.get('binary_data', '')
 
-    if not binary_data:
-        # If there's no binary data, return an empty JsonResponse with status code 204 (No Content)
-        return JsonResponse({}, status=204)
+            if not binary_data:
+                # If there's no binary data, return an empty JsonResponse with status code 204 (No Content)
+                return JsonResponse({}, status=204)
 
-    # Print the request URL and parameters
-    # print("Request URL:", request.get_full_path())
-    # print("Request Parameters:", request.GET)
+            # Call the serial_test method from Serial
+            p_value, result = Serial.serial_test(binary_data)
 
-    # Call the block_frequency method
-    p_value, result = Serial.serial_test(binary_data)
+            print("run_serial_test p_value:", p_value)
+            print("run_serial_test Result:", result)
+            
+            # Prepare the response data
+            result_text = "random number" if result else "non-random number"
+            response_data = {
+                'p_value': p_value,
+                'result': result_text
+            }
 
-    print("run_serial_test p_value:", p_value)
-    print("run_serial_test Result:", result)
-    
-    # Prepare the response data
-    if result:
-        result_text = "random number"
-    else:
-        result_text = "non-random number"
+            return JsonResponse(response_data)
         
-    response_data = {
-        'p_value': p_value,
-        'result': result_text
-    }
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON data"}, status=400)
 
-    return JsonResponse(response_data)
-
+    else:
+        return JsonResponse({"error": "Invalid request method. Use POST."}, status=405)
 
 
+
+# def run_cumulative_sums_test(request):
+#     # Example binary data received from the request query parameters
+#     binary_data = request.GET.get('binary_data', '')
+
+#     # # Print the request URL and parameters
+#     # print("Request URL:", request.get_full_path())
+#     # print("Request Parameters:", request.GET)
+
+#     # Call the block_frequency method
+#     p_value, result = CumulativeSums.cumulative_sums_test(binary_data)
+
+#     print("run_cumulative_sums_test p_value:", p_value)
+#     print("run_cumulative_sums_test Result:", result)
+    
+#     # Prepare the response data
+#     if result:
+#         result_text = "random number"
+#     else:
+#         result_text = "non-random number"
+        
+#     response_data = {
+#         'p_value': p_value,
+#         'result': result_text
+#     }
+
+#     return JsonResponse(response_data)
+
+@csrf_exempt
 def run_cumulative_sums_test(request):
-    # Example binary data received from the request query parameters
-    binary_data = request.GET.get('binary_data', '')
+    if request.method == 'POST':
+        try:
+            # Parse binary data from JSON body
+            data = json.loads(request.body)
+           
+            binary_data = data.get('binary_data', '')
+            print('hello', binary_data)
+           
+           
+            # Call the cumulative_sums_test method from CumulativeSums
+            try:
+                p_value, result = CumulativeSums.cumulative_sums_test(binary_data)
+            except ValueError as e:
+                return JsonResponse({"error": f"Processing error: {str(e)}"}, status=500)
 
-    # # Print the request URL and parameters
-    # print("Request URL:", request.get_full_path())
-    # print("Request Parameters:", request.GET)
+            print("run_cumulative_sums_test p_value:", p_value)
+            print("run_cumulative_sums_test Result:", result)
+            
+            # Prepare the response data
+            result_text = "random number" if result else "non-random number"
+            response_data = {
+                'p_value': p_value,
+                'result': result_text
+            }
 
-    # Call the block_frequency method
-    p_value, result = CumulativeSums.cumulative_sums_test(binary_data)
+            return JsonResponse(response_data)
 
-    print("run_cumulative_sums_test p_value:", p_value)
-    print("run_cumulative_sums_test Result:", result)
-    
-    # Prepare the response data
-    if result:
-        result_text = "random number"
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON data"}, status=400)
+
     else:
-        result_text = "non-random number"
+        return JsonResponse({"error": "Invalid request method. Use POST."}, status=405)
+
+# def run_autocorrelation_test(request):
+#     # Example binary data received from the request query parameters
+#     binary_data = request.GET.get('binary_data', '')
+
+#     if not binary_data:
+#         # If there's no binary data, return an empty JsonResponse with status code 204 (No Content)
+#         return JsonResponse({}, status=204)
+
+
+#     max_lag = 20 
+
+#     # Print the request URL and parameters
+#     # print("Request URL:", request.get_full_path())
+#     # print("Request Parameters:", request.GET)
+
+#     # Call the block_frequency method
+#     p_value, result = AutocorrelationTest.autocorrelation_test(binary_data, max_lag, verbose=True)
+
+#     print("run_autocorrelation_test p_value:", p_value)
+#     print("run_autocorrelation_test Result:", result)
+    
+#     # Prepare the response data
+#     if result:
+#         result_text = "random number"
+#     else:
+#         result_text = "non-random number"
         
-    response_data = {
-        'p_value': p_value,
-        'result': result_text
-    }
+#     response_data = {
+#         'p_value': p_value,
+#         'result': result_text
+#     }
 
-    return JsonResponse(response_data)
+#     return JsonResponse(response_data)
 
 
+@csrf_exempt  # Use only in development; ensure CSRF handling in production
 def run_autocorrelation_test(request):
-    # Example binary data received from the request query parameters
-    binary_data = request.GET.get('binary_data', '')
+    if request.method == 'POST':
+        try:
+            # Parse JSON data
+            data = json.loads(request.body)
+            binary_data = data.get('binary_data', '')
 
-    if not binary_data:
-        # If there's no binary data, return an empty JsonResponse with status code 204 (No Content)
-        return JsonResponse({}, status=204)
+            if not binary_data:
+                # If there's no binary data, return an empty JsonResponse with status code 204 (No Content)
+                return JsonResponse({}, status=204)
 
+            max_lag = data.get('max_lag', 20)  # Default value is 20 if not provided
 
-    max_lag = 20 
+            # Call the autocorrelation_test method from AutocorrelationTest
+            p_value, result = AutocorrelationTest.autocorrelation_test(binary_data, max_lag, verbose=True)
 
-    # Print the request URL and parameters
-    # print("Request URL:", request.get_full_path())
-    # print("Request Parameters:", request.GET)
+            print("run_autocorrelation_test p_value:", p_value)
+            print("run_autocorrelation_test Result:", result)
+            
+            # Prepare the response data
+            result_text = "random number" if result else "non-random number"
+            response_data = {
+                'p_value': p_value,
+                'result': result_text
+            }
 
-    # Call the block_frequency method
-    p_value, result = AutocorrelationTest.autocorrelation_test(binary_data, max_lag, verbose=True)
-
-    print("run_autocorrelation_test p_value:", p_value)
-    print("run_autocorrelation_test Result:", result)
-    
-    # Prepare the response data
-    if result:
-        result_text = "random number"
-    else:
-        result_text = "non-random number"
+            return JsonResponse(response_data)
         
-    response_data = {
-        'p_value': p_value,
-        'result': result_text
-    }
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON data"}, status=400)
 
-    return JsonResponse(response_data)
+    else:
+        return JsonResponse({"error": "Invalid request method. Use POST."}, status=405)
 
 
+# def run_adaptive_statistical_test(request):
+#     # Example binary data received from the request query parameters
+#     binary_data = request.GET.get('binary_data', '')
+
+#     if not binary_data:
+#         # If there's no binary data, return an empty JsonResponse with status code 204 (No Content)
+#         return JsonResponse({}, status=204)
+
+#     # Print the request URL and parameters
+#     # print("Request URL:", request.get_full_path())
+#     # print("Request Parameters:", request.GET)
+
+#     # Call the block_frequency method
+#     p_value, result = AdaptiveStatisticalTest.adaptive_statistical_test(binary_data)
+
+#     print("run_adaptive_statistical_test p_value:", p_value)
+#     print("run_adaptive_statistical_test Result:", result)
+    
+#     # Prepare the response data
+#     if result:
+#         result_text = "random number"
+#     else:
+#         result_text = "non-random number"
+        
+#     response_data = {
+#         'p_value': p_value,
+#         'result': result_text
+#     }
+
+#     return JsonResponse(response_data)
+
+@csrf_exempt  # Use only in development; ensure CSRF handling in production
 def run_adaptive_statistical_test(request):
-    # Example binary data received from the request query parameters
-    binary_data = request.GET.get('binary_data', '')
+    if request.method == 'POST':
+        try:
+            # Parse JSON data
+            data = json.loads(request.body)
+            binary_data = data.get('binary_data', '')
 
-    if not binary_data:
-        # If there's no binary data, return an empty JsonResponse with status code 204 (No Content)
-        return JsonResponse({}, status=204)
+            if not binary_data:
+                # If there's no binary data, return an empty JsonResponse with status code 204 (No Content)
+                return JsonResponse({}, status=204)
 
-    # Print the request URL and parameters
-    # print("Request URL:", request.get_full_path())
-    # print("Request Parameters:", request.GET)
+            # Call the adaptive_statistical_test method from AdaptiveStatisticalTest
+            p_value, result = AdaptiveStatisticalTest.adaptive_statistical_test(binary_data)
 
-    # Call the block_frequency method
-    p_value, result = AdaptiveStatisticalTest.adaptive_statistical_test(binary_data)
+            print("run_adaptive_statistical_test p_value:", p_value)
+            print("run_adaptive_statistical_test Result:", result)
+            
+            # Prepare the response data
+            result_text = "random number" if result else "non-random number"
+            response_data = {
+                'p_value': p_value,
+                'result': result_text
+            }
 
-    print("run_adaptive_statistical_test p_value:", p_value)
-    print("run_adaptive_statistical_test Result:", result)
-    
-    # Prepare the response data
-    if result:
-        result_text = "random number"
-    else:
-        result_text = "non-random number"
+            return JsonResponse(response_data)
         
-    response_data = {
-        'p_value': p_value,
-        'result': result_text
-    }
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON data"}, status=400)
 
-    return JsonResponse(response_data)
+    else:
+        return JsonResponse({"error": "Invalid request method. Use POST."}, status=405)
 
 
 def run_random_excursions_test(request):
     # Example binary data received from the request query parameters
     binary_data = request.GET.get('binary_data', '')
    
+    if not binary_data:
+                # If there's no binary data, return an empty JsonResponse with status code 204 (No Content)
+                return JsonResponse({}, status=204)
     # Print the request URL and parameters
     # print("Request URL:", request.get_full_path())
     # print("Request Parameters:", request.GET)
@@ -495,6 +940,9 @@ def random_excursions_variant_test(request):
     # Example binary data received from the request query parameters
     binary_data = request.GET.get('binary_data', '')
 
+    if not binary_data:
+            # If there's no binary data, return an empty JsonResponse with status code 204 (No Content)
+            return JsonResponse({}, status=204)
     # Print the request URL and parameters
     # print("Request URL:", request.get_full_path())
     # print("Request Parameters:", request.GET)
@@ -521,64 +969,130 @@ def random_excursions_variant_test(request):
     return JsonResponse(response_data)
 
 
+# def run_binary_matrix_rank_text(request):
+#     # Example binary data received from the request query parameters
+#     binary_data = request.GET.get('binary_data', '')
+
+#     # # Print the request URL and parameters
+#     # print("Request URL:", request.get_full_path())
+#     # print("Request Parameters:", request.GET)
+
+#     # Call the block_frequency method
+#     p_value, result = Matrix.binary_matrix_rank_text(binary_data)
+
+#     print("run_binary_matrix_rank_text p_value:", p_value)
+#     print("run_binary_matrix_rank_text Result:", result)
+    
+#     # Prepare the response data
+#     if result:
+#         result_text = "random number"
+#     else:
+#         result_text = "non-random number"
+        
+#     response_data = {
+#         'p_value': p_value,
+#         'result': result_text
+#     }
+
+#     return JsonResponse(response_data)
+
+@csrf_exempt  # Use this only in development; secure with CSRF token handling for production
 def run_binary_matrix_rank_text(request):
-    # Example binary data received from the request query parameters
-    binary_data = request.GET.get('binary_data', '')
+    if request.method == 'POST':
+        try:
+            # Parse binary data from JSON body
+            data = json.loads(request.body)
+            binary_data = data.get('binary_data', '')
 
-    # # Print the request URL and parameters
-    # print("Request URL:", request.get_full_path())
-    # print("Request Parameters:", request.GET)
+            if not binary_data:
+                # If no binary data, return an empty JsonResponse with status code 204 (No Content)
+                return JsonResponse({}, status=204)
 
-    # Call the block_frequency method
-    p_value, result = Matrix.binary_matrix_rank_text(binary_data)
+            # Call the binary_matrix_rank_text method from Matrix
+            p_value, result = Matrix.binary_matrix_rank_text(binary_data)
 
-    print("run_binary_matrix_rank_text p_value:", p_value)
-    print("run_binary_matrix_rank_text Result:", result)
-    
-    # Prepare the response data
-    if result:
-        result_text = "random number"
-    else:
-        result_text = "non-random number"
+            print("run_binary_matrix_rank_text p_value:", p_value)
+            print("run_binary_matrix_rank_text Result:", result)
+            
+            # Prepare the response data
+            result_text = "random number" if result else "non-random number"
+            response_data = {
+                'p_value': p_value,
+                'result': result_text
+            }
+
+            return JsonResponse(response_data)
         
-    response_data = {
-        'p_value': p_value,
-        'result': result_text
-    }
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON data"}, status=400)
 
-    return JsonResponse(response_data)
+    else:
+        return JsonResponse({"error": "Invalid request method. Use POST."}, status=405)
 
 
+# def run_spectral_test(request):
+#     # Example binary data received from the request query parameters
+#     binary_data = request.GET.get('binary_data', '')
+
+#     if not binary_data:
+#         # If there's no binary data, return an empty JsonResponse with status code 204 (No Content)
+#         return JsonResponse({}, status=204)
+    
+#     # Print the request URL and parameters
+#     # print("Request URL:", request.get_full_path())
+#     # print("Request Parameters:", request.GET)
+
+#     # Call the block_frequency method
+#     p_value, result = SpectralTest.spectral_test(binary_data)
+
+#     print("run_spectral_test p_value:", p_value)
+#     print("run_spectral_test Result:", result)
+    
+#     # Prepare the response data
+#     if result:
+#         result_text = "random number"
+#     else:
+#         result_text = "non-random number"
+        
+#     response_data = {
+#         'p_value': p_value,
+#         'result': result_text
+#     }
+
+#     return JsonResponse(response_data)
+
+@csrf_exempt  # Use only in development; ensure CSRF handling in production
 def run_spectral_test(request):
-    # Example binary data received from the request query parameters
-    binary_data = request.GET.get('binary_data', '')
+    if request.method == 'POST':
+        try:
+            # Parse binary data from JSON body
+            data = json.loads(request.body)
+            binary_data = data.get('binary_data', '')
 
-    if not binary_data:
-        # If there's no binary data, return an empty JsonResponse with status code 204 (No Content)
-        return JsonResponse({}, status=204)
-    
-    # Print the request URL and parameters
-    # print("Request URL:", request.get_full_path())
-    # print("Request Parameters:", request.GET)
+            if not binary_data:
+                # If no binary data, return an empty JsonResponse with status code 204 (No Content)
+                return JsonResponse({}, status=204)
+            
+            # Call the spectral_test method from SpectralTest
+            p_value, result = SpectralTest.spectral_test(binary_data)
 
-    # Call the block_frequency method
-    p_value, result = SpectralTest.spectral_test(binary_data)
+            print("run_spectral_test p_value:", p_value)
+            print("run_spectral_test Result:", result)
+            
+            # Prepare the response data
+            result_text = "random number" if result else "non-random number"
+            response_data = {
+                'p_value': p_value,
+                'result': result_text
+            }
 
-    print("run_spectral_test p_value:", p_value)
-    print("run_spectral_test Result:", result)
-    
-    # Prepare the response data
-    if result:
-        result_text = "random number"
-    else:
-        result_text = "non-random number"
+            return JsonResponse(response_data)
         
-    response_data = {
-        'p_value': p_value,
-        'result': result_text
-    }
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON data"}, status=400)
 
-    return JsonResponse(response_data)
+    else:
+        return JsonResponse({"error": "Invalid request method. Use POST."}, status=405)
 
 
 def run_birthday_spacings_test(request):

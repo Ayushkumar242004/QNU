@@ -35,26 +35,61 @@ const GridContainer = ({ binaryData }) => {
     setFrequencyTestChecked(!frequencyTestChecked);
   };
   // 1100100100001111110110101010001000100001011010001100001000110100110001001100011001100010100010111000
+  // useEffect(() => {
+  //   const fetchFrequencyTestData = async () => {
+  //     try {
+  //       const response = await axios.get(
+  //         `http://localhost:8000/run_frequency_test/?binary_data=${binaryData}`
+  //       );
+  //       setFrequencyTestResponse(response.data);
+  //     } catch (error) {
+  //       console.error("Error executing frequency test:", error);
+  //     }
+  //   };
+
+  //   fetchFrequencyTestData();
+  // }, [binaryData]);
+
   useEffect(() => {
     const fetchFrequencyTestData = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:8000/run_frequency_test/?binary_data=${binaryData}`
+        const response = await axios.post(
+          'http://localhost:8000/run_frequency_test/', 
+          { binary_data: binaryData }  // Send the binary data in the request body
         );
+        console.log(response)
         setFrequencyTestResponse(response.data);
       } catch (error) {
         console.error("Error executing frequency test:", error);
       }
     };
-
+  
     fetchFrequencyTestData();
   }, [binaryData]);
+  
+  
+
+  // useEffect(() => {
+  //   const fetchFrequencyBlockTestData = async () => {
+  //     try {
+  //       const response = await axios.get(
+  //         `http://localhost:8000/run_frequency_block_test/?binary_data=${binaryData}`
+  //       );
+  //       setFrequencyBlockTestResponse(response.data);
+  //     } catch (error) {
+  //       console.error("Error executing frequency block test:", error);
+  //     }
+  //   };
+
+  //   fetchFrequencyBlockTestData();
+  // }, [binaryData]);
 
   useEffect(() => {
     const fetchFrequencyBlockTestData = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:8000/run_frequency_block_test/?binary_data=${binaryData}`
+        const response = await axios.post(
+          'http://localhost:8000/run_frequency_block_test/',
+          { binary_data: binaryData }
         );
         setFrequencyBlockTestResponse(response.data);
       } catch (error) {
@@ -65,11 +100,27 @@ const GridContainer = ({ binaryData }) => {
     fetchFrequencyBlockTestData();
   }, [binaryData]);
 
+  // useEffect(() => {
+  //   const fetchrunTestData = async () => {
+  //     try {
+  //       const response = await axios.get(
+  //         `http://localhost:8000/run_runs_test/?binary_data=${binaryData}`
+  //       );
+  //       setrunTestResponse(response.data);
+  //     } catch (error) {
+  //       console.error("Error executing run test:", error);
+  //     }
+  //   };
+
+  //   fetchrunTestData();
+  // }, [binaryData]);
+
   useEffect(() => {
     const fetchrunTestData = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:8000/run_runs_test/?binary_data=${binaryData}`
+        const response = await axios.post(
+          'http://localhost:8000/run_runs_test/',
+          { binary_data: binaryData }
         );
         setrunTestResponse(response.data);
       } catch (error) {
@@ -80,11 +131,27 @@ const GridContainer = ({ binaryData }) => {
     fetchrunTestData();
   }, [binaryData]);
 
+  // useEffect(() => {
+  //   const fetchrunlongestOneBlockTestData = async () => {
+  //     try {
+  //       const response = await axios.get(
+  //         `http://localhost:8000/run_longest_one_block_test/?binary_data=${binaryData}`
+  //       );
+  //       setrunlongestOneBlockTestResponse(response.data);
+  //     } catch (error) {
+  //       console.error("Error executing run test:", error);
+  //     }
+  //   };
+
+  //   fetchrunlongestOneBlockTestData();
+  // }, [binaryData]);
+
   useEffect(() => {
     const fetchrunlongestOneBlockTestData = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:8000/run_longest_one_block_test/?binary_data=${binaryData}`
+        const response = await axios.post(
+          'http://localhost:8000/run_longest_one_block_test/',
+          { binary_data: binaryData }
         );
         setrunlongestOneBlockTestResponse(response.data);
       } catch (error) {
@@ -94,11 +161,26 @@ const GridContainer = ({ binaryData }) => {
 
     fetchrunlongestOneBlockTestData();
   }, [binaryData]);
+  // useEffect(() => {
+  //   const fetchApproximateEntropyTestData = async () => {
+  //     try {
+  //       const response = await axios.get(
+  //         `http://localhost:8000/run_approximate_entropy_test/?binary_data=${binaryData}`
+  //       );
+  //       setApproximateEntropyTestResponse(response.data);
+  //     } catch (error) {
+  //       console.error("Error executing Approximate Entropy test:", error);
+  //     }
+  //   };
+  //   fetchApproximateEntropyTestData();
+  // }, [binaryData]);
+
   useEffect(() => {
     const fetchApproximateEntropyTestData = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:8000/run_approximate_entropy_test/?binary_data=${binaryData}`
+        const response = await axios.post(
+          'http://localhost:8000/run_approximate_entropy_test/',
+          { binary_data: binaryData }
         );
         setApproximateEntropyTestResponse(response.data);
       } catch (error) {
@@ -111,8 +193,9 @@ const GridContainer = ({ binaryData }) => {
   useEffect(() => {
     const fetchrunLinearComplexityTestData = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:8000/run_linear_complexity_test/?binary_data=${binaryData}`
+        const response = await axios.post(
+          'http://localhost:8000/run_linear_complexity_test/',
+          { binary_data: binaryData }
         );
         setrunLinearComplexityTestResponse(response.data);
       } catch (error) {
@@ -121,11 +204,25 @@ const GridContainer = ({ binaryData }) => {
     };
     fetchrunLinearComplexityTestData();
   }, [binaryData]);
+  // useEffect(() => {
+  //   const fetchrunLinearComplexityTestData = async () => {
+  //     try {
+  //       const response = await axios.get(
+  //         `http://localhost:8000/run_linear_complexity_test/?binary_data=${binaryData}`
+  //       );
+  //       setrunLinearComplexityTestResponse(response.data);
+  //     } catch (error) {
+  //       console.error("Error executing linear complexity test:", error);
+  //     }
+  //   };
+  //   fetchrunLinearComplexityTestData();
+  // }, [binaryData]);
   useEffect(() => {
     const fetchrunNonOverlappingTestData = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:8000/run_non_overlapping_test/?binary_data=${binaryData}`
+        const response = await axios.post(
+          'http://localhost:8000/run_non_overlapping_test/',
+          { binary_data: binaryData }
         );
         setrunNonOverlappingTestResponse(response.data);
       } catch (error) {
@@ -134,12 +231,26 @@ const GridContainer = ({ binaryData }) => {
     };
     fetchrunNonOverlappingTestData();
   }, [binaryData]);
+  // useEffect(() => {
+  //   const fetchrunNonOverlappingTestData = async () => {
+  //     try {
+  //       const response = await axios.get(
+  //         `http://localhost:8000/run_non_overlapping_test/?binary_data=${binaryData}`
+  //       );
+  //       setrunNonOverlappingTestResponse(response.data);
+  //     } catch (error) {
+  //       console.error("Error executing Non-overlapping test:", error);
+  //     }
+  //   };
+  //   fetchrunNonOverlappingTestData();
+  // }, [binaryData]);
 
   useEffect(() => {
     const fetchrunOverlappingTestData = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:8000/run_overlapping_test/?binary_data= ${binaryData}`
+        const response = await axios.post(
+          'http://localhost:8000/run_overlapping_test/',
+          { binary_data: binaryData }
         );
         setrunOverlappingTestResponse(response.data);
       } catch (error) {
@@ -149,11 +260,26 @@ const GridContainer = ({ binaryData }) => {
     fetchrunOverlappingTestData();
   }, [binaryData]);
 
+  // useEffect(() => {
+  //   const fetchrunOverlappingTestData = async () => {
+  //     try {
+  //       const response = await axios.get(
+  //         `http://localhost:8000/run_overlapping_test/?binary_data= ${binaryData}`
+  //       );
+  //       setrunOverlappingTestResponse(response.data);
+  //     } catch (error) {
+  //       console.error("Error executing Overlapping test:", error);
+  //     }
+  //   };
+  //   fetchrunOverlappingTestData();
+  // }, [binaryData]);
+
   useEffect(() => {
     const fetchrunUniversalTestData = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:8000/run_statistical_test/?binary_data=${binaryData}`
+        const response = await axios.post(
+          'http://localhost:8000/run_statistical_test/',
+          {binary_data: binaryData}
         );
         setrunUniversalTestResponse(response.data);
       } catch (error) {
@@ -162,12 +288,28 @@ const GridContainer = ({ binaryData }) => {
     };
     fetchrunUniversalTestData();
   }, [binaryData]);
+  
+
+  // useEffect(() => {
+  //   const fetchrunSerialTestData = async () => {
+  //     try {
+  //       const response = await axios.get(
+  //         `http://localhost:8000/run_serial_test/?binary_data=${binaryData}`
+  //       );
+  //       setrunSerialTestResponse(response.data);
+  //     } catch (error) {
+  //       console.error("Error executing Serial test:", error);
+  //     }
+  //   };
+  //   fetchrunSerialTestData();
+  // }, [binaryData]);
 
   useEffect(() => {
     const fetchrunSerialTestData = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:8000/run_serial_test/?binary_data=${binaryData}`
+        const response = await axios.post(
+          'http://localhost:8000/run_serial_test/',
+          {binary_data: binaryData}
         );
         setrunSerialTestResponse(response.data);
       } catch (error) {
@@ -177,11 +319,26 @@ const GridContainer = ({ binaryData }) => {
     fetchrunSerialTestData();
   }, [binaryData]);
 
+  // useEffect(() => {
+  //   const fetchrunCumulativeSumsTestData = async () => {
+  //     try {
+  //       const response = await axios.get(
+  //         `http://localhost:8000/run_cumulative_sums_test/?binary_data=${binaryData}`
+  //       );
+  //       setrunCumulativeSumsTestResponse(response.data);
+  //     } catch (error) {
+  //       console.error("Error executing Cumulative Sums test:", error);
+  //     }
+  //   };
+  //   fetchrunCumulativeSumsTestData();
+  // }, [binaryData]);
+
   useEffect(() => {
     const fetchrunCumulativeSumsTestData = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:8000/run_cumulative_sums_test/?binary_data=${binaryData}`
+        const response = await axios.post(
+          'http://localhost:8000/run_cumulative_sums_test/',
+          {binary_data: binaryData}
         );
         setrunCumulativeSumsTestResponse(response.data);
       } catch (error) {
@@ -191,11 +348,26 @@ const GridContainer = ({ binaryData }) => {
     fetchrunCumulativeSumsTestData();
   }, [binaryData]);
 
+  // useEffect(() => {
+  //   const fetchrunBinaryMatrixRankTestData = async () => {
+  //     try {
+  //       const response = await axios.get(
+  //         `http://localhost:8000/run_binary_matrix_rank_text/?binary_data=${binaryData}`
+  //       );
+  //       setrunBinaryMatrixRankTestResponse(response.data);
+  //     } catch (error) {
+  //       console.error("Error executing Cumulative Sums test:", error);
+  //     }
+  //   };
+  //   fetchrunBinaryMatrixRankTestData();
+  // }, [binaryData]);
+
   useEffect(() => {
     const fetchrunBinaryMatrixRankTestData = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:8000/run_binary_matrix_rank_text/?binary_data=${binaryData}`
+        const response = await axios.post(
+          'http://localhost:8000/run_binary_matrix_rank_text/',
+          {binary_data: binaryData}
         );
         setrunBinaryMatrixRankTestResponse(response.data);
       } catch (error) {
@@ -205,11 +377,26 @@ const GridContainer = ({ binaryData }) => {
     fetchrunBinaryMatrixRankTestData();
   }, [binaryData]);
 
+  // useEffect(() => {
+  //   const fetchrunSpectralTestData = async () => {
+  //     try {
+  //       const response = await axios.get(
+  //         `http://localhost:8000/run_spectral_test/?binary_data= ${binaryData}`
+  //       );
+  //       setrunSpectralTestResponse(response.data);
+  //     } catch (error) {
+  //       console.error("Error executing Cumulative Sums test:", error);
+  //     }
+  //   };
+  //   fetchrunSpectralTestData();
+  // }, [binaryData]);
+
   useEffect(() => {
     const fetchrunSpectralTestData = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:8000/run_spectral_test/?binary_data= ${binaryData}`
+        const response = await axios.post(
+          'http://localhost:8000/run_spectral_test/',
+          {binary_data: binaryData}
         );
         setrunSpectralTestResponse(response.data);
       } catch (error) {
@@ -219,11 +406,27 @@ const GridContainer = ({ binaryData }) => {
     fetchrunSpectralTestData();
   }, [binaryData]);
 
+
+  // useEffect(() => {
+  //   const fecthrunAutoCorrelationtData = async () => {
+  //     try {
+  //       const response = await axios.get(
+  //         `http://localhost:8000/run_autocorrelation_test/?binary_data= ${binaryData}`
+  //       );
+  //       setrunAutoCorrelationtResponse(response.data);
+  //     } catch (error) {
+  //       console.error("Error executing auto correlation test:", error);
+  //     }
+  //   };
+  //   fecthrunAutoCorrelationtData();
+  // }, [binaryData]);
+
   useEffect(() => {
     const fecthrunAutoCorrelationtData = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:8000/run_autocorrelation_test/?binary_data= ${binaryData}`
+        const response = await axios.post(
+          'http://localhost:8000/run_autocorrelation_test/',
+          {binary_data: binaryData}
         );
         setrunAutoCorrelationtResponse(response.data);
       } catch (error) {
@@ -233,11 +436,26 @@ const GridContainer = ({ binaryData }) => {
     fecthrunAutoCorrelationtData();
   }, [binaryData]);
   
+  // useEffect(() => {
+  //   const fetchrunSpectralTestData = async () => {
+  //     try {
+  //       const response = await axios.get(
+  //         `http://localhost:8000/run_spectral_test/?binary_data= ${binaryData}`
+  //       );
+  //       setrunSpectralTestResponse(response.data);
+  //     } catch (error) {
+  //       console.error("Error executing Cumulative Sums test:", error);
+  //     }
+  //   };
+  //   fetchrunSpectralTestData();
+  // }, [binaryData]);
+
   useEffect(() => {
     const fetchrunSpectralTestData = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:8000/run_spectral_test/?binary_data= ${binaryData}`
+        const response = await axios.post(
+          'http://localhost:8000/run_spectral_test/',
+          {binary_data: binaryData}
         );
         setrunSpectralTestResponse(response.data);
       } catch (error) {
@@ -247,11 +465,26 @@ const GridContainer = ({ binaryData }) => {
     fetchrunSpectralTestData();
   }, [binaryData]);
 
+  // useEffect(() => {
+  //   const fetchrunAdaptiveStatisticalTestData = async () => {
+  //     try {
+  //       const response = await axios.get(
+  //         `http://localhost:8000/run_adaptive_statistical_test/?binary_data= ${binaryData}`
+  //       );
+  //       setrunAdaptiveStatisticalTestResponse(response.data);
+  //     } catch (error) {
+  //       console.error("Error executing adaptive statistical test:", error);
+  //     }
+  //   };
+  //   fetchrunAdaptiveStatisticalTestData();
+  // }, [binaryData]);
+
   useEffect(() => {
     const fetchrunAdaptiveStatisticalTestData = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:8000/run_adaptive_statistical_test/?binary_data= ${binaryData}`
+        const response = await axios.post(
+          'http://localhost:8000/run_adaptive_statistical_test/',
+          {binary_data: binaryData}
         );
         setrunAdaptiveStatisticalTestResponse(response.data);
       } catch (error) {
