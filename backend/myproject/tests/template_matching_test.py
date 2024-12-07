@@ -9,7 +9,7 @@ class TemplateMatching:
     def non_overlapping_test(binary_data: str, verbose=False, template_pattern='000000001', block=8):
         length_of_binary = len(binary_data)
         if length_of_binary == 0:
-            return (0.00000, False, 'Error: Not enough data to run this test')
+            return (-2, False, 'Error: Not enough data to run this test')
 
         pattern_size = len(template_pattern)
         block_size = floor(length_of_binary / block)
@@ -51,8 +51,11 @@ class TemplateMatching:
     def overlapping_patterns(binary_data: str, verbose=False, pattern_size=8, block_size=8):
         length_of_binary_data = len(binary_data)
         if length_of_binary_data == 0:
-            return (0.00000, False, 'Error: Not enough data to run this test')
+            return (-2, False)
 
+        if length_of_binary_data < pattern_size:
+            return (-2, False)
+        
         pattern = '1' * pattern_size
         number_of_block = floor(length_of_binary_data / block_size)
         lambda_val = float(block_size - pattern_size + 1) / pow(2, pattern_size)

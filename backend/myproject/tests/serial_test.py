@@ -21,7 +21,7 @@ class Serial:
 
         # Check for empty or insufficient input data
         if not binary_data or len(binary_data) < pattern_length:
-            return -1, False  # Return -1 and False for invalid or insufficient input
+            return -2, False  # Return -1 and False for invalid or insufficient input
 
         length_of_binary_data = len(binary_data)
         binary_data += binary_data[:(pattern_length - 1)]  # Extend the data for overlapping patterns
@@ -85,4 +85,4 @@ class Serial:
         except Exception as e:
             # Handle any other exceptions and return -1, False
             print(f"Error during serial test: {e}")
-            return -1, False
+            return -4, False

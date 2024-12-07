@@ -41,7 +41,7 @@ class AutocorrelationTest:
         n = len(binary_data)
         
         if n <= max_lag:
-            return -1, False
+            return -2, False
         
         # Convert binary string to array of integers
         data = np.array([int(bit) for bit in binary_data])

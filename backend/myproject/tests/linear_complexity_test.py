@@ -23,7 +23,7 @@ class ComplexityTest:
         length_of_binary_data = len(binary_data)
 
         if length_of_binary_data == 0:
-            return (0.00000, False, 'Error: Not enough data to run this test')
+            return (-2, False, 'Error: Not enough data to run this test')
 
         # Initialized k, m. n, pi, and v_values
         degree_of_freedom = 6
@@ -60,7 +60,7 @@ class ComplexityTest:
 
             return (p_value, (p_value >= 0.01))
         else:
-            return (-1.0, False)
+            return (-2, False)
 
     @staticmethod
     def berlekamp_massey_algorithm(block_data):

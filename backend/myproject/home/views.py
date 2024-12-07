@@ -882,6 +882,7 @@ def run_adaptive_statistical_test(request):
                 # If there's no binary data, return an empty JsonResponse with status code 204 (No Content)
                 return JsonResponse({}, status=204)
 
+            print('hi adaptive ',binary_data)
             # Call the adaptive_statistical_test method from AdaptiveStatisticalTest
             p_value, result = AdaptiveStatisticalTest.adaptive_statistical_test(binary_data)
 
@@ -1068,7 +1069,7 @@ def run_spectral_test(request):
             # Parse binary data from JSON body
             data = json.loads(request.body)
             binary_data = data.get('binary_data', '')
-
+            
             if not binary_data:
                 # If no binary data, return an empty JsonResponse with status code 204 (No Content)
                 return JsonResponse({}, status=204)
@@ -1095,40 +1096,87 @@ def run_spectral_test(request):
         return JsonResponse({"error": "Invalid request method. Use POST."}, status=405)
 
 
+# def run_birthday_spacings_test(request):
+#     # Example binary data received from the request query parameters
+#     binary_data_str = request.GET.get('binary_data', '')
+
+#     # Print the request URL and parameters for debugging
+#     # print("Request URL:", request.get_full_path())
+#     # print("Request Parameters:", request.GET)
+
+#     # Convert binary string to a list of integers
+#     if binary_data_str:
+#         # Ensure only '0' and '1' are considered
+#         binary_data = [int(bit) for bit in binary_data_str if bit in '01']
+#     else:
+#         return JsonResponse({'error': 'Invalid or missing binary data.'}, status=400)
+
+#     # Check if the converted data has at least two points
+#     if len(binary_data) < 2:
+#         return JsonResponse({'error': 'Insufficient data. At least two data points are required.'}, status=400)
+
+#     # Call the Birthday Spacings Test method
+#     p_value, result = BirthdaySpacingsTest.BirthdaySpacingsTest(binary_data)
+
+#     print("run_birthday_spacings_test p_value:", p_value)
+#     print("run_birthday_spacings_test Result:", result)
+
+#     # Prepare the response data
+#     result_text = "random number" if result else "non-random number"
+        
+#     response_data = {
+#         'p_value': p_value,
+#         'result': result_text
+#     }
+
+#     return JsonResponse(response_data)
+
+
+@csrf_exempt
 def run_birthday_spacings_test(request):
-    # Example binary data received from the request query parameters
-    binary_data_str = request.GET.get('binary_data', '')
+    if request.method == 'POST':
+        try:
+            # Parse JSON data
+            data = json.loads(request.body)
+            binary_data = data.get('binary_data', [])
 
-    # Print the request URL and parameters for debugging
-    # print("Request URL:", request.get_full_path())
-    # print("Request Parameters:", request.GET)
+            if not isinstance(binary_data, list) or not binary_data:
+                # If there's no valid binary data, return an empty JsonResponse with status code 204 (No Content)
+                return JsonResponse({}, status=204)
 
-    # Convert binary string to a list of integers
-    if binary_data_str:
-        # Ensure only '0' and '1' are considered
-        binary_data = [int(bit) for bit in binary_data_str if bit in '01']
+            # Extract the first non-empty, non-whitespace string
+            filtered_binary_data = next((item for item in binary_data if item.strip()), None)
+
+            if not filtered_binary_data:
+                # If no valid binary string is found, return an error
+                return JsonResponse({"error": "No valid binary data provided"}, status=400)
+
+            print('hi spacing ', filtered_binary_data)
+
+            # Call the Birthday Spacings Test method
+            p_value, result = BirthdaySpacingsTest.BirthdaySpacingsTest(filtered_binary_data)
+
+            # Prepare the response
+            result_text = "random number" if result else "non-random number"
+            response_data = {
+                'p_value': p_value,
+                'result': result_text
+            }
+
+            return JsonResponse(response_data)
+
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON data"}, status=400)
+        except ValueError as ve:
+            # Handle invalid binary data conversion
+            print("ValueError:", str(ve))
+            return JsonResponse({"error": "Invalid binary data format"}, status=400)
+        except Exception as e:
+            # Log the error and return a 500 status code
+            print("Error in run_birthday_spacings_test:", str(e))
+            return JsonResponse({"error": "Internal server error"}, status=500)
     else:
-        return JsonResponse({'error': 'Invalid or missing binary data.'}, status=400)
-
-    # Check if the converted data has at least two points
-    if len(binary_data) < 2:
-        return JsonResponse({'error': 'Insufficient data. At least two data points are required.'}, status=400)
-
-    # Call the Birthday Spacings Test method
-    p_value, result = BirthdaySpacingsTest.BirthdaySpacingsTest(binary_data)
-
-    print("run_birthday_spacings_test p_value:", p_value)
-    print("run_birthday_spacings_test Result:", result)
-
-    # Prepare the response data
-    result_text = "random number" if result else "non-random number"
-        
-    response_data = {
-        'p_value': p_value,
-        'result': result_text
-    }
-
-    return JsonResponse(response_data)
+        return JsonResponse({"error": "Invalid request method. Use POST."}, status=405)
 
 
 def run_bitstream_test(request):
@@ -1139,255 +1187,6 @@ def run_bitstream_test(request):
         # If there's no binary data, return an empty JsonResponse with status code 204 (No Content)
         return JsonResponse({}, status=204)
     
-    # Print the request URL and parameters
-    # print("Request URL:", request.get_full_path())
-    # print("Request Parameters:", request.GET)
-
-    # Call the block_frequency method
-    p_value, result = BirthdaySpacingsTest.BirthdaySpacingsTest(binary_data)
-
-    print("run_bitstream_test p_value:", p_value)
-    print("run_bitstream_test Result:", result)
-    
-    # Prepare the response data
-    if result:
-        result_text = "random number"
-    else:
-        result_text = "non-random number"
-        
-    response_data = {
-        'p_value': p_value,
-        'result': result_text
-    }
-
-    return JsonResponse(response_data)
-
-
-def run_parking_lot_test(request):
-    # Example binary data received from the request query parameters
-    binary_data = request.GET.get('binary_data', '')
-
-    # Print the request URL and parameters
-    # print("Request URL:", request.get_full_path())
-    # print("Request Parameters:", request.GET)
-
-    # Call the block_frequency method
-    p_value, result = ParkingLotTest.ParkingLotTest(binary_data)
-
-    print("run_parking_lot_test p_value:", p_value)
-    print("run_parking_lot_test Result:", result)
-    
-    # Prepare the response data
-    if result:
-        result_text = "random number"
-    else:
-        result_text = "non-random number"
-        
-    response_data = {
-        'p_value': p_value,
-        'result': result_text
-    }
-
-    return JsonResponse(response_data)
-
-
-
-
-def run_overlapping_5_test(request):
-    # Example binary data received from the request query parameters
-    binary_data = request.GET.get('binary_data', '')
-
-    if not binary_data:
-        # If there's no binary data, return an empty JsonResponse with status code 204 (No Content)
-        return JsonResponse({}, status=204)
-    
-    # Print the request URL and parameters
-    # print("Request URL:", request.get_full_path())
-    # print("Request Parameters:", request.GET)
-
-    # Call the block_frequency method
-    p_value, result = Overlapping5PermutationTest.Overlapping5PermutationTest(binary_data)
-
-    print("run_overlapping_5_test p_value:", p_value)
-    print("run_overlapping_5_test Result:", result)
-    
-    # Prepare the response data
-    if result:
-        result_text = "random number"
-    else:
-        result_text = "non-random number"
-        
-    response_data = {
-        'p_value': p_value,
-        'result': result_text
-    }
-
-    return JsonResponse(response_data)
-
-
-
-def run_minimum_distance_test(request):
-    # Example binary data received from the request query parameters
-    binary_data = request.GET.get('binary_data', '')
-
-    if not binary_data:
-        # If there's no binary data, return an empty JsonResponse with status code 204 (No Content)
-        return JsonResponse({}, status=204)
-    
-    # Print the request URL and parameters
-    # print("Request URL:", request.get_full_path())
-    # print("Request Parameters:", request.GET)
-
-    # Call the block_frequency method
-    p_value, result = MinimumDistanceTest.MinimumDistanceTest(binary_data)
-
-    print("run_minimum_distance_test p_value:", p_value)
-    print("run_minimum_distance_test Result:", result)
-    
-    # Prepare the response data
-    if result:
-        result_text = "random number"
-    else:
-        result_text = "non-random number"
-        
-    response_data = {
-        'p_value': p_value,
-        'result': result_text
-    }
-
-    return JsonResponse(response_data)
-
-
-def run_31matrix_test(request):
-    # Example binary data received from the request query parameters
-    binary_data = request.GET.get('binary_data', '')
-
-    if not binary_data:
-        # If there's no binary data, return an empty JsonResponse with status code 204 (No Content)
-        return JsonResponse({}, status=204)
-
-    # Print the request URL and parameters
-    # print("Request URL:", request.get_full_path())
-    # print("Request Parameters:", request.GET)
-
-    # Call the block_frequency method
-    p_value, result = Ranks31x31MatricesTest.Ranks31x31MatricesTest(binary_data)
-
-    print("run_31matrix_test p_value:", p_value)
-    print("run_31matrix_test Result:", result)
-    
-    # Prepare the response data
-    if result:
-        result_text = "random number"
-    else:
-        result_text = "non-random number"
-        
-    response_data = {
-        'p_value': p_value,
-        'result': result_text
-    }
-
-    return JsonResponse(response_data)
-
-
-
-
-def run_spheres_test(request):
-    # Example binary data received from the request query parameters
-    binary_data = request.GET.get('binary_data', '')
-
-    if not binary_data:
-        # If there's no binary data, return an empty JsonResponse with status code 204 (No Content)
-        return JsonResponse({}, status=204)
-    
-    # Print the request URL and parameters
-    # print("Request URL:", request.get_full_path())
-    # print("Request Parameters:", request.GET)
-
-    # Call the block_frequency method
-    p_value, result = Spheres3DTest.Spheres3DTest(binary_data)
-
-    print("run_spheres_test p_value:", p_value)
-    print("run_spheres_test Result:", result)
-    
-    # Prepare the response data
-    if result:
-        result_text = "random number"
-    else:
-        result_text = "non-random number"
-        
-    response_data = {
-        'p_value': p_value,
-        'result': result_text
-    }
-
-    return JsonResponse(response_data)
-
-
-
-
-def run_32matrix_test(request):
-    # Example binary data received from the request query parameters
-    binary_data = request.GET.get('binary_data', '')
-
-    # Print the request URL and parameters
-    # print("Request URL:", request.get_full_path())
-    # print("Request Parameters:", request.GET)
-
-    # Call the block_frequency method
-    p_value, result = Ranks32x32MatricesTest.Ranks32x32MatricesTest(binary_data)
-
-    print("run_32matrix_test p_value:", p_value)
-    print("run_32matrix_test Result:", result)
-    
-    # Prepare the response data
-    if result:
-        result_text = "random number"
-    else:
-        result_text = "non-random number"
-        
-    response_data = {
-        'p_value': p_value,
-        'result': result_text
-    }
-
-    return JsonResponse(response_data)
-
-
-
-def run_craps_test(request):
-    # Example binary data received from the request query parameters
-    binary_data = request.GET.get('binary_data', '')
-
-    # Print the request URL and parameters
-    # print("Request URL:", request.get_full_path())
-    # print("Request Parameters:", request.GET)
-
-    # Call the block_frequency method
-    p_value, result = CrapsTest.CrapsTest(binary_data)
-
-    print("run_craps_test p_value:", p_value)
-    print("run_craps_test Result:", result)
-    
-    # Prepare the response data
-    if result:
-        result_text = "random number"
-    else:
-        result_text = "non-random number"
-        
-    response_data = {
-        'p_value': p_value,
-        'result': result_text
-    }
-
-    return JsonResponse(response_data)
-
-
-
-def run_bitstream_test(request):
-    # Example binary data received from the request query parameters
-    binary_data = request.GET.get('binary_data', '')
-
     # Print the request URL and parameters
     # print("Request URL:", request.get_full_path())
     # print("Request Parameters:", request.GET)
@@ -1412,325 +1211,887 @@ def run_bitstream_test(request):
     return JsonResponse(response_data)
 
 
+# def run_parking_lot_test(request):
+#     # Example binary data received from the request query parameters
+#     binary_data = request.GET.get('binary_data', '')
+
+#     # Print the request URL and parameters
+#     # print("Request URL:", request.get_full_path())
+#     # print("Request Parameters:", request.GET)
+
+#     # Call the block_frequency method
+#     p_value, result = ParkingLotTest.ParkingLotTest(binary_data)
+
+#     print("run_parking_lot_test p_value:", p_value)
+#     print("run_parking_lot_test Result:", result)
+    
+#     # Prepare the response data
+#     if result:
+#         result_text = "random number"
+#     else:
+#         result_text = "non-random number"
+        
+#     response_data = {
+#         'p_value': p_value,
+#         'result': result_text
+#     }
+
+#     return JsonResponse(response_data)
+
+
+@csrf_exempt
+def run_parking_lot_test(request):
+    if request.method == 'POST':
+        try:
+            # Parse JSON data
+            data = json.loads(request.body)
+            binary_data = data.get('binary_data', [])
+
+            # Validate that binary_data is a list and not empty
+            if not isinstance(binary_data, list) or not binary_data:
+                # If there's no valid binary data, return an empty JsonResponse with status code 204 (No Content)
+                return JsonResponse({}, status=204)
+
+            # Extract the first non-empty, non-whitespace string
+            filtered_binary_data = next((item for item in binary_data if item.strip()), None)
+
+            if not filtered_binary_data:
+                # If no valid binary string is found, return an error
+                return JsonResponse({"error": "No valid binary data provided"}, status=400)
+
+            print('Filtered binary data:', filtered_binary_data)
+
+            # Call the Parking Lot Test method
+            p_value, result = ParkingLotTest.ParkingLotTest(filtered_binary_data)
+
+            # Prepare the response
+            result_text = "random number" if result else "non-random number"
+            response_data = {
+                'p_value': p_value,
+                'result': result_text
+            }
+
+            return JsonResponse(response_data)
+
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON data"}, status=400)
+        except ValueError as ve:
+            # Handle invalid binary data conversion
+            print("ValueError:", str(ve))
+            return JsonResponse({"error": "Invalid binary data format"}, status=400)
+        except Exception as e:
+            # Log the error and return a 500 status code
+            print("Error in run_parking_lot_test:", str(e))
+            return JsonResponse({"error": "Internal server error"}, status=500)
+    else:
+        return JsonResponse({"error": "Invalid request method. Use POST."}, status=405)
+
+# def run_overlapping_5_test(request):
+#     # Example binary data received from the request query parameters
+#     binary_data = request.GET.get('binary_data', '')
+
+#     if not binary_data:
+#         # If there's no binary data, return an empty JsonResponse with status code 204 (No Content)
+#         return JsonResponse({}, status=204)
+    
+#     # Print the request URL and parameters
+#     # print("Request URL:", request.get_full_path())
+#     # print("Request Parameters:", request.GET)
+
+#     # Call the block_frequency method
+#     p_value, result = Overlapping5PermutationTest.Overlapping5PermutationTest(binary_data)
+
+#     print("run_overlapping_5_test p_value:", p_value)
+#     print("run_overlapping_5_test Result:", result)
+    
+#     # Prepare the response data
+#     if result:
+#         result_text = "random number"
+#     else:
+#         result_text = "non-random number"
+        
+#     response_data = {
+#         'p_value': p_value,
+#         'result': result_text
+#     }
+
+#     return JsonResponse(response_data)
+
+@csrf_exempt
+def run_overlapping_5_test(request):
+    if request.method == 'POST':
+        try:
+            # Parse JSON data
+            data = json.loads(request.body)
+            binary_data = data.get('binary_data', [])
+
+            if not isinstance(binary_data, list) or not binary_data:
+                # If there's no valid binary data, return an empty JsonResponse with status code 204 (No Content)
+                return JsonResponse({}, status=204)
+
+            # Extract the first non-empty, non-whitespace string
+            filtered_binary_data = next((item for item in binary_data if item.strip()), None)
+
+            if not filtered_binary_data:
+                # If no valid binary string is found, return an error
+                return JsonResponse({"error": "No valid binary data provided"}, status=400)
+
+            # Call the Overlapping 5 Permutation Test method
+            p_value, result = Overlapping5PermutationTest.Overlapping5PermutationTest(filtered_binary_data)
+
+            # Prepare the response
+            result_text = "random number" if result else "non-random number"
+            response_data = {
+                'p_value': p_value,
+                'result': result_text
+            }
+
+            return JsonResponse(response_data)
+
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON data"}, status=400)
+        except ValueError as ve:
+            # Handle invalid binary data conversion
+            print("ValueError:", str(ve))
+            return JsonResponse({"error": "Invalid binary data format"}, status=400)
+        except Exception as e:
+            # Log the error and return a 500 status code
+            print("Error in run_overlapping_5_test:", str(e))
+            return JsonResponse({"error": "Internal server error"}, status=500)
+    else:
+        return JsonResponse({"error": "Invalid request method. Use POST."}, status=405)
+
+@csrf_exempt
+def run_minimum_distance_test(request):
+    if request.method == 'POST':
+        try:
+            # Parse JSON data
+            data = json.loads(request.body)
+            binary_data = data.get('binary_data', [])
+
+            if not isinstance(binary_data, list) or not binary_data:
+                # If there's no valid binary data, return an empty JsonResponse with status code 204 (No Content)
+                return JsonResponse({}, status=204)
+
+            # Extract the first non-empty, non-whitespace string
+            filtered_binary_data = next((item for item in binary_data if item.strip()), None)
+
+            if not filtered_binary_data:
+                # If no valid binary string is found, return an error
+                return JsonResponse({"error": "No valid binary data provided"}, status=400)
+
+            # Call the Minimum Distance Test method
+            p_value, result = MinimumDistanceTest.MinimumDistanceTest(filtered_binary_data)
+
+            # Prepare the response
+            result_text = "random number" if result else "non-random number"
+            response_data = {
+                'p_value': p_value,
+                'result': result_text
+            }
+
+            return JsonResponse(response_data)
+
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON data"}, status=400)
+        except ValueError as ve:
+            # Handle invalid binary data conversion
+            print("ValueError:", str(ve))
+            return JsonResponse({"error": "Invalid binary data format"}, status=400)
+        except Exception as e:
+            # Log the error and return a 500 status code
+            print("Error in run_minimum_distance_test:", str(e))
+            return JsonResponse({"error": "Internal server error"}, status=500)
+    else:
+        return JsonResponse({"error": "Invalid request method. Use POST."}, status=405)
+
+
+# def run_31matrix_test(request):
+#     # Example binary data received from the request query parameters
+#     binary_data = request.GET.get('binary_data', '')
+
+#     if not binary_data:
+#         # If there's no binary data, return an empty JsonResponse with status code 204 (No Content)
+#         return JsonResponse({}, status=204)
+
+#     # Print the request URL and parameters
+#     # print("Request URL:", request.get_full_path())
+#     # print("Request Parameters:", request.GET)
+
+#     # Call the block_frequency method
+#     p_value, result = Ranks31x31MatricesTest.Ranks31x31MatricesTest(binary_data)
+
+#     print("run_31matrix_test p_value:", p_value)
+#     print("run_31matrix_test Result:", result)
+    
+#     # Prepare the response data
+#     if result:
+#         result_text = "random number"
+#     else:
+#         result_text = "non-random number"
+        
+#     response_data = {
+#         'p_value': p_value,
+#         'result': result_text
+#     }
+
+#     return JsonResponse(response_data)
+
+
+@csrf_exempt
+def run_31matrix_test(request):
+    if request.method == 'POST':
+        try:
+            # Parse JSON data
+            data = json.loads(request.body)
+            binary_data = data.get('binary_data', [])
+
+            if not isinstance(binary_data, list) or not binary_data:
+                # If there's no valid binary data, return an empty JsonResponse with status code 204 (No Content)
+                return JsonResponse({}, status=204)
+
+            # Extract the first non-empty, non-whitespace string
+            filtered_binary_data = next((item for item in binary_data if item.strip()), None)
+
+            if not filtered_binary_data:
+                # If no valid binary string is found, return an error
+                return JsonResponse({"error": "No valid binary data provided"}, status=400)
+
+            # Call the Ranks 31x31 Matrices Test method
+            p_value, result = Ranks31x31MatricesTest.Ranks31x31MatricesTest(filtered_binary_data)
+
+            # Prepare the response
+            result_text = "random number" if result else "non-random number"
+            response_data = {
+                'p_value': p_value,
+                'result': result_text
+            }
+
+            return JsonResponse(response_data)
+
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON data"}, status=400)
+        except ValueError as ve:
+            # Handle invalid binary data conversion
+            print("ValueError:", str(ve))
+            return JsonResponse({"error": "Invalid binary data format"}, status=400)
+        except Exception as e:
+            # Log the error and return a 500 status code
+            print("Error in run_31matrix_test:", str(e))
+            return JsonResponse({"error": "Internal server error"}, status=500)
+    else:
+        return JsonResponse({"error": "Invalid request method. Use POST."}, status=405)
+
+@csrf_exempt
+def run_spheres_test(request):
+    if request.method == 'POST':
+        try:
+            # Parse JSON data
+            data = json.loads(request.body)
+            binary_data = data.get('binary_data', [])
+
+            if not isinstance(binary_data, list) or not binary_data:
+                # If there's no valid binary data, return an empty JsonResponse with status code 204 (No Content)
+                return JsonResponse({}, status=204)
+
+            # Extract the first non-empty, non-whitespace string
+            filtered_binary_data = next((item for item in binary_data if item.strip()), None)
+            print('hi spheres', filtered_binary_data)
+            if not filtered_binary_data:
+                # If no valid binary string is found, return an error
+                return JsonResponse({"error": "No valid binary data provided"}, status=400)
+
+            # Call the Spheres 3D Test method
+            p_value, result = Spheres3DTest.Spheres3DTest(filtered_binary_data)
+
+            # Prepare the response
+            result_text = "random number" if result else "non-random number"
+            response_data = {
+                'p_value': p_value,
+                'result': result_text
+            }
+
+            return JsonResponse(response_data)
+
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON data"}, status=400)
+        except ValueError as ve:
+            # Handle invalid binary data conversion
+            print("ValueError:", str(ve))
+            return JsonResponse({"error": "Invalid binary data format"}, status=400)
+        except Exception as e:
+            # Log the error and return a 500 status code
+            print("Error in run_spheres_test:", str(e))
+            return JsonResponse({"error": "Internal server error"}, status=500)
+    else:
+        return JsonResponse({"error": "Invalid request method. Use POST."}, status=405)
+
+@csrf_exempt
+def run_32matrix_test(request):
+    if request.method == 'POST':
+        try:
+            # Parse JSON data
+            data = json.loads(request.body)
+            binary_data = data.get('binary_data', [])
+
+            if not isinstance(binary_data, list) or not binary_data:
+                # If there's no valid binary data, return an empty JsonResponse with status code 204 (No Content)
+                return JsonResponse({}, status=204)
+
+            # Extract the first non-empty, non-whitespace string
+            filtered_binary_data = next((item for item in binary_data if item.strip()), None)
+
+            if not filtered_binary_data:
+                # If no valid binary string is found, return an error
+                return JsonResponse({"error": "No valid binary data provided"}, status=400)
+
+            # Call the Ranks 32x32 Matrices Test method
+            p_value, result = Ranks32x32MatricesTest.Ranks32x32MatricesTest(filtered_binary_data)
+
+            # Prepare the response
+            result_text = "random number" if result else "non-random number"
+            response_data = {
+                'p_value': p_value,
+                'result': result_text
+            }
+
+            return JsonResponse(response_data)
+
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON data"}, status=400)
+        except ValueError as ve:
+            # Handle invalid binary data conversion
+            print("ValueError:", str(ve))
+            return JsonResponse({"error": "Invalid binary data format"}, status=400)
+        except Exception as e:
+            # Log the error and return a 500 status code
+            print("Error in run_32matrix_test:", str(e))
+            return JsonResponse({"error": "Internal server error"}, status=500)
+    else:
+        return JsonResponse({"error": "Invalid request method. Use POST."}, status=405)
 
 
 
+@csrf_exempt
+def run_craps_test(request):
+    if request.method == 'POST':
+        try:
+            # Parse JSON data
+            data = json.loads(request.body)
+            binary_data = data.get('binary_data', [])
+
+            if not isinstance(binary_data, list) or not binary_data:
+                return JsonResponse({}, status=204)
+
+            # Extract the first non-empty, non-whitespace string
+            filtered_binary_data = next((item for item in binary_data if item.strip()), None)
+
+            if not filtered_binary_data:
+                return JsonResponse({"error": "No valid binary data provided"}, status=400)
+
+            # Call the Craps Test method
+            p_value, result = CrapsTest.CrapsTest(filtered_binary_data)
+
+            # Prepare the response
+            result_text = "random number" if result else "non-random number"
+            response_data = {
+                'p_value': p_value,
+                'result': result_text
+            }
+
+            return JsonResponse(response_data)
+
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON data"}, status=400)
+        except ValueError as ve:
+            print("ValueError:", str(ve))
+            return JsonResponse({"error": "Invalid binary data format"}, status=400)
+        except Exception as e:
+            print("Error in run_craps_test:", str(e))
+            return JsonResponse({"error": "Internal server error"}, status=500)
+    else:
+        return JsonResponse({"error": "Invalid request method. Use POST."}, status=405)
+
+
+@csrf_exempt
+def run_bitstream_test(request):
+    if request.method == 'POST':
+        try:
+            # Parse JSON data
+            data = json.loads(request.body)
+            binary_data = data.get('binary_data', [])
+
+            if not isinstance(binary_data, list) or not binary_data:
+                return JsonResponse({}, status=204)
+
+            # Extract the first non-empty, non-whitespace string
+            filtered_binary_data = next((item for item in binary_data if item.strip()), None)
+
+            if not filtered_binary_data:
+                return JsonResponse({"error": "No valid binary data provided"}, status=400)
+
+            # Call the Bitstream Test method
+            p_value, result = BitstreamTest.BitstreamTest(filtered_binary_data)
+
+            # Prepare the response
+            result_text = "random number" if result else "non-random number"
+            response_data = {
+                'p_value': p_value,
+                'result': result_text
+            }
+
+            return JsonResponse(response_data)
+
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON data"}, status=400)
+        except ValueError as ve:
+            print("ValueError:", str(ve))
+            return JsonResponse({"error": "Invalid binary data format"}, status=400)
+        except Exception as e:
+            print("Error in run_bitstream_test:", str(e))
+            return JsonResponse({"error": "Internal server error"}, status=500)
+    else:
+        return JsonResponse({"error": "Invalid request method. Use POST."}, status=405)
+
+
+@csrf_exempt
 def run_gcd_test(request):
-    # Example binary data received from the request query parameters
-    binary_data = request.GET.get('binary_data', '')
+    if request.method == 'POST':
+        try:
+            # Parse JSON data
+            data = json.loads(request.body)
+            binary_data = data.get('binary_data', [])
 
-    # Print the request URL and parameters
-    # print("Request URL:", request.get_full_path())
-    # print("Request Parameters:", request.GET)
+            if not isinstance(binary_data, list) or not binary_data:
+                return JsonResponse({}, status=204)
 
-    # Call the block_frequency method
-    p_value, result = MarsagliaTsangGCDTest.MarsagliaTsangGCDTest(binary_data)
+            # Extract the first non-empty, non-whitespace string
+            filtered_binary_data = next((item for item in binary_data if item.strip()), None)
 
-    print("run_gcd_test p_value:", p_value)
-    print("run_gcd_test Result:", result)
-    
-    # Prepare the response data
-    if result:
-        result_text = "random number"
+            if not filtered_binary_data:
+                return JsonResponse({"error": "No valid binary data provided"}, status=400)
+
+            # Call the GCD Test method
+            p_value, result = MarsagliaTsangGCDTest.MarsagliaTsangGCDTest(filtered_binary_data)
+
+            # Prepare the response
+            result_text = "random number" if result else "non-random number"
+            response_data = {
+                'p_value': p_value,
+                'result': result_text
+            }
+
+            return JsonResponse(response_data)
+
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON data"}, status=400)
+        except ValueError as ve:
+            print("ValueError:", str(ve))
+            return JsonResponse({"error": "Invalid binary data format"}, status=400)
+        except Exception as e:
+            print("Error in run_gcd_test:", str(e))
+            return JsonResponse({"error": "Internal server error"}, status=500)
     else:
-        result_text = "non-random number"
-        
-    response_data = {
-        'p_value': p_value,
-        'result': result_text
-    }
+        return JsonResponse({"error": "Invalid request method. Use POST."}, status=405)
 
-    return JsonResponse(response_data)
 
+
+@csrf_exempt
 def run_opso_test(request):
-    # Example binary data received from the request query parameters
-    binary_data = request.GET.get('binary_data', '')
+    if request.method == 'POST':
+        try:
+            # Parse JSON data
+            data = json.loads(request.body)
+            binary_data = data.get('binary_data', [])
 
-    # Print the request URL and parameters
-    # print("Request URL:", request.get_full_path())
-    # print("Request Parameters:", request.GET)
+            if not isinstance(binary_data, list) or not binary_data:
+                return JsonResponse({}, status=204)
 
-    # Call the block_frequency method
-    p_value, result = OPSOTest.OPSOTest(binary_data)
+            # Extract the first non-empty, non-whitespace string
+            filtered_binary_data = next((item for item in binary_data if item.strip()), None)
 
-    print("run_opso_test p_value:", p_value)
-    print("run_opso_test Result:", result)
-    
-    # Prepare the response data
-    if result:
-        result_text = "random number"
+            if not filtered_binary_data:
+                return JsonResponse({"error": "No valid binary data provided"}, status=400)
+
+            # Call the OPSO Test method
+            p_value, result = OPSOTest.OPSOTest(filtered_binary_data)
+
+            # Prepare the response
+            result_text = "random number" if result else "non-random number"
+            response_data = {
+                'p_value': p_value,
+                'result': result_text
+            }
+
+            return JsonResponse(response_data)
+
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON data"}, status=400)
+        except ValueError as ve:
+            print("ValueError:", str(ve))
+            return JsonResponse({"error": "Invalid binary data format"}, status=400)
+        except Exception as e:
+            print("Error in run_opso_test:", str(e))
+            return JsonResponse({"error": "Internal server error"}, status=500)
     else:
-        result_text = "non-random number"
-        
-    response_data = {
-        'p_value': p_value,
-        'result': result_text
-    }
-
-    return JsonResponse(response_data)
+        return JsonResponse({"error": "Invalid request method. Use POST."}, status=405)
 
 
-
+@csrf_exempt
 def run_oqso_test(request):
-    # Example binary data received from the request query parameters
-    binary_data = request.GET.get('binary_data', '')
+    if request.method == 'POST':
+        try:
+            # Parse JSON data
+            data = json.loads(request.body)
+            binary_data = data.get('binary_data', [])
 
-    # Print the request URL and parameters
-    # print("Request URL:", request.get_full_path())
-    # print("Request Parameters:", request.GET)
+            if not isinstance(binary_data, list) or not binary_data:
+                return JsonResponse({}, status=204)
 
-    # Call the block_frequency method
-    p_value, result = OQSOTest.OQSOTest(binary_data)
+            # Extract the first non-empty, non-whitespace string
+            filtered_binary_data = next((item for item in binary_data if item.strip()), None)
 
-    print("run_oqso_test p_value:", p_value)
-    print("run_oqso_test Result:", result)
-    
-    # Prepare the response data
-    if result:
-        result_text = "random number"
+            if not filtered_binary_data:
+                return JsonResponse({"error": "No valid binary data provided"}, status=400)
+
+            # Call the OQSO Test method
+            p_value, result = OQSOTest.OQSOTest(filtered_binary_data)
+
+            # Prepare the response
+            result_text = "random number" if result else "non-random number"
+            response_data = {
+                'p_value': p_value,
+                'result': result_text
+            }
+
+            return JsonResponse(response_data)
+
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON data"}, status=400)
+        except ValueError as ve:
+            print("ValueError:", str(ve))
+            return JsonResponse({"error": "Invalid binary data format"}, status=400)
+        except Exception as e:
+            print("Error in run_oqso_test:", str(e))
+            return JsonResponse({"error": "Internal server error"}, status=500)
     else:
-        result_text = "non-random number"
-        
-    response_data = {
-        'p_value': p_value,
-        'result': result_text
-    }
-
-    return JsonResponse(response_data)
+        return JsonResponse({"error": "Invalid request method. Use POST."}, status=405)
 
 
-
+@csrf_exempt
 def run_dna_test(request):
-    # Example binary data received from the request query parameters
-    binary_data = request.GET.get('binary_data', '')
+    if request.method == 'POST':
+        try:
+            # Parse JSON data
+            data = json.loads(request.body)
+            binary_data = data.get('binary_data', [])
 
-    # Print the request URL and parameters
-    # print("Request URL:", request.get_full_path())
-    # print("Request Parameters:", request.GET)
+            if not isinstance(binary_data, list) or not binary_data:
+                return JsonResponse({}, status=204)
 
-    # Call the block_frequency method
-    p_value, result = DNATest.DNATest(binary_data)
+            # Extract the first non-empty, non-whitespace string
+            filtered_binary_data = next((item for item in binary_data if item.strip()), None)
 
-    print("run_dna_test p_value:", p_value)
-    print("run_dna_test Result:", result)
-    
-    # Prepare the response data
-    if result:
-        result_text = "random number"
+            if not filtered_binary_data:
+                return JsonResponse({"error": "No valid binary data provided"}, status=400)
+
+            # Call the DNA Test method
+            p_value, result = DNATest.DNATest(filtered_binary_data)
+
+            # Prepare the response
+            result_text = "random number" if result else "non-random number"
+            response_data = {
+                'p_value': p_value,
+                'result': result_text
+            }
+
+            return JsonResponse(response_data)
+
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON data"}, status=400)
+        except ValueError as ve:
+            print("ValueError:", str(ve))
+            return JsonResponse({"error": "Invalid binary data format"}, status=400)
+        except Exception as e:
+            print("Error in run_dna_test:", str(e))
+            return JsonResponse({"error": "Internal server error"}, status=500)
     else:
-        result_text = "non-random number"
-        
-    response_data = {
-        'p_value': p_value,
-        'result': result_text
-    }
-
-    return JsonResponse(response_data)
+        return JsonResponse({"error": "Invalid request method. Use POST."}, status=405)
 
 
-
-
+@csrf_exempt
 def run_count_one_test(request):
-    # Example binary data received from the request query parameters
-    binary_data = request.GET.get('binary_data', '')
+    if request.method == 'POST':
+        try:
+            # Parse JSON data
+            data = json.loads(request.body)
+            binary_data = data.get('binary_data', [])
 
-    # Print the request URL and parameters
-    # print("Request URL:", request.get_full_path())
-    # print("Request Parameters:", request.GET)
+            if not isinstance(binary_data, list) or not binary_data:
+                return JsonResponse({}, status=204)
 
-    # Call the block_frequency method
-    p_value, result = CountThe1sStreamTest.CountThe1sStreamTest(binary_data)
+            # Extract the first non-empty, non-whitespace string
+            filtered_binary_data = next((item for item in binary_data if item.strip()), None)
 
-    print("run_count_one_test p_value:", p_value)
-    print("run_count_one_test Result:", result)
-    
-    # Prepare the response data
-    if result:
-        result_text = "random number"
+            if not filtered_binary_data:
+                return JsonResponse({"error": "No valid binary data provided"}, status=400)
+
+            # Call the Count The 1s Stream Test method
+            p_value, result = CountThe1sStreamTest.CountThe1sStreamTest(filtered_binary_data)
+
+            # Prepare the response
+            result_text = "random number" if result else "non-random number"
+            response_data = {
+                'p_value': p_value,
+                'result': result_text
+            }
+
+            return JsonResponse(response_data)
+
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON data"}, status=400)
+        except ValueError as ve:
+            print("ValueError:", str(ve))
+            return JsonResponse({"error": "Invalid binary data format"}, status=400)
+        except Exception as e:
+            print("Error in run_count_one_test:", str(e))
+            return JsonResponse({"error": "Internal server error"}, status=500)
     else:
-        result_text = "non-random number"
-        
-    response_data = {
-        'p_value': p_value,
-        'result': result_text
-    }
-
-    return JsonResponse(response_data)
+        return JsonResponse({"error": "Invalid request method. Use POST."}, status=405)
 
 
 
-
+@csrf_exempt
 def run_count_one_byte_test(request):
-    # Example binary data received from the request query parameters
-    binary_data = request.GET.get('binary_data', '')
+    if request.method == 'POST':
+        try:
+            # Parse JSON data
+            data = json.loads(request.body)
+            binary_data = data.get('binary_data', [])
 
-    # Print the request URL and parameters
-    # print("Request URL:", request.get_full_path())
-    # print("Request Parameters:", request.GET)
+            if not isinstance(binary_data, list) or not binary_data:
+                return JsonResponse({}, status=204)
 
-    # Call the block_frequency method
-    p_value, result = CountThe1sByteTest.CountThe1sByteTest(binary_data)
+            # Extract the first non-empty, non-whitespace string
+            filtered_binary_data = next((item for item in binary_data if item.strip()), None)
+            print('hi one byte test', filtered_binary_data)
+            if not filtered_binary_data:
+                return JsonResponse({"error": "No valid binary data provided"}, status=400)
 
-    print("run_count_one_byte_test p_value:", p_value)
-    print("run_count_one_byte_test Result:", result)
-    
-    # Prepare the response data
-    if result:
-        result_text = "random number"
+            # Call the CountThe1sByteTest method with the binary data
+            p_value, result = CountThe1sByteTest.CountThe1sByteTest(filtered_binary_data)
+
+            # Prepare the response based on the result
+            result_text = "random number" if result else "non-random number"
+            response_data = {
+                'p_value': p_value,
+                'result': result_text
+            }
+
+            return JsonResponse(response_data)
+
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON data"}, status=400)
+        except Exception as e:
+            print("Error in run_count_one_byte_test:", str(e))
+            return JsonResponse({"error": "Internal server error"}, status=500)
     else:
-        result_text = "non-random number"
-        
-    response_data = {
-        'p_value': p_value,
-        'result': result_text
-    }
+        return JsonResponse({"error": "Invalid request method. Use POST."}, status=405)
 
-    return JsonResponse(response_data)
-
-
+@csrf_exempt
 def run_simple_gcd_test(request):
-    # Example binary data received from the request query parameters
-    binary_data = request.GET.get('binary_data', '')
+    if request.method == 'POST':
+        try:
+            # Parse JSON data
+            data = json.loads(request.body)
+            binary_data = data.get('binary_data', [])
 
-    # Print the request URL and parameters
-    # print("Request URL:", request.get_full_path())
-    # print("Request Parameters:", request.GET)
+            if not isinstance(binary_data, list) or not binary_data:
+                return JsonResponse({}, status=204)
 
-    # Call the block_frequency method
-    p_value, result = MarsagliaTsangSimpleGCDTest.MarsagliaTsangSimpleGCDTest(binary_data)
+            # Extract the first non-empty, non-whitespace string
+            filtered_binary_data = next((item for item in binary_data if item.strip()), None)
+          
+            if not filtered_binary_data:
+                return JsonResponse({"error": "No valid binary data provided"}, status=400)
 
-    print("run_simple_gcd_test p_value:", p_value)
-    print("run_simple_gcd_test Result:", result)
-    
-    # Prepare the response data
-    if result:
-        result_text = "random number"
+
+            # Call the Marsaglia Tsang Simple GCD Test method with the binary data
+            p_value, result = MarsagliaTsangSimpleGCDTest.MarsagliaTsangSimpleGCDTest(filtered_binary_data)
+
+            # Prepare the response based on the result
+            result_text = "random number" if result else "non-random number"
+            response_data = {
+                'p_value': p_value,
+                'result': result_text
+            }
+
+            return JsonResponse(response_data)
+
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON data"}, status=400)
+        except Exception as e:
+            print("Error in run_simple_gcd_test:", str(e))
+            return JsonResponse({"error": "Internal server error"}, status=500)
     else:
-        result_text = "non-random number"
-        
-    response_data = {
-        'p_value': p_value,
-        'result': result_text
-    }
-
-    return JsonResponse(response_data)
+        return JsonResponse({"error": "Invalid request method. Use POST."}, status=405)
 
 
 
+@csrf_exempt
 def run_general_minimum_distance_test(request):
-    # Example binary data received from the request query parameters
-    binary_data = request.GET.get('binary_data', '')
+    if request.method == 'POST':
+        try:
+            # Parse JSON data
+            data = json.loads(request.body)
+            binary_data = data.get('binary_data', [])
 
-    # Print the request URL and parameters
-    # print("Request URL:", request.get_full_path())
-    # print("Request Parameters:", request.GET)
+            if not isinstance(binary_data, list) or not binary_data:
+                return JsonResponse({}, status=204)
 
-    # Call the block_frequency method
-    p_value, result = GeneralizedMinimumDistanceTest.GeneralizedMinimumDistanceTest(binary_data)
+            # Extract the first non-empty, non-whitespace string
+            filtered_binary_data = next((item for item in binary_data if item.strip()), None)
+          
+            if not filtered_binary_data:
+                return JsonResponse({"error": "No valid binary data provided"}, status=400)
 
-    print("run_general_minimum_distance_test p_value:", p_value)
-    print("run_general_minimum_distance_test Result:", result)
-    
-    # Prepare the response data
-    if result:
-        result_text = "random number"
+
+            # Call the Generalized Minimum Distance Test method with the binary data
+            p_value, result = GeneralizedMinimumDistanceTest.GeneralizedMinimumDistanceTest(filtered_binary_data)
+
+            # Prepare the response based on the result
+            result_text = "random number" if result else "non-random number"
+            response_data = {
+                'p_value': p_value,
+                'result': result_text
+            }
+
+            return JsonResponse(response_data)
+
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON data"}, status=400)
+        except Exception as e:
+            print("Error in run_general_minimum_distance_test:", str(e))
+            return JsonResponse({"error": "Internal server error"}, status=500)
     else:
-        result_text = "non-random number"
-        
-    response_data = {
-        'p_value': p_value,
-        'result': result_text
-    }
-
-    return JsonResponse(response_data)
+        return JsonResponse({"error": "Invalid request method. Use POST."}, status=405)
 
 
-
+@csrf_exempt
 def run_u01_linear_complexity_test(request):
-    # Example binary data received from the request query parameters
-    binary_data = request.GET.get('binary_data', '')
+    if request.method == 'POST':
+        try:
+            # Parse JSON data
+            data = json.loads(request.body)
+            binary_data = data.get('binary_data', [])
 
-    # Print the request URL and parameters
-    # print("Request URL:", request.get_full_path())
-    # print("Request Parameters:", request.GET)
+            if not isinstance(binary_data, list) or not binary_data:
+                return JsonResponse({}, status=204)
 
-    # Call the block_frequency method
-    p_value, result = TestU01LinearComplexityTest.TestU01LinearComplexityTest(binary_data)
+            # Extract the first non-empty, non-whitespace string
+            filtered_binary_data = next((item for item in binary_data if item.strip()), None)
+          
+            if not filtered_binary_data:
+                return JsonResponse({"error": "No valid binary data provided"}, status=400)
 
-    print("run_u01_linear_complexity_test p_value:", p_value)
-    print("run_u01_linear_complexity_test Result:", result)
-    
-    # Prepare the response data
-    if result:
-        result_text = "random number"
+
+            # Call the TestU01 Linear Complexity Test method with the binary data
+            p_value, result = TestU01LinearComplexityTest.TestU01LinearComplexityTest(filtered_binary_data)
+
+            # Prepare the response based on the result
+            result_text = "random number" if result else "non-random number"
+            response_data = {
+                'p_value': p_value,
+                'result': result_text
+            }
+
+            return JsonResponse(response_data)
+
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON data"}, status=400)
+        except Exception as e:
+            print("Error in run_u01_linear_complexity_test:", str(e))
+            return JsonResponse({"error": "Internal server error"}, status=500)
     else:
-        result_text = "non-random number"
-        
-    response_data = {
-        'p_value': p_value,
-        'result': result_text
-    }
-
-    return JsonResponse(response_data)
+        return JsonResponse({"error": "Invalid request method. Use POST."}, status=405)
 
 
-
-
+@csrf_exempt
 def run_u01_longest_repeated_substring_test(request):
-    # Example binary data received from the request query parameters
-    binary_data = request.GET.get('binary_data', '')
+    if request.method == 'POST':
+        try:
+            # Parse JSON data
+            data = json.loads(request.body)
+            binary_data = data.get('binary_data', [])
 
-    # Print the request URL and parameters
-    # print("Request URL:", request.get_full_path())
-    # print("Request Parameters:", request.GET)
+            if not isinstance(binary_data, list) or not binary_data:
+                return JsonResponse({}, status=204)
 
-    # Call the block_frequency method
-    p_value, result = TestU01LongestRepeatedSubstringTest.TestU01LongestRepeatedSubstringTest(binary_data)
+            # Extract the first non-empty, non-whitespace string
+            filtered_binary_data = next((item for item in binary_data if item.strip()), None)
+          
+            if not filtered_binary_data:
+                return JsonResponse({"error": "No valid binary data provided"}, status=400)
 
-    print("run_u01_longest_repeated_substring_test p_value:", p_value)
-    print("run_u01_longest_repeated_substring_test Result:", result)
-    
-    # Prepare the response data
-    if result:
-        result_text = "random number"
+
+            # Call the TestU01 Longest Repeated Substring Test method with the binary data
+            p_value, result = TestU01LongestRepeatedSubstringTest.TestU01LongestRepeatedSubstringTest(filtered_binary_data)
+
+            # Prepare the response based on the result
+            result_text = "random number" if result else "non-random number"
+            response_data = {
+                'p_value': p_value,
+                'result': result_text
+            }
+
+            return JsonResponse(response_data)
+
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON data"}, status=400)
+        except Exception as e:
+            print("Error in run_u01_longest_repeated_substring_test:", str(e))
+            return JsonResponse({"error": "Internal server error"}, status=500)
     else:
-        result_text = "non-random number"
-        
-    response_data = {
-        'p_value': p_value,
-        'result': result_text
-    }
-
-    return JsonResponse(response_data)
+        return JsonResponse({"error": "Invalid request method. Use POST."}, status=405)
 
 
-
+@csrf_exempt
 def run_matrix_rank_test(request):
-    # Example binary data received from the request query parameters
-    binary_data = request.GET.get('binary_data', '')
+    if request.method == 'POST':
+        try:
+            # Parse JSON data
+            data = json.loads(request.body)
+            binary_data = data.get('binary_data', [])
 
-    # Print the request URL and parameters
-    # print("Request URL:", request.get_full_path())
-    # print("Request Parameters:", request.GET)
+            if not isinstance(binary_data, list) or not binary_data:
+                return JsonResponse({}, status=204)
 
-    # Call the block_frequency method
-    p_value, result = TestU01MatrixRankTest.TestU01MatrixRankTest(binary_data)
+            # Extract the first non-empty, non-whitespace string
+            filtered_binary_data = next((item for item in binary_data if item.strip()), None)
+          
+            if not filtered_binary_data:
+                return JsonResponse({"error": "No valid binary data provided"}, status=400)
 
-    print("run_matrix_rank_test p_value:", p_value)
-    print("run_matrix_rank_test Result:", result)
-    
-    # Prepare the response data
-    if result:
-        result_text = "random number"
+
+            # Call the TestU01 Matrix Rank Test method with the binary data
+            p_value, result = TestU01MatrixRankTest.TestU01MatrixRankTest(filtered_binary_data)
+
+            # Prepare the response based on the result
+            result_text = "random number" if result else "non-random number"
+            response_data = {
+                'p_value': p_value,
+                'result': result_text
+            }
+
+            return JsonResponse(response_data)
+
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON data"}, status=400)
+        except Exception as e:
+            print("Error in run_matrix_rank_test:", str(e))
+            return JsonResponse({"error": "Internal server error"}, status=500)
     else:
-        result_text = "non-random number"
-        
-    response_data = {
-        'p_value': p_value,
-        'result': result_text
-    }
-
-    return JsonResponse(response_data)
+        return JsonResponse({"error": "Invalid request method. Use POST."}, status=405)
 
 def send_binary_data(request):
     binary_data = '101010'  # Example binary data as a string
@@ -2137,6 +2498,15 @@ def create_graph_dieharder(request):
     # return HttpResponse(buf, content_type='image/png')
     return HttpResponse(buf, content_type='image/png')
 
+from datetime import datetime
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.styles import getSampleStyleSheet,ParagraphStyle
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image
+from reportlab.lib import colors
+from io import BytesIO
+from django.http import HttpResponse
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
 
 def generate_pdf_report(request):
     global global_graph_image
@@ -2161,10 +2531,18 @@ def generate_pdf_report(request):
     # Set up styles
     styles = getSampleStyleSheet()
 
+    current_date = datetime.now().strftime("%B %d, %Y")  # Format as "December 06, 2024"
+
+     # Add a paragraph with the current date
+    date_style = ParagraphStyle('Date', parent=styles['Normal'], fontSize=10, alignment=2, spaceAfter=10)
+    date_paragraph = Paragraph(f"Date: {current_date}", date_style)
+
     # Add a headline (title)
     title = Paragraph("Report-QNu Labs", styles['Title'])
     title_space = Spacer(1, 0.0 * inch)  # Small spacer below the title
 
+
+    
     # Add subtitles with underlining
     subtitle_style = styles['Heading2']
     subtitle_style.fontName = 'Helvetica-Bold'
@@ -2320,8 +2698,16 @@ def generate_pdf_report(request):
     table2 = Table(data2, colWidths=[4 * inch])
     table2.setStyle(TableStyle([('ALIGN', (0, 0), (-1, -1), 'CENTER')]))
 
+    
+     # Add logo on the top-right corner (adjust the path of your logo)
+    logo_path = os.path.join(os.path.dirname(__file__), 'qnulogo.png')
+
+    logo_image = Image(logo_path, width=0.5 * inch, height=0.5 * inch)
+    logo_image.hAlign = 'LEFT'  # Right-align the image on the page
+    logo_image.vAlign = 'TOP'    # Top-align the image on the page
+
     # Build the PDF document
-    elements = [title, title_space, nist_subtitle, subtitle_space, table1, subtitle_space, graph_subtitle, table2]
+    elements = [date_paragraph,title, logo_image, title_space, nist_subtitle, subtitle_space, table1, subtitle_space, graph_subtitle, table2]
     doc.build(elements)
 
     # Get the PDF data and write it to the response

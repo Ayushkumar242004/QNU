@@ -29,7 +29,7 @@ class RunTest:
             p_value = erfc(abs(vObs - (2 * length_of_binary_data * pi * (1 - pi))) /
                         (2 * sqrt(2 * length_of_binary_data) * pi * (1 - pi)))
         except ZeroDivisionError:
-            return (-1, False)
+            return (-3, False)
 
         if verbose:
             print('\tP-Value:\t\t\t\t\t\t', p_value)
@@ -41,7 +41,7 @@ class RunTest:
         length_of_binary_data = len(binary_data)
 
         if length_of_binary_data < 128:
-            return (-1, False, 'Error: Not enough data to run this test')
+            return (-2, False, 'Error: Not enough data to run this test')
         elif length_of_binary_data < 6272:
             k = 3
             m = 8

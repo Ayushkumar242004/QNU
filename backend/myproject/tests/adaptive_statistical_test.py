@@ -28,7 +28,7 @@ class AdaptiveStatisticalTest:
         n = len(sequence)
         
         if n == 0:
-            return -1, False
+            return -2, False
         
         # Convert the sequence to an array of integers (0s and 1s)
         data = np.array([int(bit) for bit in sequence])

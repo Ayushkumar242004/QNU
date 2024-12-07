@@ -28,14 +28,14 @@ class CountThe1sStreamTest:
                 total_count += chunk_total
 
         if total_count == 0:
-            return -1, False  # Handle case when no valid bits were processed
+            return -2, False  # Handle case when no valid bits were processed
 
         # Calculate statistical values
         expected = total_count / 2
         variance = total_count / 4  # Variance for a binomial distribution (n/4 for p=0.5)
         
         if variance <= 0:
-            return -1, False  # Variance must be positive
+            return -6, False  # Variance must be positive
 
         z_statistic = (ones_count - expected) / sqrt(variance)  # Z-statistic calculation
         p_value = 2 * (1 - norm.cdf(abs(z_statistic)))  # Two-tailed p-value

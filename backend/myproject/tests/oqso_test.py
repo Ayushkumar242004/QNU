@@ -27,7 +27,7 @@ class OQSOTest:
         # Check if we have enough data
         n = len(clean_data)
         if n < 4:
-            return -1, False  # Return (-1, False) if insufficient data
+            return -2, False  # Return (-1, False) if insufficient data
         
         # Convert the cleaned string of binary data to a list of integers (0s and 1s)
         data_array = np.array([int(bit) for bit in clean_data], dtype=int)

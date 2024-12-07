@@ -54,27 +54,44 @@ const GridContainer1 = ({ getData, onBinaryDataChange }) => {
   };
 
 
-  const handleButtonClickGraph = (buttonName) => {
-    // Handle button click actions
+  // const handleButtonClickGraph = (buttonName) => {
+  //   // Handle button click actions
     
-    if (buttonName === 'Report generation') {
+  //   if (buttonName === 'Report generation') {
       
-        // Optionally, you can then redirect the user or perform other actions
-        window.location.href = `http://localhost:8000/pdf-report/?binary_data=${encodeURIComponent(initialInputData[0])}`;
+  //       // Optionally, you can then redirect the user or perform other actions
+  //       window.location.href = `http://localhost:8000/pdf-report/?binary_data=${encodeURIComponent(initialInputData[0])}`;
        
       
-    }
-    else if (buttonName === 'Graph generation') {
-      // Example binary data
-    //   const binaryData = '1101010101010101'; // Replace with actual binary data
+  //   }
+  //   else if (buttonName === 'Graph generation') {
+  //     // Example binary data
+  //   //   const binaryData = '1101010101010101'; // Replace with actual binary data
       
-      // Redirect with binary data as query parameter
-      console.log("hi my binary data is: ",initialInputData[0])
-      window.location.href = `http://localhost:8000/graph-generation/?binary_data=${encodeURIComponent(initialInputData[0])}`;
-    }
+  //     // Redirect with binary data as query parameter
+  //     console.log("hi my binary data is: ",initialInputData[0])
+  //     window.location.href = `http://localhost:8000/graph-generation/?binary_data=${encodeURIComponent(initialInputData[0])}`;
+  //   }
     
    
-  };
+  // };
+  const handleButtonClickGraph = (buttonName) => {
+    // Handle button click actions
+    if (buttonName === 'Report generation') {
+        // Optionally, you can then redirect the user or perform other actions
+        
+        window.open(`http://localhost:8000/pdf-report/?binary_data=${encodeURIComponent(initialInputData[0])}`, '_blank');
+    }
+    else if (buttonName === 'Graph generation') {
+        // Example binary data
+        //   const binaryData = '1101010101010101'; // Replace with actual binary data
+        
+        // Open the graph generation URL in a new tab
+        console.log("hi my binary data is: ", initialInputData[0]);
+        window.open(`http://localhost:8000/graph-generation/?binary_data=${encodeURIComponent(initialInputData[0])}`, '_blank');
+    }
+}
+
 
   // Define button names
   const buttonNamesGraph = [

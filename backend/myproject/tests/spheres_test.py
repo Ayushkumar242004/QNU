@@ -13,18 +13,18 @@ class Spheres3DTest:
         
         # Step 2: Ensure we have at least one full 3D point (3 coordinates)
         if len(data) < 3:
-            return -1, False  # Insufficient data, return failure result
+            return -2, False  # Insufficient data, return failure result
         
         # Step 3: Convert binary string to numeric (float) data using NumPy for efficient processing
         try:
             data = np.array(list(map(float, data)), dtype=np.float64)
         except ValueError:
-            return -1, False  # Invalid data format, return failure
+            return -7, False  # Invalid data format, return failure
 
         # Step 4: Split data into 3D points (x, y, z coordinates)
         n = len(data) // 3  # Calculate the number of 3D points
         if n == 0:
-            return -1, False  # No valid 3D points
+            return -2, False  # No valid 3D points
 
         # Reshape the data into an array of shape (n, 3), where each row is a 3D point
         points = data[:n * 3].reshape(n, 3)

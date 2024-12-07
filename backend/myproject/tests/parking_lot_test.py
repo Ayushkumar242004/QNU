@@ -13,18 +13,18 @@ class ParkingLotTest:
         data = data.replace(',', '').strip()
 
         if not data:
-            return None 
+            return None
         
         # Step 1: Sanitize and validate input
         if not data or len(data.strip()) % 2 != 0:
-            return -1, False
+            return -2, False
 
         # Remove commas or spaces, then convert to numpy array of integers (0 or 1)
         data = np.fromiter(map(int, data.replace(',', '').strip()), dtype=np.int8)
 
         n = len(data) // 2  # Each pair represents coordinates
         if n == 0:
-            return -1, False  # Not enough data to form even a single point
+            return -2, False  # Not enough data to form even a single point
 
         # Step 2: Reshape the data into coordinates (2D array with two columns)
         coordinates = data.reshape(n, 2)
@@ -54,7 +54,7 @@ class ParkingLotTest:
         variance = n * (np.pi / 4) * (1 - (np.pi / 4))
         
         if variance == 0:
-            return -1, False  # Avoid division by zero if variance is zero
+            return -6, False  # Avoid division by zero if variance is zero
         
         z_statistic = (parked - expected) / np.sqrt(variance)
         p_value = 2 * (1 - norm.cdf(abs(z_statistic)))

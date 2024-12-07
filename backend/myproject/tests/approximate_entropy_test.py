@@ -33,7 +33,7 @@ class ApproximateEntropy:
         if length_of_binary_data < pattern_length:
             if verbose:
                 print(f"Binary data is too short: {length_of_binary_data} < {pattern_length}")
-            return -1, False
+            return -2, False
 
         # Augment the binary data to create overlapping patterns
         binary_data += binary_data[:pattern_length + 1]

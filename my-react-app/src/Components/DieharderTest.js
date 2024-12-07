@@ -82,61 +82,86 @@ const DieharderTest = ({ getData, onBinaryDataChange }) => {
     setFrequencyTestChecked(!frequencyTestChecked);
   };
 
+  // useEffect(() => {
+  //   const runBinarySpacingsTestData = async () => {
+  //     try {
+  //       const response = await axios.get(
+  //         `http://localhost:8000/run_binary_spacings_test/?binary_data=${initialInputData}`
+  //       );
+  //       setrunBinarySpacingsTestResponse(response.data);
+  //     } catch (error) {
+  //       console.error("Error executing frequency test:", error);
+  //     }
+  //   };
+
+  //   runBinarySpacingsTestData();
+  // }, [initialInputData]);
+
   useEffect(() => {
     const runBinarySpacingsTestData = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:8000/run_binary_spacings_test/?binary_data=${initialInputData}`
+        const response = await axios.post(
+          'http://localhost:8000/run_binary_spacings_test/', // POST endpoint
+          { binary_data: initialInputData } // JSON payload
         );
-        setrunBinarySpacingsTestResponse(response.data);
+        console.log("hi spacing test", response);
+        setrunBinarySpacingsTestResponse(response.data); // Update response state
       } catch (error) {
-        console.error("Error executing frequency test:", error);
+        console.error("Error executing binary spacings test:", error);
       }
     };
-
+  
     runBinarySpacingsTestData();
-  }, [initialInputData]);
-
+  }, [initialInputData]); // Dependency array
+  
 
   useEffect(() => {
     const runParkingLotTestData = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:8000/run_parking_lot_test/?binary_data=${initialInputData}`
+        const response = await axios.post(
+          'http://localhost:8000/run_parking_lot_test/', // The POST endpoint
+          { binary_data: initialInputData } // Data sent in the POST request body
         );
         setrunParkingLotTestResponse(response.data);
       } catch (error) {
-        console.error("Error executing frequency test:", error);
+        console.error("Error executing parking lot test:", error);
       }
     };
-
-    runParkingLotTestData();
+  
+    if (initialInputData) {
+      runParkingLotTestData();
+    }
   }, [initialInputData]);
+  
 
   useEffect(() => {
     const runOverlapping5PermutationTestData = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:8000/run_overlapping_5_test/?binary_data=${initialInputData}`
+        const response = await axios.post(
+          'http://localhost:8000/run_overlapping_5_test/',
+          { binary_data: initialInputData }
         );
         setrunOverlapping5PermutationTestResponse(response.data);
       } catch (error) {
-        console.error("Error executing frequency test:", error);
+        console.error("Error executing overlapping 5 test:", error);
       }
     };
 
+    if (initialInputData){
     runOverlapping5PermutationTestData();
+    }
   }, [initialInputData]);
 
   useEffect(() => {
     const runMinimumDistanceTestData = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:8000/run_minimum_distance_test/?binary_data=${initialInputData}`
+        const response = await axios.post(
+          'http://localhost:8000/run_minimum_distance_test/',
+          { binary_data: initialInputData }
         );
         setrunMinimumDistanceTestResponse(response.data);
       } catch (error) {
-        console.error("Error executing frequency test:", error);
+        console.error("Error executing minimum distance test:", error);
       }
     };
 
@@ -146,12 +171,13 @@ const DieharderTest = ({ getData, onBinaryDataChange }) => {
   useEffect(() => {
     const run31MatrixTestData = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:8000/run_31matrix_test/?binary_data=${initialInputData}`
+        const response = await axios.post(
+          'http://localhost:8000/run_31matrix_test/',
+          { binary_data: initialInputData }
         );
         setrun31MatrixTestResponse(response.data);
       } catch (error) {
-        console.error("Error executing frequency test:", error);
+        console.error("Error executing 31 matrix test:", error);
       }
     };
 
@@ -161,12 +187,13 @@ const DieharderTest = ({ getData, onBinaryDataChange }) => {
   useEffect(() => {
     const runSpheresTestData = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:8000/run_spheres_test/?binary_data=${initialInputData}`
+        const response = await axios.post(
+        'http://localhost:8000/run_spheres_test/',
+        { binary_data: initialInputData }
         );
         setrunSpeheresTestResponse(response.data);
       } catch (error) {
-        console.error("Error executing frequency test:", error);
+        console.error("Error executing spheres test:", error);
       }
     };
 
@@ -178,12 +205,13 @@ const DieharderTest = ({ getData, onBinaryDataChange }) => {
   useEffect(() => {
     const run32MatrixTestData = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:8000/run_32matrix_test/?binary_data=${initialInputData}`
+        const response = await axios.post(
+          'http://localhost:8000/run_32matrix_test/',
+          { binary_data: initialInputData }
         );
         setrun32MatrixTestResponse(response.data);
       } catch (error) {
-        console.error("Error executing frequency test:", error);
+        console.error("Error executing 32 matrix test:", error);
       }
     };
 
@@ -193,12 +221,13 @@ const DieharderTest = ({ getData, onBinaryDataChange }) => {
   useEffect(() => {
     const runCrapsTestData = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:8000/run_craps_test/?binary_data=${initialInputData}`
+        const response = await axios.post(
+          'http://localhost:8000/run_craps_test/',
+          { binary_data: initialInputData }
         );
         setrunCrapsTestResponse(response.data);
       } catch (error) {
-        console.error("Error executing frequency test:", error);
+        console.error("Error executing craps test:", error);
       }
     };
 
@@ -211,12 +240,13 @@ const DieharderTest = ({ getData, onBinaryDataChange }) => {
   useEffect(() => {
     const runBitstreamTestData = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:8000/run_bitstream_test/?binary_data=${initialInputData}`
+        const response = await axios.post(
+          'http://localhost:8000/run_bitstream_test/',
+          { binary_data: initialInputData }
         );
         setrunBitstreamTestResponse(response.data);
       } catch (error) {
-        console.error("Error executing frequency test:", error);
+        console.error("Error executing bitstream test:", error);
       }
     };
 
@@ -228,12 +258,13 @@ const DieharderTest = ({ getData, onBinaryDataChange }) => {
   useEffect(() => {
     const rungcdTestData = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:8000/run_gcd_test/?binary_data=${initialInputData}`
+        const response = await axios.post(
+          'http://localhost:8000/run_gcd_test/',
+          { binary_data: initialInputData }
         );
         setrungcdTestResponse(response.data);
       } catch (error) {
-        console.error("Error executing frequency test:", error);
+        console.error("Error executing gcd test:", error);
       }
     };
 
@@ -245,12 +276,13 @@ const DieharderTest = ({ getData, onBinaryDataChange }) => {
   useEffect(() => {
     const runopsoTestData = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:8000/run_opso_test/?binary_data=${initialInputData}`
+        const response = await axios.post(
+          'http://localhost:8000/run_opso_test/',
+          { binary_data: initialInputData }
         );
         setrunopsoTestResponse(response.data);
       } catch (error) {
-        console.error("Error executing frequency test:", error);
+        console.error("Error executing opso test:", error);
       }
     };
 
@@ -260,12 +292,13 @@ const DieharderTest = ({ getData, onBinaryDataChange }) => {
   useEffect(() => {
     const runoqsoTestData = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:8000/run_oqso_test/?binary_data=${initialInputData}`
+        const response = await axios.post(
+          'http://localhost:8000/run_oqso_test/',
+          { binary_data: initialInputData }
         );
         setrunoqsoTestResponse(response.data);
       } catch (error) {
-        console.error("Error executing frequency test:", error);
+        console.error("Error executing oqso test:", error);
       }
     };
 
@@ -275,12 +308,13 @@ const DieharderTest = ({ getData, onBinaryDataChange }) => {
   useEffect(() => {
     const runoneStreamTestData = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:8000/run_count_one_test/?binary_data=${initialInputData}`
+        const response = await axios.post(
+          'http://localhost:8000/run_count_one_test/',
+          { binary_data: initialInputData }
         );
         setrunoneStreamTestResponse(response.data);
       } catch (error) {
-        console.error("Error executing frequency test:", error);
+        console.error("Error executing one stream test:", error);
       }
     };
 
@@ -291,12 +325,13 @@ const DieharderTest = ({ getData, onBinaryDataChange }) => {
   useEffect(() => {
     const rundnaTestData = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:8000/run_dna_test/?binary_data=${initialInputData}`
+        const response = await axios.post(
+          'http://localhost:8000/run_dna_test/',
+          { binary_data: initialInputData }
         );
         setrundnaTestResponse(response.data);
       } catch (error) {
-        console.error("Error executing frequency test:", error);
+        console.error("Error executing dna test:", error);
       }
     };
 
@@ -308,12 +343,13 @@ const DieharderTest = ({ getData, onBinaryDataChange }) => {
   useEffect(() => {
     const runoneByteTestData = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:8000/run_count_one_byte_test/?binary_data=${initialInputData}`
+        const response = await axios.post(
+          'http://localhost:8000/run_count_one_byte_test/',
+          { binary_data: initialInputData }
         );
         setrunoneByteTestResponse(response.data);
       } catch (error) {
-        console.error("Error executing frequency test:", error);
+        console.error("Error executing one byte test:", error);
       }
     };
 
@@ -325,12 +361,13 @@ const DieharderTest = ({ getData, onBinaryDataChange }) => {
   useEffect(() => {
     const rungcdSimpleTestData = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:8000/run_simple_gcd_test/?binary_data=${initialInputData}`
+        const response = await axios.post(
+        'http://localhost:8000/run_simple_gcd_test/',
+        { binary_data: initialInputData }
         );
         setrungcdSimpleTestResponse(response.data);
       } catch (error) {
-        console.error("Error executing frequency test:", error);
+        console.error("Error executing gcd simple test:", error);
       }
     };
 
@@ -342,12 +379,13 @@ const DieharderTest = ({ getData, onBinaryDataChange }) => {
   useEffect(() => {
     const rungeneralisedMinimumDistanceTestData = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:8000/run_general_minimum_distance_test/?binary_data=${initialInputData}`
+        const response = await axios.post(
+          'http://localhost:8000/run_general_minimum_distance_test/',
+          { binary_data: initialInputData }
         );
         setrungeneralisedMinimumTestResponse(response.data);
       } catch (error) {
-        console.error("Error executing frequency test:", error);
+        console.error("Error executing generalised minimum test:", error);
       }
     };
 
@@ -359,12 +397,13 @@ const DieharderTest = ({ getData, onBinaryDataChange }) => {
   useEffect(() => {
     const runu01LinearComplexityTestData = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:8000/run_u01_linear_complexity_test/?binary_data=${initialInputData}`
+        const response = await axios.post(
+          'http://localhost:8000/run_u01_linear_complexity_test/',
+          { binary_data: initialInputData }
         );
         setrunu01LinearComplexityTestResponse(response.data);
       } catch (error) {
-        console.error("Error executing frequency test:", error);
+        console.error("Error executing linear complexity test:", error);
       }
     };
 
@@ -377,12 +416,13 @@ const DieharderTest = ({ getData, onBinaryDataChange }) => {
   useEffect(() => {
     const runu01LongestSubstringTestData = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:8000/run_u01_longest_repeated_substring_test/?binary_data=${initialInputData}`
+        const response = await axios.post(
+          'http://localhost:8000/run_u01_longest_repeated_substring_test/',
+          { binary_data: initialInputData }
         );
         setrunu01LongestSubstringTestResponse(response.data);
       } catch (error) {
-        console.error("Error executing frequency test:", error);
+        console.error("Error executing longest substring test:", error);
       }
     };
 
@@ -395,12 +435,13 @@ const DieharderTest = ({ getData, onBinaryDataChange }) => {
   useEffect(() => {
     const runmatrixRankTestData = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:8000/run_matrix_rank_test/?binary_data=${initialInputData}`
+        const response = await axios.post(
+          'http://localhost:8000/run_matrix_rank_test/',
+          { binary_data: initialInputData }
         );
         setrunmatrixRankTestResponse(response.data);
       } catch (error) {
-        console.error("Error executing frequency test:", error);
+        console.error("Error executing matrix rank test:", error);
       }
     };
 
@@ -413,8 +454,8 @@ const DieharderTest = ({ getData, onBinaryDataChange }) => {
     if (buttonName === 'Report generation') {
       
         // Optionally, you can then redirect the user or perform other actions
-        window.location.href = `http://localhost:8000/pdf-report-dieharder/?binary_data=${encodeURIComponent(initialInputData[0])}`;
-       
+        // window.location.href = `http://localhost:8000/pdf-report-dieharder/?binary_data=${encodeURIComponent(initialInputData[0])}`;
+        window.open(`http://localhost:8000/pdf-report-dieharder/?binary_data=${encodeURIComponent(initialInputData[0])}`, '_blank');
       
     }
     else if (buttonName === 'Graph generation') {
@@ -423,7 +464,8 @@ const DieharderTest = ({ getData, onBinaryDataChange }) => {
       
       // Redirect with binary data as query parameter
       console.log("hi my binary data is: ",initialInputData[0])
-      window.location.href = `http://localhost:8000/graph-generaion-dieharder/?binary_data=${encodeURIComponent(initialInputData[0])}`;
+      // window.location.href = `http://localhost:8000/graph-generaion-dieharder/?binary_data=${encodeURIComponent(initialInputData[0])}`;
+      window.open(`http://localhost:8000/graph-generaion-dieharder/?binary_data=${encodeURIComponent(initialInputData[0])}`, '_blank');
     }
     
    

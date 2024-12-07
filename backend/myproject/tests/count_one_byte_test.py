@@ -11,7 +11,7 @@ class CountThe1sByteTest:
             return None 
         
         if len(data) == 0:
-            return -1, False
+            return -2, False
         
         # Clean and convert input data to integers
         try:
@@ -26,7 +26,7 @@ class CountThe1sByteTest:
 
             # Check if the length of data is a multiple of 8
             if len(data) % 8 != 0:
-                raise ValueError("Input data length must be a multiple of 8.")
+                return -2, False
 
             n = len(data) // 8
             num_chunks = min(8, n)  # Use up to 8 threads or fewer based on data size
@@ -58,10 +58,10 @@ class CountThe1sByteTest:
 
         except ValueError as e:
             print(f"ValueError: {e}")
-            return -1, False  # Return -1 if there's a ValueError
+            return -7, False  # Return -1 if there's a ValueError
         except Exception as e:
             print(f"Error: {e}")
-            return -1, False  # Return -1 for any other error
+            return -4, False  # Return -1 for any other error
 
     @staticmethod
     def process_chunk(chunk, chunk_size):

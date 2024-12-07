@@ -10,7 +10,7 @@ class FrequencyTest:
         Monobit test for randomness.
         """
         if len(binary_data) == 0:
-            return (0.00000, False, 'Error: Not enough data to run this test')
+            return (-2, False)
 
         length_of_bit_string = len(binary_data)
 
@@ -62,15 +62,15 @@ class FrequencyTest:
         length_of_bit_string = len(binary_data)
 
         if block_size <= 0:
-            return -1, False  # Ensure we always return some p_value
+            return -2, False  # Ensure we always return some p_value
 
         if length_of_bit_string < block_size:
-            return -1, False  # Return (-1, False) if not enough data
+            return -2, False  # Return (-1, False) if not enough data
 
         number_of_blocks = floor(length_of_bit_string / block_size)
 
         if number_of_blocks <= 1:
-            return -1, False
+            return -2, False
 
         def process_block(start_index):
             block_data = binary_data[start_index:start_index + block_size]

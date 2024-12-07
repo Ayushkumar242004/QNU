@@ -46,7 +46,7 @@ class Matrix:
         """
         length_of_binary_data = len(binary_data)
         if length_of_binary_data == 0:
-            return (0.00000, False, 'Error: Not enough data to run this test')
+            return (-2, False, 'Error: Not enough data to run this test')
 
         shape = (rows_in_matrix, columns_in_matrix)
         block_size = rows_in_matrix * columns_in_matrix
@@ -96,4 +96,4 @@ class Matrix:
 
             return (p_value, (p_value >= 0.01))
         else:
-            return (-1.0, False)
+            return (-2.0, False)

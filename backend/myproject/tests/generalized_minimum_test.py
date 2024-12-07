@@ -31,7 +31,7 @@ class GeneralizedMinimumDistanceTest:
         # Check if there are enough data points for the given dimension
         n = len(cleaned_data)
         if n < d + 1:
-            return -1, False  # Not enough data points for the test
+            return -2, False  # Not enough data points for the test
 
         # Reshape data into coordinates of dimension 'd'
         coords = np.array([cleaned_data[i:i + d] for i in range(n - d + 1)])

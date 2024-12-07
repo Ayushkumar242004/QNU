@@ -20,12 +20,16 @@ const GridContainer = ({binaryDataString}) => {
       // Example binary data
       const binaryData = '1101010101010101'; // Replace with actual binary data
       
-      // Redirect with binary data as query parameter
-      window.location.href = `http://localhost:8000/graph-generation/?binary_data=${encodeURIComponent(binaryData)}`;
+      // // Redirect with binary data as query parameter
+      // window.location.href = `http://localhost:8000/graph-generation/?binary_data=${encodeURIComponent(binaryData)}`;
+      const graphUrl = `http://localhost:8000/graph-generation/?binary_data=${encodeURIComponent(binaryData)}`;
+      window.open(graphUrl, '_blank'); // Opens in a new tab
     }
     
    
   };
+
+  
 
   // Define button names
   const buttonNames = [

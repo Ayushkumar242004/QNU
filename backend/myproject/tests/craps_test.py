@@ -49,7 +49,7 @@ class CrapsTest:
         try:
             data = np.array(list(map(int, data)), dtype=np.int8)
         except ValueError:
-            return -1, False  # Invalid data
+            return -2, False  # Invalid data
 
         # Divide data into chunks for threading
         total_chunks = (len(data) + chunk_size - 1) // chunk_size  # Ceiling division
@@ -74,7 +74,7 @@ class CrapsTest:
 
         total_games = total_wins + total_losses
         if total_games == 0:
-            return -1, False  # No games played
+            return -2, False  # No games played
 
         expected_wins = total_games * (244 / 495)  # Approximate win probability in craps
         variance = total_games * (244 / 495) * (1 - (244 / 495))

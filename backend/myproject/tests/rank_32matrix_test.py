@@ -28,18 +28,18 @@ class Ranks32x32MatricesTest:
 
         # Step 2: Check if there is enough data for at least one 32x32 matrix
         if len(data) < 32 * 32:
-            return -1, False  # Insufficient data, return failure
+            return -2, False  # Insufficient data, return failure
 
         # Step 3: Convert binary string to integer data using NumPy for efficiency
         try:
             data = np.array(list(map(int, data)), dtype=np.int8)
         except ValueError:
-            return -1, False  # Invalid data, return failure
+            return -2, False  # Invalid data, return failure
 
         # Step 4: Calculate number of matrices
         n = len(data) // (32 * 32)
         if n == 0:
-            return -1, False  # No valid matrices, return failure
+            return -2, False  # No valid matrices, return failure
 
         counts = np.zeros(3)  # For rank 32, 31, and less than 31
 

@@ -13,7 +13,7 @@ class SpectralTest:
 
         # Check if binary_data is empty after filtering
         if length_of_binary_data == 0:
-            return -1, False  # Return (-1, False) if no valid input
+            return -2, False  # Return (-2, False) if no valid input
 
         # Convert '0's and '1's to -1 and +1 using numpy array for parallel operation
         plus_one_minus_one = array([1 if char == '1' else -1 for char in binary_data])

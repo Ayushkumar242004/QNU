@@ -19,7 +19,7 @@ class TestU01MatrixRankTest:
         
         # Ensure there is enough data to form matrices
         if len(data) < m * m:
-            return -1, False
+            return -2, False
 
         n = len(data) // (m * m)  # Number of matrices
         

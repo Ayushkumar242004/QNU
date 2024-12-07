@@ -13,8 +13,8 @@ class BitstreamTest:
         # Clean the input string: keep only '0' and '1'
         clean_data = ''.join(filter(lambda x: x in '01', data))
         
-        if len(clean_data) == 0:
-            return -1, False  # Return a default value if no valid binary data
+        if len(clean_data) < 8:
+            return -2, False  # Return a default value if no valid binary data
 
         # Convert the cleaned string of binary data to a list of integers (0s and 1s)
         data_array = np.array([int(bit) for bit in clean_data], dtype=int)  # Convert to integer array

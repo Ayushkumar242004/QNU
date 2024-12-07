@@ -26,49 +26,55 @@ class RandomExcursions:
 
     @staticmethod
     def random_excursions_test(binary_data: str, target_state=-1):
-        # Convert binary string to +1 and -1 steps
-        li_data = [1 if bit == '1' else -1 for bit in binary_data]
-        cumulative_sum = [0] + [sum(li_data[:i+1]) for i in range(len(li_data))]
+        try:
+            # Convert binary string to +1 and -1 steps
+            li_data = [1 if bit == '1' else -1 for bit in binary_data]
+            cumulative_sum = [0] + [sum(li_data[:i+1]) for i in range(len(li_data))]
 
-        cycles = []
-        start_idx = 0
-        # Create cycles between zero-crossings
-        for i in range(1, len(cumulative_sum)):
-            if cumulative_sum[i] == 0:
-                cycles.append(array(cumulative_sum[start_idx:i+1]))
-                start_idx = i
+            cycles = []
+            start_idx = 0
+            # Create cycles between zero-crossings
+            for i in range(1, len(cumulative_sum)):
+                if cumulative_sum[i] == 0:
+                    cycles.append(array(cumulative_sum[start_idx:i+1]))
+                    start_idx = i
 
-        # Parallelize state count calculations for cycles
-        def calculate_state_counts(cycles_batch):
-            return [len(where(cycle == target_state)[0]) for cycle in cycles_batch]
+            # Parallelize state count calculations for cycles
+            def calculate_state_counts(cycles_batch):
+                return [len(where(cycle == target_state)[0]) for cycle in cycles_batch]
 
-        # Split cycles for parallel processing
-        batch_size = max(1, len(cycles) // 8)
-        cycles_batches = [cycles[i:i + batch_size] for i in range(0, len(cycles), batch_size)]
-        
-        state_count = []
-        with ThreadPoolExecutor() as executor:
-            futures = {executor.submit(calculate_state_counts, batch): batch for batch in cycles_batches}
-            for future in as_completed(futures):
-                state_count.extend(future.result())
-        
-        state_count = clip(array(state_count), 0, 5)
+            # Split cycles for parallel processing
+            batch_size = max(1, len(cycles) // 8)
+            cycles_batches = [cycles[i:i + batch_size] for i in range(0, len(cycles), batch_size)]
+            
+            state_count = []
+            with ThreadPoolExecutor() as executor:
+                futures = {executor.submit(calculate_state_counts, batch): batch for batch in cycles_batches}
+                for future in as_completed(futures):
+                    state_count.extend(future.result())
+            
+            state_count = clip(array(state_count), 0, 5)
 
-        # Calculate observed values and expected values
-        su = [(state_count == cycle).sum() for cycle in range(6)]
-        
-        num_cycles = len(cycles)
-        pi = array([RandomExcursions.get_pi_value(uu, target_state) for uu in range(6)])
-        inner_term = num_cycles * pi
+            # Calculate observed values and expected values
+            su = [(state_count == cycle).sum() for cycle in range(6)]
+            
+            num_cycles = len(cycles)
+            pi = array([RandomExcursions.get_pi_value(uu, target_state) for uu in range(6)])
+            inner_term = num_cycles * pi
 
-        # Add epsilon to avoid divide-by-zero errors
-        epsilon = 1e-10
-        xObs = sum((array(su) - inner_term) ** 2 / (inner_term + epsilon))
-        chi_sq = xObs
-        p_value = gammaincc(2.5, xObs / 2.0)
-        
-        result = p_value >= 0.01
-        return chi_sq, p_value, result
+            # Add epsilon to avoid divide-by-zero errors
+            epsilon = 1e-10
+            xObs = sum((array(su) - inner_term) ** 2 / (inner_term + epsilon))
+            chi_sq = xObs
+            p_value = gammaincc(2.5, xObs / 2.0)
+            
+            result = p_value >= 0.01
+            return chi_sq, p_value, result
+
+        except Exception as e:
+            # Log the exception if necessary
+            print(f"Error in random_excursions_test: {e}")
+            return -4, False
 
     @staticmethod
     def variant_test(binary_data: str, target_state=1, verbose=False):

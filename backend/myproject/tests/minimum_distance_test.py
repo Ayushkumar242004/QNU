@@ -14,7 +14,7 @@ class MinimumDistanceTest:
         
         # Ensure that data length is even (to split into 2D coordinates)
         if len(data) < 4 or len(data) % 2 != 0:
-            return -1, False  # Not enough data to form at least 2 points
+            return -2, False  # Not enough data to form at least 2 points
 
         try:
             n = len(data) // 2  # Number of 2D points
@@ -22,7 +22,7 @@ class MinimumDistanceTest:
             # Create 2D points directly as numpy array
             points = np.array([[int(data[2 * i]), int(data[2 * i + 1])] for i in range(n)])
         except ValueError:
-            return -1, False  # Return failure if data contains invalid characters
+            return -2, False  # Return failure if data contains invalid characters
 
         try:
             # Use KDTree for efficient nearest neighbor search
@@ -59,4 +59,4 @@ class MinimumDistanceTest:
             return p_value, (p_value >= 0.01)
 
         except Exception as e:
-            return -1, False  # Catch-all for any unexpected issues
+            return -4, False  # Catch-all for any unexpected issues

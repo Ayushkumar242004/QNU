@@ -12,10 +12,10 @@ class DNATest:
         
         # Check for empty input data
         if len(data) == 0:
-            return -1, False
+            return -2, False
         
         if not isinstance(data, str) or len(data) < 10:
-            return -1, False
+            return -2, False
         
         n = len(data)
         subsequence_count = defaultdict(int)  # Dictionary to count occurrences of each subsequence

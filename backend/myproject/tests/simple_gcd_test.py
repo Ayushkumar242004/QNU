@@ -12,7 +12,7 @@ class MarsagliaTsangSimpleGCDTest:
         if not data:
             return None
         if data is None or len(data) == 0:
-            return -1, False
+            return -2, False
 
         try:
             # Preprocess the input data to remove invalid characters
@@ -61,7 +61,7 @@ class MarsagliaTsangSimpleGCDTest:
 
         except ValueError as e:
             print(f"ValueError: {e}")
-            return -1, False  # Return -1 if there's a ValueError
+            return -7, False  # Return -1 if there's a ValueError
         except Exception as e:
             print(f"Error: {e}")
-            return -1, False  # Return -1 for any other error
+            return -4, False  # Return -1 for any other error

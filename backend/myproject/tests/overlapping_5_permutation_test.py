@@ -28,17 +28,17 @@ class Overlapping5PermutationTest:
             return None 
 
         if len(data) < 5:
-            return -1, False  # Insufficient data, return failure result
+            return -2, False  # Insufficient data, return failure result
 
         # Step 2: Convert binary string to a NumPy array for efficient processing
         try:
             data = np.fromiter(map(int, data), dtype=np.int8)
         except ValueError:
-            return -1, False  # Return failure if the data is invalid
+            return -2, False  # Return failure if the data is invalid
 
         k = len(data) // 5  # Number of 5-permutation blocks
         if k == 0:
-            return -1, False  # Not enough data to create even one block
+            return -2, False  # Not enough data to create even one block
 
         # Step 3: Use NumPy to create a lookup table for all 120 5-permutations
         counts = np.zeros(120, dtype=int)  # 5! = 120 permutations

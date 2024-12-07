@@ -22,7 +22,7 @@ class Universal:
         pattern_size = 5
 
         if length_of_binary_data == 0:
-            return (0.00000, False, 'Error: Not enough data to run this test')
+            return (-2, False, 'Error: Not enough data to run this test')
 
         # Determine pattern size based on length of binary data
         thresholds = [387840, 904960, 2068480, 4654080, 10342400, 22753280, 49643520, 107560960, 231669760, 496435200]
@@ -65,4 +65,4 @@ class Universal:
 
             return (p_value, (p_value >= 0.01))
         else:
-            return (-1.0, False)
+            return (-2, False)

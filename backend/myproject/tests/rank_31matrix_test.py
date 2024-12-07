@@ -25,13 +25,13 @@ class Ranks31x31MatricesTest:
 
         # Check if data has at least 31x31 elements
         if len(data) < 31 * 31:
-            return -1, False  # Return (-1, False) if insufficient data
+            return -2, False  # Return (-1, False) if insufficient data
 
         try:
             # Ensure data consists of integers (handling any non-integer characters)
             data = [int(bit) for bit in data]
         except ValueError:
-            return -1, False  # Return (-1, False) if conversion to int fails
+            return -2, False  # Return (-1, False) if conversion to int fails
 
         n = len(data) // (31 * 31)  # Number of 31x31 matrices
 

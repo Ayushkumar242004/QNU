@@ -21,12 +21,12 @@ class TestU01LinearComplexityTest:
             # Ensure the input data length is sufficient for block size 'm'
             n = len(data)
             if n < m:
-                return -1, False  # Not enough data for even one block
+                return -2, False  # Not enough data for even one block
 
             # Compute block count
             block_count = n // m
             if block_count == 0:
-                return -1, False  # Prevent division by zero
+                return -2, False  # Prevent division by zero
 
             # Split data into blocks
             blocks = [data[i * m:(i + 1) * m] for i in range(block_count)]
@@ -57,7 +57,7 @@ class TestU01LinearComplexityTest:
 
         except ZeroDivisionError:
             print("Error: Block count or variance is zero, cannot divide.")
-            return -1, False  # Return -1 for any division errors
+            return -3, False  # Return -1 for any division errors
         except Exception as e:
             print(f"Error: {e}")
-            return -1, False  # Return -1 for any other error
+            return -4, False  # Return -1 for any other error

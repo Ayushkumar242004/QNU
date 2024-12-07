@@ -6,10 +6,11 @@ class BirthdaySpacingsTest:
     @staticmethod
     def BirthdaySpacingsTest(data, t=512, verbose=False):
         if not data:
-            return -1, False
+            return -2, False
         # Return -1, False if no data or insufficient data
-        if len(data) < 2:
-            return -1, False
+        if len(data) < 3:
+            return -2, False
+        
         
         try:
             # Convert binary string data into an array of integers
@@ -39,7 +40,7 @@ class BirthdaySpacingsTest:
             k = len(spacings)
 
             if k == 0 or np.mean(spacings) == 0:
-                return -1, False  # Handle cases where spacings are empty or mean is zero
+                return -5, False  # Handle cases where spacings are empty or mean is zero
 
             # Chi-square calculation based on spacings
             chi_square = (np.var(spacings) / np.mean(spacings)) * (k - 1)
@@ -53,4 +54,4 @@ class BirthdaySpacingsTest:
         except Exception as e:
             # Catch any other exceptions and return -1, False
             print(f"Error: {e}")
-            return -1, False
+            return -4, False
