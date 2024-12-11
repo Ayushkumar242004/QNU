@@ -38,6 +38,16 @@ from tests.u01_linear_complexity_test import TestU01LinearComplexityTest
 from tests.u01_longest_substring_test import TestU01LongestRepeatedSubstringTest
 from tests.u01_matrix_rank_test import TestU01MatrixRankTest
 
+from datetime import datetime
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.styles import getSampleStyleSheet,ParagraphStyle
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image
+from reportlab.lib import colors
+from io import BytesIO
+from django.http import HttpResponse
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
+
 from django.http import StreamingHttpResponse
 from reportlab.platypus import Image
 from reportlab.lib.utils import ImageReader
@@ -905,69 +915,143 @@ def run_adaptive_statistical_test(request):
         return JsonResponse({"error": "Invalid request method. Use POST."}, status=405)
 
 
-def run_random_excursions_test(request):
-    # Example binary data received from the request query parameters
-    binary_data = request.GET.get('binary_data', '')
+# def run_random_excursions_test(request):
+#     # Example binary data received from the request query parameters
+#     binary_data = request.GET.get('binary_data', '')
    
-    if not binary_data:
+#     if not binary_data:
+#                 # If there's no binary data, return an empty JsonResponse with status code 204 (No Content)
+#                 return JsonResponse({}, status=204)
+#     # Print the request URL and parameters
+#     # print("Request URL:", request.get_full_path())
+#     # print("Request Parameters:", request.GET)
+
+#     # Call the block_frequency method
+#     chi_sq, p_value, result = RandomExcursions.random_excursions_test(binary_data)
+
+#     print("run_random_excursions_test chi^2:", chi_sq)
+#     print("run_random_excursions_test p_value:", p_value)
+#     print("run_random_excursions_test Result:", result)
+    
+#     # Prepare the response data
+#     if result:
+#         result_text = "random number"
+#     else:
+#         result_text = "non-random number"
+        
+#     response_data = {
+#         'chi^2': chi_sq,
+#         'p_value': p_value,
+#         'result': result_text
+#     }
+
+#     return JsonResponse(response_data)
+
+
+@csrf_exempt  # Use only in development; ensure CSRF handling in production
+def run_random_excursions_test(request):
+    if request.method == 'POST':
+        try:
+            # Parse JSON data
+            data = json.loads(request.body)
+            binary_data = data.get('binary_data', '')
+
+            if not binary_data:
                 # If there's no binary data, return an empty JsonResponse with status code 204 (No Content)
                 return JsonResponse({}, status=204)
-    # Print the request URL and parameters
-    # print("Request URL:", request.get_full_path())
-    # print("Request Parameters:", request.GET)
 
-    # Call the block_frequency method
-    chi_sq, p_value, result = RandomExcursions.random_excursions_test(binary_data)
+            print('hi random excursions', binary_data)
 
-    print("run_random_excursions_test chi^2:", chi_sq)
-    print("run_random_excursions_test p_value:", p_value)
-    print("run_random_excursions_test Result:", result)
-    
-    # Prepare the response data
-    if result:
-        result_text = "random number"
-    else:
-        result_text = "non-random number"
+            # Call the random_excursions_test method from RandomExcursions
+            chi_sq, p_value, result = RandomExcursions.random_excursions_test(binary_data)
+
+            print("run_random_excursions_test chi^2:", chi_sq)
+            print("run_random_excursions_test p_value:", p_value)
+            print("run_random_excursions_test Result:", result)
+
+            # Prepare the response data
+            result_text = "random number" if result else "non-random number"
+            response_data = {
+                'chi^2': chi_sq,
+                'p_value': p_value,
+                'result': result_text
+            }
+
+            return JsonResponse(response_data)
         
-    response_data = {
-        'chi^2': chi_sq,
-        'p_value': p_value,
-        'result': result_text
-    }
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON data"}, status=400)
 
-    return JsonResponse(response_data)
+    else:
+        return JsonResponse({"error": "Invalid request method. Use POST."}, status=405)
 
+
+# def random_excursions_variant_test(request):
+#     # Example binary data received from the request query parameters
+#     binary_data = request.GET.get('binary_data', '')
+
+#     if not binary_data:
+#             # If there's no binary data, return an empty JsonResponse with status code 204 (No Content)
+#             return JsonResponse({}, status=204)
+#     # Print the request URL and parameters
+#     # print("Request URL:", request.get_full_path())
+#     # print("Request Parameters:", request.GET)
+
+#     # Call the block_frequency method
+#     chi_sq, p_value, result = RandomExcursions.variant_test(binary_data)
+
+#     print("random_excursions_variant_test chi^2:", chi_sq)
+#     print("random_excursions_variant_test p_value:", p_value)
+#     print("random_excursions_variant_test Result:", result)
+    
+#     # Prepare the response data
+#     if result:
+#         result_text = "random number"
+#     else:
+#         result_text = "non-random number"
+        
+#     response_data = {
+#         'chi^2': chi_sq,
+#         'p_value': p_value,
+#         'result': result_text
+#     }
+
+#     return JsonResponse(response_data)
+
+@csrf_exempt 
 def random_excursions_variant_test(request):
-    # Example binary data received from the request query parameters
-    binary_data = request.GET.get('binary_data', '')
+    if request.method == 'POST':
+        try:
+            # Parse JSON data from the request body
+            data = json.loads(request.body)
+            binary_data = data.get('binary_data', '')
 
-    if not binary_data:
-            # If there's no binary data, return an empty JsonResponse with status code 204 (No Content)
-            return JsonResponse({}, status=204)
-    # Print the request URL and parameters
-    # print("Request URL:", request.get_full_path())
-    # print("Request Parameters:", request.GET)
+            if not binary_data:
+                # If there's no binary data, return an empty JsonResponse with status code 204 (No Content)
+                return JsonResponse({}, status=204)
 
-    # Call the block_frequency method
-    chi_sq, p_value, result = RandomExcursions.variant_test(binary_data)
+            # Call the variant_test method from RandomExcursions
+            chi_sq, p_value, result = RandomExcursions.variant_test(binary_data)
 
-    print("random_excursions_variant_test chi^2:", chi_sq)
-    print("random_excursions_variant_test p_value:", p_value)
-    print("random_excursions_variant_test Result:", result)
+            print("random_excursions_variant_test chi^2:", chi_sq)
+            print("random_excursions_variant_test p_value:", p_value)
+            print("random_excursions_variant_test Result:", result)
+
+            # Prepare the response data
+            result_text = "random number" if result else "non-random number"
+            response_data = {
+                'chi^2': chi_sq,
+                'p_value': p_value,
+                'result': result_text
+            }
+
+            return JsonResponse(response_data)
+
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON data"}, status=400)
     
-    # Prepare the response data
-    if result:
-        result_text = "random number"
     else:
-        result_text = "non-random number"
-        
-    response_data = {
-        'chi^2': chi_sq,
-        'p_value': p_value,
-        'result': result_text
-    }
-
-    return JsonResponse(response_data)
+        return JsonResponse({"error": "Invalid request method. Use POST."}, status=405)
 
 
 # def run_binary_matrix_rank_text(request):
@@ -1139,20 +1223,25 @@ def run_birthday_spacings_test(request):
             # Parse JSON data
             data = json.loads(request.body)
             binary_data = data.get('binary_data', [])
+            print('data is printing:',binary_data)
 
-            if not isinstance(binary_data, list) or not binary_data:
-                # If there's no valid binary data, return an empty JsonResponse with status code 204 (No Content)
-                return JsonResponse({}, status=204)
+            
 
-            # Extract the first non-empty, non-whitespace string
-            filtered_binary_data = next((item for item in binary_data if item.strip()), None)
+            if isinstance(binary_data, list):
+                # If binary_data is a list, filter out any empty or whitespace-only strings
+                filtered_binary_data = next((item for item in binary_data if item.strip()), None)
+            elif isinstance(binary_data, str):
+                # If binary_data is a string, just use it directly
+                filtered_binary_data = binary_data.strip()  # Strip to remove any extra spaces or newlines
+            else:
+                # If neither string nor list, return an error
+                return JsonResponse({"error": "Invalid data format for binary_data"}, status=400)
 
             if not filtered_binary_data:
                 # If no valid binary string is found, return an error
                 return JsonResponse({"error": "No valid binary data provided"}, status=400)
 
-            print('hi spacing ', filtered_binary_data)
-
+            
             # Call the Birthday Spacings Test method
             p_value, result = BirthdaySpacingsTest.BirthdaySpacingsTest(filtered_binary_data)
 
@@ -1179,36 +1268,85 @@ def run_birthday_spacings_test(request):
         return JsonResponse({"error": "Invalid request method. Use POST."}, status=405)
 
 
-def run_bitstream_test(request):
-    # Example binary data received from the request query parameters
-    binary_data = request.GET.get('binary_data', '')
+# def run_bitstream_test(request):
+#     # Example binary data received from the request query parameters
+#     binary_data = request.GET.get('binary_data', '')
 
-    if not binary_data:
-        # If there's no binary data, return an empty JsonResponse with status code 204 (No Content)
-        return JsonResponse({}, status=204)
+#     if not binary_data:
+#         # If there's no binary data, return an empty JsonResponse with status code 204 (No Content)
+#         return JsonResponse({}, status=204)
     
-    # Print the request URL and parameters
-    # print("Request URL:", request.get_full_path())
-    # print("Request Parameters:", request.GET)
+#     # Print the request URL and parameters
+#     # print("Request URL:", request.get_full_path())
+#     # print("Request Parameters:", request.GET)
 
-    # Call the block_frequency method
-    p_value, result = BitstreamTest.BitstreamTest(binary_data)
+#     # Call the block_frequency method
+#     p_value, result = BitstreamTest.BitstreamTest(binary_data)
 
-    print("run_bitstream_test p_value:", p_value)
-    print("run_bitstream_test Result:", result)
+#     print("run_bitstream_test p_value:", p_value)
+#     print("run_bitstream_test Result:", result)
     
-    # Prepare the response data
-    if result:
-        result_text = "random number"
-    else:
-        result_text = "non-random number"
+#     # Prepare the response data
+#     if result:
+#         result_text = "random number"
+#     else:
+#         result_text = "non-random number"
         
-    response_data = {
-        'p_value': p_value,
-        'result': result_text
-    }
+#     response_data = {
+#         'p_value': p_value,
+#         'result': result_text
+#     }
 
-    return JsonResponse(response_data)
+#     return JsonResponse(response_data)
+
+
+def run_bitstream_test(request):
+    # Check if the request method is POST
+    if request.method == 'POST':
+        try:
+            # Parse JSON data from the request body
+            data = json.loads(request.body)
+            binary_data = data.get('binary_data', '')
+
+            # If there's no binary data, return an empty JsonResponse with status code 204 (No Content)
+            if not binary_data:
+                return JsonResponse({}, status=204)
+            
+            # Handle both string and list formats for binary_data
+            if isinstance(binary_data, str):
+                # If binary_data is a string, strip it of any leading/trailing spaces
+                filtered_binary_data = binary_data.strip()
+            elif isinstance(binary_data, list):
+                # If binary_data is a list, filter out any empty or whitespace-only strings
+                filtered_binary_data = next((item for item in binary_data if item.strip()), None)
+            else:
+                # If neither a string nor list, return an error
+                return JsonResponse({"error": "Invalid data format for binary_data"}, status=400)
+
+            # If no valid binary string is found, return an error
+            if not filtered_binary_data:
+                return JsonResponse({"error": "No valid binary data provided"}, status=400)
+
+            # Call the BitstreamTest method
+            p_value, result = BitstreamTest.BitstreamTest(filtered_binary_data)
+
+            # Prepare the response
+            result_text = "random number" if result else "non-random number"
+            response_data = {
+                'p_value': p_value,
+                'result': result_text
+            }
+
+            return JsonResponse(response_data)
+
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON data"}, status=400)
+        except Exception as e:
+            print("Error in run_bitstream_test:", str(e))
+            return JsonResponse({"error": "Internal server error"}, status=500)
+    else:
+        # If the request method is not POST
+        return JsonResponse({"error": "Invalid request method. Use POST."}, status=405)
 
 
 # def run_parking_lot_test(request):
@@ -1243,20 +1381,27 @@ def run_bitstream_test(request):
 def run_parking_lot_test(request):
     if request.method == 'POST':
         try:
-            # Parse JSON data
+            # Parse JSON data from the request body
             data = json.loads(request.body)
-            binary_data = data.get('binary_data', [])
+            binary_data = data.get('binary_data', '')
 
-            # Validate that binary_data is a list and not empty
-            if not isinstance(binary_data, list) or not binary_data:
-                # If there's no valid binary data, return an empty JsonResponse with status code 204 (No Content)
+            # If no binary_data is provided, return an empty JsonResponse with status code 204 (No Content)
+            if not binary_data:
                 return JsonResponse({}, status=204)
 
-            # Extract the first non-empty, non-whitespace string
-            filtered_binary_data = next((item for item in binary_data if item.strip()), None)
+            # Handle both string and list formats for binary_data
+            if isinstance(binary_data, str):
+                # If binary_data is a string, strip it of any leading/trailing spaces
+                filtered_binary_data = binary_data.strip()
+            elif isinstance(binary_data, list):
+                # If binary_data is a list, filter out any empty or whitespace-only strings
+                filtered_binary_data = next((item for item in binary_data if item.strip()), None)
+            else:
+                # If binary_data is neither a string nor a list, return an error
+                return JsonResponse({"error": "Invalid data format for binary_data"}, status=400)
 
+            # If no valid binary string is found, return an error
             if not filtered_binary_data:
-                # If no valid binary string is found, return an error
                 return JsonResponse({"error": "No valid binary data provided"}, status=400)
 
             print('Filtered binary data:', filtered_binary_data)
@@ -1284,6 +1429,7 @@ def run_parking_lot_test(request):
             print("Error in run_parking_lot_test:", str(e))
             return JsonResponse({"error": "Internal server error"}, status=500)
     else:
+        # If the request method is not POST
         return JsonResponse({"error": "Invalid request method. Use POST."}, status=405)
 
 # def run_overlapping_5_test(request):
@@ -1325,12 +1471,23 @@ def run_overlapping_5_test(request):
             data = json.loads(request.body)
             binary_data = data.get('binary_data', [])
 
-            if not isinstance(binary_data, list) or not binary_data:
-                # If there's no valid binary data, return an empty JsonResponse with status code 204 (No Content)
+            if not binary_data:
                 return JsonResponse({}, status=204)
 
+
+            if isinstance(binary_data, str):
+                # If binary_data is a string, strip it of any leading/trailing spaces
+                filtered_binary_data = binary_data.strip()
+            elif isinstance(binary_data, list):
+                # If binary_data is a list, filter out any empty or whitespace-only strings
+                filtered_binary_data = next((item for item in binary_data if item.strip()), None)
+            else:
+                # If binary_data is neither a string nor a list, return an error
+                return JsonResponse({"error": "Invalid data format for binary_data"}, status=400)
+
+
             # Extract the first non-empty, non-whitespace string
-            filtered_binary_data = next((item for item in binary_data if item.strip()), None)
+            # filtered_binary_data = next((item for item in binary_data if item.strip()), None)
 
             if not filtered_binary_data:
                 # If no valid binary string is found, return an error
@@ -1369,12 +1526,23 @@ def run_minimum_distance_test(request):
             data = json.loads(request.body)
             binary_data = data.get('binary_data', [])
 
-            if not isinstance(binary_data, list) or not binary_data:
-                # If there's no valid binary data, return an empty JsonResponse with status code 204 (No Content)
+            if not binary_data:
                 return JsonResponse({}, status=204)
 
+
+            if isinstance(binary_data, str):
+                # If binary_data is a string, strip it of any leading/trailing spaces
+                filtered_binary_data = binary_data.strip()
+            elif isinstance(binary_data, list):
+                # If binary_data is a list, filter out any empty or whitespace-only strings
+                filtered_binary_data = next((item for item in binary_data if item.strip()), None)
+            else:
+                # If binary_data is neither a string nor a list, return an error
+                return JsonResponse({"error": "Invalid data format for binary_data"}, status=400)
+
+
             # Extract the first non-empty, non-whitespace string
-            filtered_binary_data = next((item for item in binary_data if item.strip()), None)
+            # filtered_binary_data = next((item for item in binary_data if item.strip()), None)
 
             if not filtered_binary_data:
                 # If no valid binary string is found, return an error
@@ -1446,12 +1614,23 @@ def run_31matrix_test(request):
             data = json.loads(request.body)
             binary_data = data.get('binary_data', [])
 
-            if not isinstance(binary_data, list) or not binary_data:
-                # If there's no valid binary data, return an empty JsonResponse with status code 204 (No Content)
+            if not binary_data:
                 return JsonResponse({}, status=204)
 
+
+            if isinstance(binary_data, str):
+                # If binary_data is a string, strip it of any leading/trailing spaces
+                filtered_binary_data = binary_data.strip()
+            elif isinstance(binary_data, list):
+                # If binary_data is a list, filter out any empty or whitespace-only strings
+                filtered_binary_data = next((item for item in binary_data if item.strip()), None)
+            else:
+                # If binary_data is neither a string nor a list, return an error
+                return JsonResponse({"error": "Invalid data format for binary_data"}, status=400)
+
+
             # Extract the first non-empty, non-whitespace string
-            filtered_binary_data = next((item for item in binary_data if item.strip()), None)
+            # filtered_binary_data = next((item for item in binary_data if item.strip()), None)
 
             if not filtered_binary_data:
                 # If no valid binary string is found, return an error
@@ -1490,13 +1669,23 @@ def run_spheres_test(request):
             data = json.loads(request.body)
             binary_data = data.get('binary_data', [])
 
-            if not isinstance(binary_data, list) or not binary_data:
-                # If there's no valid binary data, return an empty JsonResponse with status code 204 (No Content)
+            if not binary_data:
                 return JsonResponse({}, status=204)
 
+
+            if isinstance(binary_data, str):
+                # If binary_data is a string, strip it of any leading/trailing spaces
+                filtered_binary_data = binary_data.strip()
+            elif isinstance(binary_data, list):
+                # If binary_data is a list, filter out any empty or whitespace-only strings
+                filtered_binary_data = next((item for item in binary_data if item.strip()), None)
+            else:
+                # If binary_data is neither a string nor a list, return an error
+                return JsonResponse({"error": "Invalid data format for binary_data"}, status=400)
+
+
             # Extract the first non-empty, non-whitespace string
-            filtered_binary_data = next((item for item in binary_data if item.strip()), None)
-            print('hi spheres', filtered_binary_data)
+            
             if not filtered_binary_data:
                 # If no valid binary string is found, return an error
                 return JsonResponse({"error": "No valid binary data provided"}, status=400)
@@ -1534,12 +1723,19 @@ def run_32matrix_test(request):
             data = json.loads(request.body)
             binary_data = data.get('binary_data', [])
 
-            if not isinstance(binary_data, list) or not binary_data:
-                # If there's no valid binary data, return an empty JsonResponse with status code 204 (No Content)
+            if not binary_data:
                 return JsonResponse({}, status=204)
 
-            # Extract the first non-empty, non-whitespace string
-            filtered_binary_data = next((item for item in binary_data if item.strip()), None)
+
+            if isinstance(binary_data, str):
+                # If binary_data is a string, strip it of any leading/trailing spaces
+                filtered_binary_data = binary_data.strip()
+            elif isinstance(binary_data, list):
+                # If binary_data is a list, filter out any empty or whitespace-only strings
+                filtered_binary_data = next((item for item in binary_data if item.strip()), None)
+            else:
+                # If binary_data is neither a string nor a list, return an error
+                return JsonResponse({"error": "Invalid data format for binary_data"}, status=400)
 
             if not filtered_binary_data:
                 # If no valid binary string is found, return an error
@@ -1580,11 +1776,19 @@ def run_craps_test(request):
             data = json.loads(request.body)
             binary_data = data.get('binary_data', [])
 
-            if not isinstance(binary_data, list) or not binary_data:
+            if not binary_data:
                 return JsonResponse({}, status=204)
 
-            # Extract the first non-empty, non-whitespace string
-            filtered_binary_data = next((item for item in binary_data if item.strip()), None)
+
+            if isinstance(binary_data, str):
+                # If binary_data is a string, strip it of any leading/trailing spaces
+                filtered_binary_data = binary_data.strip()
+            elif isinstance(binary_data, list):
+                # If binary_data is a list, filter out any empty or whitespace-only strings
+                filtered_binary_data = next((item for item in binary_data if item.strip()), None)
+            else:
+                # If binary_data is neither a string nor a list, return an error
+                return JsonResponse({"error": "Invalid data format for binary_data"}, status=400)
 
             if not filtered_binary_data:
                 return JsonResponse({"error": "No valid binary data provided"}, status=400)
@@ -1621,11 +1825,19 @@ def run_bitstream_test(request):
             data = json.loads(request.body)
             binary_data = data.get('binary_data', [])
 
-            if not isinstance(binary_data, list) or not binary_data:
+            if not binary_data:
                 return JsonResponse({}, status=204)
 
-            # Extract the first non-empty, non-whitespace string
-            filtered_binary_data = next((item for item in binary_data if item.strip()), None)
+
+            if isinstance(binary_data, str):
+                # If binary_data is a string, strip it of any leading/trailing spaces
+                filtered_binary_data = binary_data.strip()
+            elif isinstance(binary_data, list):
+                # If binary_data is a list, filter out any empty or whitespace-only strings
+                filtered_binary_data = next((item for item in binary_data if item.strip()), None)
+            else:
+                # If binary_data is neither a string nor a list, return an error
+                return JsonResponse({"error": "Invalid data format for binary_data"}, status=400)
 
             if not filtered_binary_data:
                 return JsonResponse({"error": "No valid binary data provided"}, status=400)
@@ -1662,11 +1874,19 @@ def run_gcd_test(request):
             data = json.loads(request.body)
             binary_data = data.get('binary_data', [])
 
-            if not isinstance(binary_data, list) or not binary_data:
+            if not binary_data:
                 return JsonResponse({}, status=204)
 
-            # Extract the first non-empty, non-whitespace string
-            filtered_binary_data = next((item for item in binary_data if item.strip()), None)
+
+            if isinstance(binary_data, str):
+                # If binary_data is a string, strip it of any leading/trailing spaces
+                filtered_binary_data = binary_data.strip()
+            elif isinstance(binary_data, list):
+                # If binary_data is a list, filter out any empty or whitespace-only strings
+                filtered_binary_data = next((item for item in binary_data if item.strip()), None)
+            else:
+                # If binary_data is neither a string nor a list, return an error
+                return JsonResponse({"error": "Invalid data format for binary_data"}, status=400)
 
             if not filtered_binary_data:
                 return JsonResponse({"error": "No valid binary data provided"}, status=400)
@@ -1704,11 +1924,19 @@ def run_opso_test(request):
             data = json.loads(request.body)
             binary_data = data.get('binary_data', [])
 
-            if not isinstance(binary_data, list) or not binary_data:
+            if not binary_data:
                 return JsonResponse({}, status=204)
 
-            # Extract the first non-empty, non-whitespace string
-            filtered_binary_data = next((item for item in binary_data if item.strip()), None)
+
+            if isinstance(binary_data, str):
+                # If binary_data is a string, strip it of any leading/trailing spaces
+                filtered_binary_data = binary_data.strip()
+            elif isinstance(binary_data, list):
+                # If binary_data is a list, filter out any empty or whitespace-only strings
+                filtered_binary_data = next((item for item in binary_data if item.strip()), None)
+            else:
+                # If binary_data is neither a string nor a list, return an error
+                return JsonResponse({"error": "Invalid data format for binary_data"}, status=400)
 
             if not filtered_binary_data:
                 return JsonResponse({"error": "No valid binary data provided"}, status=400)
@@ -1745,11 +1973,19 @@ def run_oqso_test(request):
             data = json.loads(request.body)
             binary_data = data.get('binary_data', [])
 
-            if not isinstance(binary_data, list) or not binary_data:
+            if not binary_data:
                 return JsonResponse({}, status=204)
 
-            # Extract the first non-empty, non-whitespace string
-            filtered_binary_data = next((item for item in binary_data if item.strip()), None)
+
+            if isinstance(binary_data, str):
+                # If binary_data is a string, strip it of any leading/trailing spaces
+                filtered_binary_data = binary_data.strip()
+            elif isinstance(binary_data, list):
+                # If binary_data is a list, filter out any empty or whitespace-only strings
+                filtered_binary_data = next((item for item in binary_data if item.strip()), None)
+            else:
+                # If binary_data is neither a string nor a list, return an error
+                return JsonResponse({"error": "Invalid data format for binary_data"}, status=400)
 
             if not filtered_binary_data:
                 return JsonResponse({"error": "No valid binary data provided"}, status=400)
@@ -1786,11 +2022,19 @@ def run_dna_test(request):
             data = json.loads(request.body)
             binary_data = data.get('binary_data', [])
 
-            if not isinstance(binary_data, list) or not binary_data:
+            if not binary_data:
                 return JsonResponse({}, status=204)
 
-            # Extract the first non-empty, non-whitespace string
-            filtered_binary_data = next((item for item in binary_data if item.strip()), None)
+
+            if isinstance(binary_data, str):
+                # If binary_data is a string, strip it of any leading/trailing spaces
+                filtered_binary_data = binary_data.strip()
+            elif isinstance(binary_data, list):
+                # If binary_data is a list, filter out any empty or whitespace-only strings
+                filtered_binary_data = next((item for item in binary_data if item.strip()), None)
+            else:
+                # If binary_data is neither a string nor a list, return an error
+                return JsonResponse({"error": "Invalid data format for binary_data"}, status=400)
 
             if not filtered_binary_data:
                 return JsonResponse({"error": "No valid binary data provided"}, status=400)
@@ -1827,12 +2071,21 @@ def run_count_one_test(request):
             data = json.loads(request.body)
             binary_data = data.get('binary_data', [])
 
-            if not isinstance(binary_data, list) or not binary_data:
+            if not binary_data:
                 return JsonResponse({}, status=204)
 
-            # Extract the first non-empty, non-whitespace string
-            filtered_binary_data = next((item for item in binary_data if item.strip()), None)
 
+            if isinstance(binary_data, str):
+                # If binary_data is a string, strip it of any leading/trailing spaces
+                filtered_binary_data = binary_data.strip()
+            elif isinstance(binary_data, list):
+                # If binary_data is a list, filter out any empty or whitespace-only strings
+                filtered_binary_data = next((item for item in binary_data if item.strip()), None)
+            else:
+                # If binary_data is neither a string nor a list, return an error
+                return JsonResponse({"error": "Invalid data format for binary_data"}, status=400)
+
+            
             if not filtered_binary_data:
                 return JsonResponse({"error": "No valid binary data provided"}, status=400)
 
@@ -1869,14 +2122,19 @@ def run_count_one_byte_test(request):
             data = json.loads(request.body)
             binary_data = data.get('binary_data', [])
 
-            if not isinstance(binary_data, list) or not binary_data:
+            if not binary_data:
                 return JsonResponse({}, status=204)
 
-            # Extract the first non-empty, non-whitespace string
-            filtered_binary_data = next((item for item in binary_data if item.strip()), None)
-            print('hi one byte test', filtered_binary_data)
-            if not filtered_binary_data:
-                return JsonResponse({"error": "No valid binary data provided"}, status=400)
+
+            if isinstance(binary_data, str):
+                # If binary_data is a string, strip it of any leading/trailing spaces
+                filtered_binary_data = binary_data.strip()
+            elif isinstance(binary_data, list):
+                # If binary_data is a list, filter out any empty or whitespace-only strings
+                filtered_binary_data = next((item for item in binary_data if item.strip()), None)
+            else:
+                # If binary_data is neither a string nor a list, return an error
+                return JsonResponse({"error": "Invalid data format for binary_data"}, status=400)
 
             # Call the CountThe1sByteTest method with the binary data
             p_value, result = CountThe1sByteTest.CountThe1sByteTest(filtered_binary_data)
@@ -1906,12 +2164,20 @@ def run_simple_gcd_test(request):
             data = json.loads(request.body)
             binary_data = data.get('binary_data', [])
 
-            if not isinstance(binary_data, list) or not binary_data:
+            if not binary_data:
                 return JsonResponse({}, status=204)
 
-            # Extract the first non-empty, non-whitespace string
-            filtered_binary_data = next((item for item in binary_data if item.strip()), None)
-          
+
+            if isinstance(binary_data, str):
+                # If binary_data is a string, strip it of any leading/trailing spaces
+                filtered_binary_data = binary_data.strip()
+            elif isinstance(binary_data, list):
+                # If binary_data is a list, filter out any empty or whitespace-only strings
+                filtered_binary_data = next((item for item in binary_data if item.strip()), None)
+            else:
+                # If binary_data is neither a string nor a list, return an error
+                return JsonResponse({"error": "Invalid data format for binary_data"}, status=400)
+
             if not filtered_binary_data:
                 return JsonResponse({"error": "No valid binary data provided"}, status=400)
 
@@ -1946,12 +2212,20 @@ def run_general_minimum_distance_test(request):
             data = json.loads(request.body)
             binary_data = data.get('binary_data', [])
 
-            if not isinstance(binary_data, list) or not binary_data:
+            if not binary_data:
                 return JsonResponse({}, status=204)
 
-            # Extract the first non-empty, non-whitespace string
-            filtered_binary_data = next((item for item in binary_data if item.strip()), None)
-          
+
+            if isinstance(binary_data, str):
+                # If binary_data is a string, strip it of any leading/trailing spaces
+                filtered_binary_data = binary_data.strip()
+            elif isinstance(binary_data, list):
+                # If binary_data is a list, filter out any empty or whitespace-only strings
+                filtered_binary_data = next((item for item in binary_data if item.strip()), None)
+            else:
+                # If binary_data is neither a string nor a list, return an error
+                return JsonResponse({"error": "Invalid data format for binary_data"}, status=400)
+
             if not filtered_binary_data:
                 return JsonResponse({"error": "No valid binary data provided"}, status=400)
 
@@ -1985,12 +2259,20 @@ def run_u01_linear_complexity_test(request):
             data = json.loads(request.body)
             binary_data = data.get('binary_data', [])
 
-            if not isinstance(binary_data, list) or not binary_data:
+            if not binary_data:
                 return JsonResponse({}, status=204)
 
-            # Extract the first non-empty, non-whitespace string
-            filtered_binary_data = next((item for item in binary_data if item.strip()), None)
-          
+
+            if isinstance(binary_data, str):
+                # If binary_data is a string, strip it of any leading/trailing spaces
+                filtered_binary_data = binary_data.strip()
+            elif isinstance(binary_data, list):
+                # If binary_data is a list, filter out any empty or whitespace-only strings
+                filtered_binary_data = next((item for item in binary_data if item.strip()), None)
+            else:
+                # If binary_data is neither a string nor a list, return an error
+                return JsonResponse({"error": "Invalid data format for binary_data"}, status=400)
+
             if not filtered_binary_data:
                 return JsonResponse({"error": "No valid binary data provided"}, status=400)
 
@@ -2024,12 +2306,20 @@ def run_u01_longest_repeated_substring_test(request):
             data = json.loads(request.body)
             binary_data = data.get('binary_data', [])
 
-            if not isinstance(binary_data, list) or not binary_data:
+            if not binary_data:
                 return JsonResponse({}, status=204)
 
-            # Extract the first non-empty, non-whitespace string
-            filtered_binary_data = next((item for item in binary_data if item.strip()), None)
-          
+
+            if isinstance(binary_data, str):
+                # If binary_data is a string, strip it of any leading/trailing spaces
+                filtered_binary_data = binary_data.strip()
+            elif isinstance(binary_data, list):
+                # If binary_data is a list, filter out any empty or whitespace-only strings
+                filtered_binary_data = next((item for item in binary_data if item.strip()), None)
+            else:
+                # If binary_data is neither a string nor a list, return an error
+                return JsonResponse({"error": "Invalid data format for binary_data"}, status=400)
+
             if not filtered_binary_data:
                 return JsonResponse({"error": "No valid binary data provided"}, status=400)
 
@@ -2063,12 +2353,20 @@ def run_matrix_rank_test(request):
             data = json.loads(request.body)
             binary_data = data.get('binary_data', [])
 
-            if not isinstance(binary_data, list) or not binary_data:
+            if not binary_data:
                 return JsonResponse({}, status=204)
 
-            # Extract the first non-empty, non-whitespace string
-            filtered_binary_data = next((item for item in binary_data if item.strip()), None)
-          
+
+            if isinstance(binary_data, str):
+                # If binary_data is a string, strip it of any leading/trailing spaces
+                filtered_binary_data = binary_data.strip()
+            elif isinstance(binary_data, list):
+                # If binary_data is a list, filter out any empty or whitespace-only strings
+                filtered_binary_data = next((item for item in binary_data if item.strip()), None)
+            else:
+                # If binary_data is neither a string nor a list, return an error
+                return JsonResponse({"error": "Invalid data format for binary_data"}, status=400)
+
             if not filtered_binary_data:
                 return JsonResponse({"error": "No valid binary data provided"}, status=400)
 
@@ -2267,39 +2565,159 @@ def sse_binary_example_view(request):
 
 global_graph_image=None
 
+# @csrf_exempt
+# def create_graph(request):
+   
 
+#     binary_data = request.GET.get('binary_data', '')
+
+#     # data = json.loads(request.body)
+#     # binary_data = data.get('binary_data', '')
+
+#     print('gotcha', binary_data)
+
+#     if not binary_data:
+#         return HttpResponse("Binary data is required.", status=400)
+
+#     # Dictionary to store p-values with error handling
+#     test_p_values = {}
+
+#     # Wrap test calls in try-except blocks and ensure p-values are numeric
+#     def safe_test_call(test_func, test_name, binary_data):
+#         result = test_func(binary_data)
+
+#         p_value = result[0]
+#         # print(test_name, p_value)
+
+#         # If p_value is not defined (None) or equals -1, return 0
+#         if p_value is None or p_value == -1  or str(p_value).strip() == '':
+#             return 0
+#         if p_value > 1:
+#             return 0
+#         try:
+#             return float(p_value)
+#         except ZeroDivisionError:
+#             # Handle float division by zero
+#             return 0
+
+
+    
+#     test_p_values['Frequency Monobit'] = safe_test_call(FrequencyTest.monobit_test, 'Frequency Monobit', binary_data)
+#     test_p_values['Frequency Block Test'] = safe_test_call(FrequencyTest.block_frequency, 'Frequency Block Test', binary_data)
+#     test_p_values['Approximate Entropy Test'] = safe_test_call(ApproximateEntropy.approximate_entropy_test, 'Approximate Entropy Test', binary_data)
+#     test_p_values['Runs Test'] = safe_test_call(RunTest.run_test, 'Runs Test', binary_data)
+#     test_p_values['Longest Run of Ones Test'] = safe_test_call(RunTest.longest_one_block_test, 'Longest Run of Ones Test', binary_data)
+#     test_p_values['Binary Matrix Rank Test'] = safe_test_call(Matrix.binary_matrix_rank_text, 'Binary Matrix Rank Test', binary_data)
+#     test_p_values['Discrete Fourier Transform Test'] = safe_test_call(SpectralTest.spectral_test, 'Discrete Fourier Transform Test', binary_data)
+#     test_p_values['Non-overlapping Template Match Test'] = safe_test_call(TemplateMatching.non_overlapping_test, 'Non-overlapping Template Match Test', binary_data)
+#     test_p_values['Overlapping Template Match Test'] = safe_test_call(TemplateMatching.overlapping_patterns, 'Overlapping Template Match Test', binary_data)
+#     test_p_values['Maurer’s Universal Statistical Test'] = safe_test_call(Universal.statistical_test, 'Maurer’s Universal Statistical Test', binary_data)
+#     test_p_values['Linear Complexity Test'] = safe_test_call(ComplexityTest.linear_complexity_test, 'Linear Complexity Test', binary_data)
+#     test_p_values['Serial Test'] = safe_test_call(Serial.serial_test, 'Serial Test', binary_data)
+#     test_p_values['Cumulative Sums Test'] = safe_test_call(CumulativeSums.cumulative_sums_test, 'Cumulative Sums Test', binary_data)
+#     test_p_values['Random Excursions Test'] = safe_test_call(RandomExcursions.random_excursions_test, 'Random Excursions Test', binary_data)
+#     test_p_values['Random Excursions Variant Test'] = safe_test_call(RandomExcursions.variant_test, 'Random Excursions Variant Test', binary_data)
+#     test_p_values['Autocorrelation Test'] = safe_test_call(AutocorrelationTest.autocorrelation_test, 'Autocorrelation Test', binary_data)
+#     test_p_values['Adaptive Statistical Test'] = safe_test_call(AdaptiveStatisticalTest.adaptive_statistical_test, 'Adaptive Statistical Test', binary_data)
+
+    
+   
+#     valid_tests = {k: (0 if v is None or v > 1 else v) for k, v in test_p_values.items()}
+
+#     if not valid_tests:
+#         return HttpResponse("No valid test results to plot.", status=400)
+
+#     # Extract test names and p-values for plotting
+#     x = list(valid_tests.keys())
+#     y = list(valid_tests.values())
+
+#     # Create the plot
+#     fig, ax = plt.subplots(figsize=(16, 9))
+
+#     # Assign color based on the p-value threshold (0.05)
+#     colors = ['green' if p > 0.01 else 'blue' for p in y]
+
+#     # Plot the histogram with colors based on the condition
+#     ax.bar(x, y, color=colors)
+
+#     # Draw a horizontal dotted red line at p_value = 0.05
+#     ax.axhline(y=0.01, color='red', linestyle='--', linewidth=2, label='p-value = 0.01')
+
+#     # Label the axes
+#     ax.set_xlabel('NIST Statistical Tests', fontsize=20)
+#     ax.set_ylabel('P-values', fontsize=20)
+#     ax.set_title('P-values of NIST Statistical Tests', fontsize=20)
+
+#     # Set y-axis ticks at intervals of 0.1
+#     ax.set_yticks([i / 10.0 for i in range(0, 11)])  # 0.0, 0.1, 0.2, ..., 1.0
+
+#     # Set y-axis limits between 0 and 1
+#     ax.set_ylim(0, 1)
+
+#     # Rotate x-axis labels for better visibility
+#     plt.xticks(rotation=45, ha='right',fontsize=12)
+
+#     # Ensure tight layout to avoid overlap
+#     plt.tight_layout()
+
+#     # Add a custom legend for the color categories
+#     from matplotlib.patches import Patch
+#     legend_elements = [Patch(facecolor='green', edgecolor='green', label='Random (p > 0.01)'),
+#                        Patch(facecolor='blue', edgecolor='blue', label='Non-random (p ≤ 0.01)')]
+
+#     # Add the legend for the colors
+#     ax.legend(handles=legend_elements, loc='upper right', prop={'size': 14})
+
+#     # Create a BytesIO object to hold the image
+#     buf = io.BytesIO()
+#     plt.savefig(buf, format='png', bbox_inches='tight')
+#     buf.seek(0)
+
+#     global_graph_image = buf
+#     print("Hi", global_graph_image)
+
+#     # Close the figure to free memory
+#     plt.close(fig)
+
+#     # Return the image as a response
+#     # return HttpResponse(buf, content_type='image/png')
+#     return HttpResponse(buf, content_type='image/png')
+
+@csrf_exempt
 def create_graph(request):
-   
+    # Parse the incoming JSON data
+    try:
+        data = json.loads(request.body)
+        binary_data = data.get('binary_data', '')
+        print('Received binary data:', binary_data)
+    except json.JSONDecodeError as e:
+        print('Error parsing JSON:', e)
+        return HttpResponse("Invalid JSON data.", status=400)
 
-    binary_data = request.GET.get('binary_data', '')
-
-   
+    # Check if binary_data is empty
     if not binary_data:
         return HttpResponse("Binary data is required.", status=400)
 
     # Dictionary to store p-values with error handling
     test_p_values = {}
 
-    # Wrap test calls in try-except blocks and ensure p-values are numeric
+    # Function to safely call each test
     def safe_test_call(test_func, test_name, binary_data):
-        result = test_func(binary_data)
-
-        p_value = result[0]
-        # print(test_name, p_value)
-
-        # If p_value is not defined (None) or equals -1, return 0
-        if p_value is None or p_value == -1  or str(p_value).strip() == '':
-            return 0
-        if p_value > 1:
-            return 0
         try:
+            result = test_func(binary_data)
+            p_value = result[0]
+            print(f'{test_name} p_value:', p_value)  # Log the p-value
+            # Handle invalid or out-of-range p-values
+            if p_value is None or p_value == -1 or str(p_value).strip() == '':
+                return 0
+            if p_value > 1:
+                return 0
             return float(p_value)
-        except ZeroDivisionError:
-            # Handle float division by zero
+        except Exception as e:
+            print(f'Error in {test_name}:', e)
             return 0
 
-
-    
+    # Call the statistical tests and collect p-values
     test_p_values['Frequency Monobit'] = safe_test_call(FrequencyTest.monobit_test, 'Frequency Monobit', binary_data)
     test_p_values['Frequency Block Test'] = safe_test_call(FrequencyTest.block_frequency, 'Frequency Block Test', binary_data)
     test_p_values['Approximate Entropy Test'] = safe_test_call(ApproximateEntropy.approximate_entropy_test, 'Approximate Entropy Test', binary_data)
@@ -2318,10 +2736,11 @@ def create_graph(request):
     test_p_values['Autocorrelation Test'] = safe_test_call(AutocorrelationTest.autocorrelation_test, 'Autocorrelation Test', binary_data)
     test_p_values['Adaptive Statistical Test'] = safe_test_call(AdaptiveStatisticalTest.adaptive_statistical_test, 'Adaptive Statistical Test', binary_data)
 
-    
-   
+    # Filter valid tests where p-value is within a valid range
     valid_tests = {k: (0 if v is None or v > 1 else v) for k, v in test_p_values.items()}
+    print('Valid tests:', valid_tests)
 
+    # If no valid tests are found, return an error
     if not valid_tests:
         return HttpResponse("No valid test results to plot.", status=400)
 
@@ -2332,39 +2751,37 @@ def create_graph(request):
     # Create the plot
     fig, ax = plt.subplots(figsize=(16, 9))
 
-    # Assign color based on the p-value threshold (0.05)
+    # Assign color based on the p-value threshold (0.01)
     colors = ['green' if p > 0.01 else 'blue' for p in y]
 
     # Plot the histogram with colors based on the condition
     ax.bar(x, y, color=colors)
 
-    # Draw a horizontal dotted red line at p_value = 0.05
+    # Draw a horizontal dotted red line at p_value = 0.01
     ax.axhline(y=0.01, color='red', linestyle='--', linewidth=2, label='p-value = 0.01')
 
     # Label the axes
-    ax.set_xlabel('NIST Statistical Tests', fontsize=14)
-    ax.set_ylabel('P-values', fontsize=14)
-    ax.set_title('P-values of NIST Statistical Tests', fontsize=16)
+    ax.set_xlabel('NIST Statistical Tests', fontsize=20)
+    ax.set_ylabel('P-values', fontsize=20)
+    ax.set_title('P-values of NIST Statistical Tests', fontsize=20)
 
     # Set y-axis ticks at intervals of 0.1
-    ax.set_yticks([i / 10.0 for i in range(0, 11)])  # 0.0, 0.1, 0.2, ..., 1.0
+    ax.set_yticks([i / 10.0 for i in range(0, 11)])
 
     # Set y-axis limits between 0 and 1
     ax.set_ylim(0, 1)
 
     # Rotate x-axis labels for better visibility
-    plt.xticks(rotation=45, ha='right')
+    plt.xticks(rotation=45, ha='right', fontsize=12)
 
     # Ensure tight layout to avoid overlap
     plt.tight_layout()
 
-    # Add a custom legend for the color categories
     from matplotlib.patches import Patch
+    # Add a custom legend for the color categories
     legend_elements = [Patch(facecolor='green', edgecolor='green', label='Random (p > 0.01)'),
                        Patch(facecolor='blue', edgecolor='blue', label='Non-random (p ≤ 0.01)')]
-
-    # Add the legend for the colors
-    ax.legend(handles=legend_elements, loc='upper right')
+    ax.legend(handles=legend_elements, loc='upper right', prop={'size': 14})
 
     # Create a BytesIO object to hold the image
     buf = io.BytesIO()
@@ -2381,10 +2798,20 @@ def create_graph(request):
     # return HttpResponse(buf, content_type='image/png')
     return HttpResponse(buf, content_type='image/png')
 
+@csrf_exempt
 def create_graph_dieharder(request):
    
 
-    binary_data = request.GET.get('binary_data', '')
+    # binary_data = request.GET.get('binary_data', '')
+
+    try:
+        data = json.loads(request.body)
+        binary_data = data.get('binary_data', '')
+        print('Received binary data:', binary_data)
+    except json.JSONDecodeError as e:
+        print('Error parsing JSON:', e)
+        return HttpResponse("Invalid JSON data.", status=400)
+
 
     binary_data = binary_data.replace('%0A', '').replace('%20', '').replace(' ', '').replace('\n', '').replace('\r', '')
     
@@ -2459,9 +2886,9 @@ def create_graph_dieharder(request):
     ax.axhline(y=0.01, color='red', linestyle='--', linewidth=2, label='p-value = 0.01')
 
     # Label the axes
-    ax.set_xlabel('NIST Statistical Tests', fontsize=14)
-    ax.set_ylabel('P-values', fontsize=14)
-    ax.set_title('P-values of Dieharder Tests', fontsize=16)
+    ax.set_xlabel('NIST Statistical Tests', fontsize=20)
+    ax.set_ylabel('P-values', fontsize=20)
+    ax.set_title('P-values of Dieharder Tests', fontsize=20)
 
     # Set y-axis ticks at intervals of 0.1
     ax.set_yticks([i / 10.0 for i in range(0, 11)])  # 0.0, 0.1, 0.2, ..., 1.0
@@ -2470,7 +2897,7 @@ def create_graph_dieharder(request):
     ax.set_ylim(0, 1)
 
     # Rotate x-axis labels for better visibility
-    plt.xticks(rotation=45, ha='right')
+    plt.xticks(rotation=45, ha='right', fontsize=12)
 
     # Ensure tight layout to avoid overlap
     plt.tight_layout()
@@ -2481,7 +2908,7 @@ def create_graph_dieharder(request):
                        Patch(facecolor='blue', edgecolor='blue', label='Non-random (p ≤ 0.01)')]
 
     # Add the legend for the colors
-    ax.legend(handles=legend_elements, loc='upper right')
+    ax.legend(handles=legend_elements, loc='upper right', prop={'size': 14})
 
     # Create a BytesIO object to hold the image
     buf = io.BytesIO()
@@ -2498,22 +2925,268 @@ def create_graph_dieharder(request):
     # return HttpResponse(buf, content_type='image/png')
     return HttpResponse(buf, content_type='image/png')
 
-from datetime import datetime
-from reportlab.lib.pagesizes import A4
-from reportlab.lib.styles import getSampleStyleSheet,ParagraphStyle
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image
-from reportlab.lib import colors
-from io import BytesIO
-from django.http import HttpResponse
-from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import letter
 
+
+
+
+# def generate_pdf_report(request):
+#     global global_graph_image
+
+    
+#     binary_data = request.GET.get('binary_data', '')
+
+    
+
+#     # Create an HttpResponse object with PDF headers
+#     graph_response = create_graph(request)
+#     graph_buffer = graph_response.content
+#     graph_image_io = BytesIO(graph_buffer)
+
+#     response = HttpResponse(content_type='application/pdf')
+#     response['Content-Disposition'] = 'inline; filename="report.pdf"'
+
+    
+
+#     # Set up the PDF buffer and document template with margins
+#     buffer = BytesIO()
+#     doc = SimpleDocTemplate(buffer, pagesize=A4,
+#                              rightMargin=10, leftMargin=10,
+#                              topMargin=10, bottomMargin=30, title="QNU Labs")
+
+    
+    
+    
+#     # Set up styles
+#     styles = getSampleStyleSheet()
+
+#     current_date = datetime.now().strftime("%B %d, %Y")  # Format as "December 06, 2024"
+
+#      # Add a paragraph with the current date
+#     date_style = ParagraphStyle('Date', parent=styles['Normal'], fontSize=10, fontName='Helvetica-Bold',  alignment=2, spaceAfter=10)
+#     date_paragraph = Paragraph(f"Date: {current_date}", date_style)
+
+#     # Add a headline (title)
+#     title = Paragraph("Report-QNu Labs", styles['Title'])
+#     title_space = Spacer(1, 0.0 * inch)  # Small spacer below the title
+
+
+    
+#     # Add subtitles with underlining
+#     subtitle_style = styles['Heading2']
+#     subtitle_style.fontName = 'Helvetica-Bold'
+#     subtitle_style.fontSize = 12
+#     subtitle_style.underline = True
+
+#     nist_subtitle = Paragraph("NIST Tests:", subtitle_style)
+#     graph_subtitle = Paragraph("Graphical Analysis:", subtitle_style)
+
+#     subtitle_space = Spacer(1, 0.0 * inch)  # Spacer below the subtitles
+
+#     # Initialize x to 0
+#     x = 0
+
+#     # Perform the tests and check results
+#     frequency_test_result = FrequencyTest.monobit_test(binary_data)[1]
+#     if frequency_test_result:
+#         x += 1
+
+#     frequency_test_block_result = FrequencyTest.block_frequency(binary_data)[1]
+#     if frequency_test_block_result:
+#         x += 1
+
+#     runs_test_result = RunTest.run_test(binary_data)[1]
+#     if runs_test_result:
+#         x += 1
+
+#     approximate_entropy_test_result = ApproximateEntropy.approximate_entropy_test(binary_data)[1]
+#     if approximate_entropy_test_result:
+#         x += 1
+
+#     longest_run_of_one_test_result = RunTest.longest_one_block_test(binary_data)[1]
+#     if longest_run_of_one_test_result:
+#         x += 1
+
+#     binary_matrix_rank_test_result = Matrix.binary_matrix_rank_text(binary_data)[1]
+#     if binary_matrix_rank_test_result:
+#         x += 1
+
+#     dft_test_result = SpectralTest.spectral_test(binary_data)[1]
+#     if dft_test_result:
+#         x += 1
+
+#     non_overlapping_test_result = TemplateMatching.non_overlapping_test(binary_data)[1]
+#     if non_overlapping_test_result:
+#         x += 1
+
+#     overlapping_test_result = TemplateMatching.overlapping_patterns(binary_data)[1]
+#     if overlapping_test_result:
+#         x += 1
+
+#     maurers_universal_test_result = Universal.statistical_test(binary_data)[1]
+#     if maurers_universal_test_result:
+#         x += 1
+
+#     linear_complexity_test_result = ComplexityTest.linear_complexity_test(binary_data)[1]
+#     if linear_complexity_test_result:
+#         x += 1
+
+#     serial_test_result = Serial.serial_test(binary_data)[1]
+#     if serial_test_result:
+#         x += 1
+
+#     cumulative_sums_test_result = CumulativeSums.cumulative_sums_test(binary_data)[1]
+#     if cumulative_sums_test_result:
+#         x += 1
+
+#     random_excursions_test_result = RandomExcursions.random_excursions_test(binary_data)[1]
+#     if random_excursions_test_result:
+#         x += 1
+
+#     random_excursion_variant_test_result = RandomExcursions.variant_test(binary_data)[1]
+#     if random_excursion_variant_test_result:
+#         x += 1
+
+#     autocorrelation_test_result = AutocorrelationTest.autocorrelation_test(binary_data)[1]
+#     if autocorrelation_test_result:
+#         x += 1
+
+#     adaptive_statistical_test_result = AdaptiveStatisticalTest.adaptive_statistical_test(binary_data)[1]
+#     if adaptive_statistical_test_result:
+#         x += 1
+
+#     # Now x contains the count of tests that returned True
+#     # print("Number of tests that returned True:", x)
+#     final_text='random number' if x > 10 else 'non-random number'
+
+
+#     # Dynamically set the result text based on the test outcome
+#     frequency_test_text = 'random number' if frequency_test_result else 'non-random number'
+#     frequency_test_block_text = 'random number' if frequency_test_block_result else 'non-random number'
+#     runs_text = 'random number' if runs_test_result else 'non-random number'
+#     approximate_entropy_text = 'random number' if approximate_entropy_test_result else 'non-random number'
+#     longest_run_of_ones_text = 'random number' if longest_run_of_one_test_result else 'non-random number'
+#     binary_matrix_rank_text = 'random number' if binary_matrix_rank_test_result else 'non-random number'
+#     dft_text = 'random number' if dft_test_result else 'non-random number'
+#     non_overlapping_text = 'random number' if non_overlapping_test_result else 'non-random number'
+#     overlapping_text = 'random number' if overlapping_test_result else 'non-random number'
+#     maurers_universal_text = 'random number' if maurers_universal_test_result else 'non-random number'
+#     linear_complexity_text = 'random number' if linear_complexity_test_result else 'non-random number'
+#     serial_text = 'random number' if serial_test_result else 'non-random number'
+#     cumulative_sums_text = 'random number' if cumulative_sums_test_result else 'non-random number'
+#     random_excursion_variant_text = 'random number' if random_excursion_variant_test_result else 'non-random number'
+#     random_excursion_text = 'random number' if random_excursions_test_result else 'non-random number'
+#     autocorrelation_text = 'random number' if autocorrelation_test_result else 'non-random number'
+#     adaptive_statistical_text = 'random number' if adaptive_statistical_test_result else 'non-random number'
+
+#     bold_red_style = ParagraphStyle(
+#     'BoldRed', 
+#     parent=styles['Normal'], 
+#     fontSize=12,          # Adjust the font size as needed
+#     fontName='Helvetica-Bold',  # Bold font
+#     textColor='red'       # Red color
+#     )
+
+#     bold_black_style = ParagraphStyle(
+#     'BoldBlack', 
+#     parent=styles['Normal'], 
+#     fontSize=12,          # Adjust the font size as needed
+#     fontName='Helvetica-Bold',  # Bold font
+#     textColor='black'       # Red color
+#     )
+#     # Sample Table Data for the first table with "Final Result" in the last row
+#     data1 = [
+#         [Paragraph('Test type', styles['Normal']), 'Result', 'Test type', 'Result'],
+#         [Paragraph('1. Frequency Test', styles['Normal']), frequency_test_text,
+#          Paragraph('2. Frequency Test within a Block', styles['Normal']), frequency_test_block_text],
+#         [Paragraph('3. Runs Test', styles['Normal']), runs_text,
+#          Paragraph('4. Test for the longest Run of Ones', styles['Normal']), longest_run_of_ones_text],
+#         [Paragraph('5. Binary Matrix Rank Test', styles['Normal']), binary_matrix_rank_text,
+#          Paragraph('6. Discrete Fourier Transform Test', styles['Normal']), dft_text],
+#         [Paragraph('7. Non-overlapping Template Match', styles['Normal']), non_overlapping_text,
+#          Paragraph('8. Overlapping Template Matching Test', styles['Normal']), overlapping_text],
+#         [Paragraph('9. Maurers Universal test', styles['Normal']), maurers_universal_text,
+#          Paragraph('10. Linear complexity Test', styles['Normal']), linear_complexity_text],
+#         [Paragraph('11. Serial Test', styles['Normal']), serial_text,
+#          Paragraph('12. Approximate Entropy Test', styles['Normal']), approximate_entropy_text],
+#         [Paragraph('13. Cumulative Sum Test', styles['Normal']), cumulative_sums_text,
+#          Paragraph('14. Random Excursions Test', styles['Normal']), random_excursion_text],
+#         [Paragraph('15. Random Excursions Variant Test', styles['Normal']), random_excursion_variant_text,
+#          Paragraph('16. Autocorrelation Test', styles['Normal']), autocorrelation_text],
+#         [Paragraph('17. Adaptive Statistical Test', styles['Normal']), adaptive_statistical_text],
+#         [Paragraph('Final Result', styles['Normal']), Paragraph(final_text, bold_red_style)],
+
+       
+#     ]
+
+#     # Adjust column widths
+#     colWidths = [2 * inch, 1.5 * inch, 2 * inch, 1.5 * inch]
+
+#     # Create the first table object with adjusted column widths
+#     table1 = Table(data1, colWidths=colWidths)
+
+#     # Apply styles to the first table
+#     table1.setStyle(TableStyle([
+#         ('BACKGROUND', (0, 0), (-1, 0), colors.blue),  # Header background color
+#         ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),  # Header text color
+#         ('ALIGN', (0, 0), (-1, -1), 'CENTER'),  # Center text alignment
+#         ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),  # Bold header
+#         ('FONTSIZE', (0, 0), (-1, -1), 10),  # Set font size
+#         ('GRID', (0, 0), (-1, -1), 1, colors.black),  # Add gridlines
+#         ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),  # Center vertically
+#     ]))
+
+#     # Create the second table with graphical analysis
+#     data2 = [
+#         [Image(graph_image_io, width=400, height=350)]
+#     ]
+#     table2 = Table(data2, colWidths=[4 * inch])
+#     table2.setStyle(TableStyle([('ALIGN', (0, 0), (-1, -1), 'CENTER')]))
+
+    
+#      # Add logo on the top-right corner (adjust the path of your logo)
+#     logo_path = os.path.join(os.path.dirname(__file__), 'qnulogo.png')
+
+#     logo_image = Image(logo_path, width=0.5 * inch, height=0.5 * inch)
+#     # logo_image.hAlign = 'LEFT'  # Right-align the image on the page
+#     # logo_image.vAlign = 'TOP'    # Top-align the image on the page
+
+#     logo_table = Table([[logo_image]], colWidths=[6.5 * inch], rowHeights=[0.5 * inch])
+#     logo_table.setStyle(TableStyle([
+#     ('ALIGN', (0, 0), (0, 0), 'CENTRE'),  # Align logo to the left
+#     ('VALIGN', (100, 100), (0, 0), 'TOP'),  # Align logo to the top
+    
+#     ]))
+
+#     # Build the PDF document
+#     elements = [logo_table, date_paragraph, title, title_space, nist_subtitle, subtitle_space, table1, subtitle_space, graph_subtitle, table2]
+#     doc.build(elements)
+
+
+    
+    
+#     # Get the PDF data and write it to the response
+#     pdf = buffer.getvalue()
+#     buffer.close()
+#     response.write(pdf)
+
+#     return response
+
+@csrf_exempt
 def generate_pdf_report(request):
     global global_graph_image
 
-    binary_data = request.GET.get('binary_data', '')
+    
+    # binary_data = request.GET.get('binary_data', '')
+    try:
+        data = json.loads(request.body)
+        binary_data = data.get('binary_data', '')
+        print('Received binary data:', binary_data)
+    except json.JSONDecodeError as e:
+        print('Error parsing JSON:', e)
+        return HttpResponse("Invalid JSON data.", status=400)
 
     
+
     # Create an HttpResponse object with PDF headers
     graph_response = create_graph(request)
     graph_buffer = graph_response.content
@@ -2522,19 +3195,24 @@ def generate_pdf_report(request):
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'inline; filename="report.pdf"'
 
+    
+
     # Set up the PDF buffer and document template with margins
     buffer = BytesIO()
     doc = SimpleDocTemplate(buffer, pagesize=A4,
                              rightMargin=10, leftMargin=10,
-                             topMargin=10, bottomMargin=30)
+                             topMargin=10, bottomMargin=30, title="QNU Labs")
 
+    
+    
+    
     # Set up styles
     styles = getSampleStyleSheet()
 
     current_date = datetime.now().strftime("%B %d, %Y")  # Format as "December 06, 2024"
 
      # Add a paragraph with the current date
-    date_style = ParagraphStyle('Date', parent=styles['Normal'], fontSize=10, alignment=2, spaceAfter=10)
+    date_style = ParagraphStyle('Date', parent=styles['Normal'], fontSize=10, fontName='Helvetica-Bold',  alignment=2, spaceAfter=10)
     date_paragraph = Paragraph(f"Date: {current_date}", date_style)
 
     # Add a headline (title)
@@ -2650,6 +3328,21 @@ def generate_pdf_report(request):
     autocorrelation_text = 'random number' if autocorrelation_test_result else 'non-random number'
     adaptive_statistical_text = 'random number' if adaptive_statistical_test_result else 'non-random number'
 
+    bold_red_style = ParagraphStyle(
+    'BoldRed', 
+    parent=styles['Normal'], 
+    fontSize=12,          # Adjust the font size as needed
+    fontName='Helvetica-Bold',  # Bold font
+    textColor='red'       # Red color
+    )
+
+    bold_black_style = ParagraphStyle(
+    'BoldBlack', 
+    parent=styles['Normal'], 
+    fontSize=12,          # Adjust the font size as needed
+    fontName='Helvetica-Bold',  # Bold font
+    textColor='black'       # Red color
+    )
     # Sample Table Data for the first table with "Final Result" in the last row
     data1 = [
         [Paragraph('Test type', styles['Normal']), 'Result', 'Test type', 'Result'],
@@ -2670,7 +3363,8 @@ def generate_pdf_report(request):
         [Paragraph('15. Random Excursions Variant Test', styles['Normal']), random_excursion_variant_text,
          Paragraph('16. Autocorrelation Test', styles['Normal']), autocorrelation_text],
         [Paragraph('17. Adaptive Statistical Test', styles['Normal']), adaptive_statistical_text],
-        [Paragraph(' Final Result', styles['Normal']), final_text],
+        [Paragraph('Final Result', styles['Normal']), Paragraph(final_text, bold_red_style)],
+
        
     ]
 
@@ -2693,7 +3387,7 @@ def generate_pdf_report(request):
 
     # Create the second table with graphical analysis
     data2 = [
-        [Image(graph_image_io, width=400, height=300)]
+        [Image(graph_image_io, width=400, height=350)]
     ]
     table2 = Table(data2, colWidths=[4 * inch])
     table2.setStyle(TableStyle([('ALIGN', (0, 0), (-1, -1), 'CENTER')]))
@@ -2703,13 +3397,23 @@ def generate_pdf_report(request):
     logo_path = os.path.join(os.path.dirname(__file__), 'qnulogo.png')
 
     logo_image = Image(logo_path, width=0.5 * inch, height=0.5 * inch)
-    logo_image.hAlign = 'LEFT'  # Right-align the image on the page
-    logo_image.vAlign = 'TOP'    # Top-align the image on the page
+    # logo_image.hAlign = 'LEFT'  # Right-align the image on the page
+    # logo_image.vAlign = 'TOP'    # Top-align the image on the page
+
+    logo_table = Table([[logo_image]], colWidths=[6.5 * inch], rowHeights=[0.5 * inch])
+    logo_table.setStyle(TableStyle([
+    ('ALIGN', (0, 0), (0, 0), 'CENTRE'),  # Align logo to the left
+    ('VALIGN', (100, 100), (0, 0), 'TOP'),  # Align logo to the top
+    
+    ]))
 
     # Build the PDF document
-    elements = [date_paragraph,title, logo_image, title_space, nist_subtitle, subtitle_space, table1, subtitle_space, graph_subtitle, table2]
+    elements = [logo_table, date_paragraph, title, title_space, nist_subtitle, subtitle_space, table1, subtitle_space, graph_subtitle, table2]
     doc.build(elements)
 
+
+    
+    
     # Get the PDF data and write it to the response
     pdf = buffer.getvalue()
     buffer.close()
@@ -2717,14 +3421,26 @@ def generate_pdf_report(request):
 
     return response
 
+
+@csrf_exempt
 def generate_pdf_report_dieharder(request):
     global global_graph_image
 
-    binary_data = request.GET.get('binary_data', '')
+    # binary_data = request.GET.get('binary_data', '')
+
+    try:
+        data = json.loads(request.body)
+        binary_data = data.get('binary_data', '')
+        print('Received binary data:', binary_data)
+    except json.JSONDecodeError as e:
+        print('Error parsing JSON:', e)
+        return HttpResponse("Invalid JSON data.", status=400)
+
+    
 
     binary_data = binary_data.replace('%0A', '').replace('%20', '').replace(' ', '').replace('\n', '').replace('\r', '')
 
-
+    
     # Create a HttpResponse object with PDF headers
     graph_response = create_graph_dieharder(request)
     graph_buffer = graph_response.content
@@ -2737,7 +3453,7 @@ def generate_pdf_report_dieharder(request):
     buffer = BytesIO()
     doc = SimpleDocTemplate(buffer, pagesize=A4,
                             rightMargin=10, leftMargin=10,
-                            topMargin=10, bottomMargin=30)
+                            topMargin=10, bottomMargin=30, title="QNU Labs")
 
     # Set up styles
     styles = getSampleStyleSheet()
@@ -2759,7 +3475,16 @@ def generate_pdf_report_dieharder(request):
     subtitle_space = Spacer(1, 0.0 * inch)  # Spacer below the subtitles
 
 
+
     x = 0
+
+    bold_red_style = ParagraphStyle(
+    'BoldRed', 
+    parent=styles['Normal'], 
+    fontSize=12,          # Adjust the font size as needed
+    fontName='Helvetica-Bold',  # Bold font
+    textColor='red'       # Red color
+    )
 
     # Perform tests and increment x for each test that returns True
     birthday_test_result = BirthdaySpacingsTest.BirthdaySpacingsTest(binary_data)[1]
@@ -2865,7 +3590,7 @@ def generate_pdf_report_dieharder(request):
         [Paragraph('15. Count the Ones(Bytes) Test', styles['Normal']),one_byte_text,Paragraph('16. Marsalia-Tsang Simple GCD Test', styles['Normal']), simple_gcd_text],
         [Paragraph('17. Generalized Minimum DIstance Test', styles['Normal']),generalised_minimum_text,Paragraph('18. TestU01 Linear Complexity Test', styles['Normal']), u01_linear_text],
         [Paragraph('18. TestU01 Longest Repeated Substring Test', styles['Normal']), u01longest_text,Paragraph('20. TestU01 Matrix Rank Test', styles['Normal']),u01_matrix_text],
-        [Paragraph(' Final Result', styles['Normal']), final_text],
+        [Paragraph(' Final Result', styles['Normal']),  Paragraph(final_text, bold_red_style)],
        
     ]
 
@@ -2892,7 +3617,7 @@ def generate_pdf_report_dieharder(request):
     graph_image = Image(graph_image_io)
     
     # Automatically scale the image
-    graph_image.drawHeight = 4 * inch  # Set height
+    graph_image.drawHeight = 4.5 * inch  # Set height
     graph_image.drawWidth = 7 * inch  # Set width
 
     # Ensure the image fits within the page margins
@@ -2909,14 +3634,36 @@ def generate_pdf_report_dieharder(request):
             graph_image.drawHeight = max_height
             graph_image.drawWidth = max_height * aspect_ratio
 
+
+    current_date = datetime.now().strftime("%B %d, %Y")  # Format as "December 06, 2024"
+
+     # Add a paragraph with the current date
+    date_style = ParagraphStyle('Date', parent=styles['Normal'], fontSize=10, fontName='Helvetica-Bold',  alignment=2, spaceAfter=10)
+    date_paragraph = Paragraph(f"Date: {current_date}", date_style)
+
+    logo_path = os.path.join(os.path.dirname(__file__), 'qnulogo.png')
+
+    logo_image = Image(logo_path, width=0.5 * inch, height=0.5 * inch)
+    # logo_image.hAlign = 'LEFT'  # Right-align the image on the page
+    # logo_image.vAlign = 'TOP'    # Top-align the image on the page
+
+    logo_table = Table([[logo_image]], colWidths=[6.5 * inch], rowHeights=[0.5 * inch])
+    logo_table.setStyle(TableStyle([
+    ('ALIGN', (0, 0), (0, 0), 'CENTRE'),  # Align logo to the left
+    ('VALIGN', (100, 100), (0, 0), 'TOP'),  # Align logo to the top
+    
+    ]))
+
     # Build the PDF with the title, subtitles, tables, graph, and spacers
     elements = []
+    elements.append(logo_table)
     elements.append(title)
+    elements.append(date_paragraph)
     elements.append(title_space)  # Add space after the title
     elements.append(nist_subtitle)
     elements.append(subtitle_space)  # Spacer below the first subtitle
     elements.append(table1)
-    elements.append(Spacer(1, 0.5 * inch))  # Spacer between tables
+    # elements.append(Spacer(1, 0.5 * inch))  # Spacer between tables
     # elements.append(other_tests_subtitle)
     elements.append(subtitle_space)  # Spacer below the second subtitle
     # elements.append(table2)

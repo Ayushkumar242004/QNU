@@ -65,4 +65,4 @@ class Universal:
 
             return (p_value, (p_value >= 0.01))
         else:
-            return (-2, False)
+            return (-9, False)

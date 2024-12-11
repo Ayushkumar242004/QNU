@@ -8,17 +8,33 @@ const Grid = ({ binaryData }) => {
   const [runRandomExcursionsVariantTestResponse, setrunRandomExcursionsVariantTestResponse] = useState('');
 
 
+  // useEffect(() => {
+  //   const fetchrunRandomExcursionsVariantTestData = async () => {
+  //     try {
+  //       const response = await axios.get(`http://localhost:8000/random_excursions_variant_test/?binary_data=${binaryData}`);
+  //       setrunRandomExcursionsVariantTestResponse(response.data);
+  //     } catch (error) {
+  //       console.error('Error executing Random Excursions test:', error);
+  //     }
+  //   };
+  //   fetchrunRandomExcursionsVariantTestData();
+  // }, [binaryData]);
+
   useEffect(() => {
-    const fetchrunRandomExcursionsVariantTestData = async () => {
+    const fetchRunRandomExcursionsVariantTestData = async () => {
       try {
-        const response = await axios.get(`http://localhost:8000/random_excursions_variant_test/?binary_data=${binaryData}`);
-        setrunRandomExcursionsVariantTestResponse(response.data);
+        const response = await axios.post(
+          'http://localhost:8000/random_excursions_variant_test/', 
+          { binary_data: binaryData } // Sending binary data in the request body
+        );
+        setrunRandomExcursionsVariantTestResponse(response.data); // Update state with response
       } catch (error) {
-        console.error('Error executing Random Excursions test:', error);
+        console.error('Error executing Random Excursions Variant test:', error);
       }
     };
-    fetchrunRandomExcursionsVariantTestData();
-  }, [binaryData]);
+  
+    fetchRunRandomExcursionsVariantTestData();
+  }, [binaryData]); // Dependency on binaryData to trigger the effect when it changes
 
   // Function to handle incrementing or decrementing the digit value
   const handleButtonClick = (operation) => {

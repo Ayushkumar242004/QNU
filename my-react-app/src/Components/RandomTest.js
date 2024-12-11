@@ -9,18 +9,36 @@ const Grid = ({binaryData}) => {
   const [runRandomExcursionsTestResponse, setrunRandomExcursionsTestResponse] = useState('');
 
 
+  // useEffect(() => {
+  //   const fetchrunRandomExcursionsTestData = async () => {
+  //     try {
+  //       const response = await axios.get(`http://localhost:8000/random_excursions_test/?binary_data=${binaryData}`);
+  //       setrunRandomExcursionsTestResponse(response.data);
+  //     } catch (error) {
+  //       console.error('Error executing Random Excursions test:', error);
+  //     }
+  //   };
+  //   fetchrunRandomExcursionsTestData();
+  // }, [binaryData]);
+
+
   useEffect(() => {
     const fetchrunRandomExcursionsTestData = async () => {
       try {
-        const response = await axios.get(`http://localhost:8000/random_excursions_test/?binary_data=${binaryData}`);
+        const response = await axios.post(
+          'http://localhost:8000/random_excursions_test/', 
+          { binary_data: binaryData }
+        );
         setrunRandomExcursionsTestResponse(response.data);
       } catch (error) {
         console.error('Error executing Random Excursions test:', error);
       }
     };
+  
     fetchrunRandomExcursionsTestData();
   }, [binaryData]);
 
+  
   // Function to handle incrementing or decrementing the digit value
   const handleButtonClick = (operation) => {
     if (operation === 'increment') {

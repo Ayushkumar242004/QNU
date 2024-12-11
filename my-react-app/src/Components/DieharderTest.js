@@ -100,11 +100,12 @@ const DieharderTest = ({ getData, onBinaryDataChange }) => {
   useEffect(() => {
     const runBinarySpacingsTestData = async () => {
       try {
+        console.log(initialInputData)
         const response = await axios.post(
           'http://localhost:8000/run_binary_spacings_test/', // POST endpoint
           { binary_data: initialInputData } // JSON payload
         );
-        console.log("hi spacing test", response);
+        console.log("hi hello spacing test", response);
         setrunBinarySpacingsTestResponse(response.data); // Update response state
       } catch (error) {
         console.error("Error executing binary spacings test:", error);
@@ -451,22 +452,64 @@ const DieharderTest = ({ getData, onBinaryDataChange }) => {
   const handleButtonClickGraph = (buttonName) => {
     // Handle button click actions
     
+    // if (buttonName === 'Report generation') {
+      
+    //    window.open(`http://localhost:8000/pdf-report-dieharder/?binary_data=${encodeURIComponent(initialInputData[0])}`, '_blank');
+      
+    // }
+
     if (buttonName === 'Report generation') {
-      
-        // Optionally, you can then redirect the user or perform other actions
-        // window.location.href = `http://localhost:8000/pdf-report-dieharder/?binary_data=${encodeURIComponent(initialInputData[0])}`;
-        window.open(`http://localhost:8000/pdf-report-dieharder/?binary_data=${encodeURIComponent(initialInputData[0])}`, '_blank');
-      
-    }
+      const binaryData = initialInputData[0]; // Get the binary data
+  
+      // Send a POST request with binary data
+      fetch('http://localhost:8000/pdf-report-dieharder/', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ binary_data: binaryData }), // Send the binary data as JSON
+      })
+      .then(response => response.blob())  // Get the response as a Blob (binary data)
+      .then(blob => {
+          // Create a URL for the Blob object (this will represent the PDF file)
+          const pdfUrl = URL.createObjectURL(blob);
+  
+          // Open the PDF in a new tab
+          window.open(pdfUrl, '_blank');
+      })
+      .catch(error => {
+          console.error('Error generating report:', error);
+      });
+  }
+    // else if (buttonName === 'Graph generation') {
+    //     console.log("hi my binary data is: ",initialInputData[0])
+     
+    //     window.open(`http://localhost:8000/graph-generaion-dieharder/?binary_data=${encodeURIComponent(initialInputData[0])}`, '_blank');
+    // }
+
     else if (buttonName === 'Graph generation') {
-      // Example binary data
-    //   const binaryData = '1101010101010101'; // Replace with actual binary data
-      
-      // Redirect with binary data as query parameter
-      console.log("hi my binary data is: ",initialInputData[0])
-      // window.location.href = `http://localhost:8000/graph-generaion-dieharder/?binary_data=${encodeURIComponent(initialInputData[0])}`;
-      window.open(`http://localhost:8000/graph-generaion-dieharder/?binary_data=${encodeURIComponent(initialInputData[0])}`, '_blank');
-    }
+      const binaryData = initialInputData[0]; // Use actual binary data
+  
+      // Send a POST request with binary data
+      fetch('http://localhost:8000/graph-generaion-dieharder/', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ binary_data: binaryData }),
+      })
+      .then(response => response.blob())  // Get the image data as a Blob
+      .then(blob => {
+          // Create a URL for the Blob object
+          const imageUrl = URL.createObjectURL(blob);
+  
+          // Open the image URL in a new tab
+          window.open(imageUrl, '_blank');
+      })
+      .catch(error => {
+          console.error('Error generating graph:', error);
+      });
+  }
     
    
   };

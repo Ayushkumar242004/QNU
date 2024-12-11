@@ -46,7 +46,7 @@ const ServerLink = ({ getData, onBinaryDataChange }) => {
 
     ////////////////////////////////////////////////////////
 
-    const [initialInputData, setInitialInputData] = useState(""); // Stores the binary version of the random number
+    const [initialInputData, setInitialInputData] = useState(""); // Stores the binary number from API
     const [url, setUrl] = useState(""); // Stores the input URL
     const [isFetching, setIsFetching] = useState(false); // Track if API fetching is active
     const [intervalId, setIntervalId] = useState(null); // Stores the interval ID to clear it later
@@ -73,6 +73,34 @@ const ServerLink = ({ getData, onBinaryDataChange }) => {
     };
 
     // Fetch random number from API and convert it to binary
+    // const fetchRandomNumber = async () => {
+    //     try {
+    //         const response = await fetch(url);
+
+    //         if (!response.ok) {
+    //             throw new Error("Network response was not ok");
+    //         }
+
+    //         const contentType = response.headers.get("content-type");
+    //         let data;
+
+    //         // Check if the response is JSON or plain text
+    //         if (contentType && contentType.includes("application/json")) {
+    //             data = await response.json();
+    //             const number = data[0]; // Assuming the API returns an array with the first number
+    //             setInitialInputData(Number(number).toString(2)); // Convert to binary
+    //         } else {
+    //             // Handle plain text response
+    //             data = await response.text();
+    //             setInitialInputData(Number(data).toString(2)); // Convert to binary
+    //         }
+    //     } catch (error) {
+    //         console.error("Error fetching the random number:", error);
+    //         setInitialInputData("Error fetching data");
+    //     }
+    // };
+
+    ///
     const fetchRandomNumber = async () => {
         try {
             const response = await fetch(url);
@@ -81,25 +109,19 @@ const ServerLink = ({ getData, onBinaryDataChange }) => {
                 throw new Error("Network response was not ok");
             }
 
-            const contentType = response.headers.get("content-type");
-            let data;
-
-            // Check if the response is JSON or plain text
-            if (contentType && contentType.includes("application/json")) {
-                data = await response.json();
-                const number = data[0]; // Assuming the API returns an array with the first number
-                setInitialInputData(Number(number).toString(2)); // Convert to binary
+            const data = await response.json();
+            // console.log(' hi fetching dudes',data);
+            // Handle the specific API response format
+            if (data && data.binary_data) {
+                setInitialInputData(data.binary_data); // Update the binary value
             } else {
-                // Handle plain text response
-                data = await response.text();
-                setInitialInputData(Number(data).toString(2)); // Convert to binary
+                throw new Error("Invalid API response format");
             }
         } catch (error) {
             console.error("Error fetching the random number:", error);
             setInitialInputData("Error fetching data");
         }
     };
-
 
     // useEffect to fetch number every 2 seconds when fetching is active
     useEffect(() => {
@@ -112,37 +134,8 @@ const ServerLink = ({ getData, onBinaryDataChange }) => {
 
     const [binaryDataFile, setBinaryDataFile] = useState(null);//
     const [checkedTests, setCheckedTests] = useState([]);
-    // Function to handle button clicks
-    const handleButtonClick1 = (buttonName) => {
-        // Handle button click actions
-
-        if (buttonName === 'Report generation') {
-
-            // Optionally, you can then redirect the user or perform other actions
-            window.location.href = 'http://localhost:8000/pdf-report/';
-
-
-        }
-        else if (buttonName === 'Graph generation') {
-            // Example binary data
-            const binaryData = '1101010101010101'; // Replace with actual binary data
-
-            // Redirect with binary data as query parameter
-            window.location.href = `http://localhost:8000/graph-generation/?binary_data=${encodeURIComponent(binaryData)}`;
-        }
-
-
-    };
-
-    // Define button names
-    const buttonNames = [
-
-        // 'Execute Test',
-        // 'Reset',
-        // 'Exit Program'
-        'Graph generation',
-        'Report generation'
-    ];
+    
+    
     // extra functions for new tests
     /////////////////////////////////////
     const [frequencyTestChecked, setFrequencyTestChecked] = useState(false);
@@ -214,363 +207,405 @@ const ServerLink = ({ getData, onBinaryDataChange }) => {
 
     useEffect(() => {
         const fetchrunRandomExcursionsTestData = async () => {
-            try {
-                const response = await axios.get(`http://localhost:8000/random_excursions_test/?binary_data=${initialInputData}`);
-                setrunRandomExcursionsTestResponse(response.data);
-            } catch (error) {
-                console.error('Error executing Random Excursions test:', error);
-            }
+          try {
+            const response = await axios.post(
+              'http://localhost:8000/random_excursions_test/', 
+              { binary_data: initialInputData }
+            );
+            setrunRandomExcursionsTestResponse(response.data);
+          } catch (error) {
+            console.error('Error executing Random Excursions test:', error);
+          }
         };
+      
         fetchrunRandomExcursionsTestData();
-    }, [initialInputData]);
-
+      }, [initialInputData]);
 
 
     const [runRandomExcursionsVariantTestResponse, setrunRandomExcursionsVariantTestResponse] = useState('');
 
 
     useEffect(() => {
-        const fetchrunRandomExcursionsVariantTestData = async () => {
-            try {
-                const response = await axios.get(`http://localhost:8000/random_excursions_variant_test/?binary_data=${initialInputData}`);
-                setrunRandomExcursionsVariantTestResponse(response.data);
-            } catch (error) {
-                console.error('Error executing Random Excursions test:', error);
-            }
+        const fetchRunRandomExcursionsVariantTestData = async () => {
+          try {
+            const response = await axios.post(
+              'http://localhost:8000/random_excursions_variant_test/', 
+              { binary_data: initialInputData } // Sending binary data in the request body
+            );
+            setrunRandomExcursionsVariantTestResponse(response.data); // Update state with response
+          } catch (error) {
+            console.error('Error executing Random Excursions Variant test:', error);
+          }
         };
-        fetchrunRandomExcursionsVariantTestData();
-    }, [initialInputData]);
+      
+        fetchRunRandomExcursionsVariantTestData();
+      }, [initialInputData]); 
 
 
 
 
-
-    useEffect(() => {
+      useEffect(() => {
         const runBinarySpacingsTestData = async () => {
-            try {
-                const response = await axios.get(
-                    `http://localhost:8000/run_binary_spacings_test/?binary_data=${initialInputData}`
-                );
-                setrunBinarySpacingsTestResponse(response.data);
-            } catch (error) {
-                console.error("Error executing frequency test:", error);
-            }
+          try {
+            // console.log("hi birthday spacing test data :  ", initialInputData);
+            const response = await axios.post(
+              'http://localhost:8000/run_binary_spacings_test/', // POST endpoint
+              { binary_data: initialInputData } // JSON payload
+            );
+            // console.log("hi birthday spacing test:  ", response.data);
+            setrunBinarySpacingsTestResponse(response.data); // Update response state
+          } catch (error) {
+            console.error("Error executing binary spacings test:", error);
+          }
         };
-
+      
         runBinarySpacingsTestData();
-    }, [initialInputData]);
+      }, [initialInputData]); // Dependency array
 
 
     useEffect(() => {
-        const runParkingLotTestData = async () => {
-            try {
-                const response = await axios.get(
-                    `http://localhost:8000/run_parking_lot_test/?binary_data=${initialInputData}`
-                );
-                setrunParkingLotTestResponse(response.data);
-            } catch (error) {
-                console.error("Error executing frequency test:", error);
-            }
-        };
+    const runParkingLotTestData = async () => {
+      try {
+        const response = await axios.post(
+          'http://localhost:8000/run_parking_lot_test/', // The POST endpoint
+          { binary_data: initialInputData } // Data sent in the POST request body
+        );
+        console.log("hi parking lot test:  ", response.data);
+        setrunParkingLotTestResponse(response.data);
+      } catch (error) {
+        console.error("Error executing parking lot test:", error);
+      }
+    };
+  
+    if (initialInputData) {
+      runParkingLotTestData();
+    }
+  }, [initialInputData]);
+  
 
-        runParkingLotTestData();
-    }, [initialInputData]);
+  useEffect(() => {
+    const runOverlapping5PermutationTestData = async () => {
+      try {
+        const response = await axios.post(
+          'http://localhost:8000/run_overlapping_5_test/',
+          { binary_data: initialInputData }
+        );
+        setrunOverlapping5PermutationTestResponse(response.data);
+      } catch (error) {
+        console.error("Error executing overlapping 5 test:", error);
+      }
+    };
 
-    useEffect(() => {
-        const runOverlapping5PermutationTestData = async () => {
-            try {
-                const response = await axios.get(
-                    `http://localhost:8000/run_overlapping_5_test/?binary_data=${initialInputData}`
-                );
-                setrunOverlapping5PermutationTestResponse(response.data);
-            } catch (error) {
-                console.error("Error executing frequency test:", error);
-            }
-        };
-
-        runOverlapping5PermutationTestData();
-    }, [initialInputData]);
-
-    useEffect(() => {
-        const runMinimumDistanceTestData = async () => {
-            try {
-                const response = await axios.get(
-                    `http://localhost:8000/run_minimum_distance_test/?binary_data=${initialInputData}`
-                );
-                setrunMinimumDistanceTestResponse(response.data);
-            } catch (error) {
-                console.error("Error executing frequency test:", error);
-            }
-        };
-
-        runMinimumDistanceTestData();
-    }, [initialInputData]);
-
-    useEffect(() => {
-        const run31MatrixTestData = async () => {
-            try {
-                const response = await axios.get(
-                    `http://localhost:8000/run_31matrix_test/?binary_data=${initialInputData}`
-                );
-                setrun31MatrixTestResponse(response.data);
-            } catch (error) {
-                console.error("Error executing frequency test:", error);
-            }
-        };
-
-        run31MatrixTestData();
-    }, [initialInputData]);
-
-    useEffect(() => {
-        const runSpheresTestData = async () => {
-            try {
-                const response = await axios.get(
-                    `http://localhost:8000/run_spheres_test/?binary_data=${initialInputData}`
-                );
-                setrunSpeheresTestResponse(response.data);
-            } catch (error) {
-                console.error("Error executing frequency test:", error);
-            }
-        };
-
-        runSpheresTestData();
-    }, [initialInputData]);
+    if (initialInputData){
+    runOverlapping5PermutationTestData();
+    }
+  }, [initialInputData]);
 
 
+  useEffect(() => {
+    const runMinimumDistanceTestData = async () => {
+      try {
+        const response = await axios.post(
+          'http://localhost:8000/run_minimum_distance_test/',
+          { binary_data: initialInputData }
+        );
+        setrunMinimumDistanceTestResponse(response.data);
+      } catch (error) {
+        console.error("Error executing minimum distance test:", error);
+      }
+    };
 
-    useEffect(() => {
-        const run32MatrixTestData = async () => {
-            try {
-                const response = await axios.get(
-                    `http://localhost:8000/run_32matrix_test/?binary_data=${initialInputData}`
-                );
-                setrun32MatrixTestResponse(response.data);
-            } catch (error) {
-                console.error("Error executing frequency test:", error);
-            }
-        };
+    runMinimumDistanceTestData();
+  }, [initialInputData]);
 
-        run32MatrixTestData();
-    }, [initialInputData]);
 
-    useEffect(() => {
-        const runCrapsTestData = async () => {
-            try {
-                const response = await axios.get(
-                    `http://localhost:8000/run_craps_test/?binary_data=${initialInputData}`
-                );
-                setrunCrapsTestResponse(response.data);
-            } catch (error) {
-                console.error("Error executing frequency test:", error);
-            }
-        };
+  useEffect(() => {
+    const run31MatrixTestData = async () => {
+      try {
+        const response = await axios.post(
+          'http://localhost:8000/run_31matrix_test/',
+          { binary_data: initialInputData }
+        );
+        setrun31MatrixTestResponse(response.data);
+      } catch (error) {
+        console.error("Error executing 31 matrix test:", error);
+      }
+    };
 
-        runCrapsTestData();
-    }, [initialInputData]);
+    run31MatrixTestData();
+  }, [initialInputData]);
+
+  useEffect(() => {
+    const runSpheresTestData = async () => {
+      try {
+        const response = await axios.post(
+        'http://localhost:8000/run_spheres_test/',
+        { binary_data: initialInputData }
+        );
+        setrunSpeheresTestResponse(response.data);
+      } catch (error) {
+        console.error("Error executing spheres test:", error);
+      }
+    };
+
+    runSpheresTestData();
+  }, [initialInputData]);
 
 
 
 
-    useEffect(() => {
-        const runBitstreamTestData = async () => {
-            try {
-                const response = await axios.get(
-                    `http://localhost:8000/run_bitstream_test/?binary_data=${initialInputData}`
-                );
-                setrunBitstreamTestResponse(response.data);
-            } catch (error) {
-                console.error("Error executing frequency test:", error);
-            }
-        };
 
-        runBitstreamTestData();
-    }, [initialInputData]);
+  useEffect(() => {
+    const run32MatrixTestData = async () => {
+      try {
+        const response = await axios.post(
+          'http://localhost:8000/run_32matrix_test/',
+          { binary_data: initialInputData }
+        );
+        setrun32MatrixTestResponse(response.data);
+      } catch (error) {
+        console.error("Error executing 32 matrix test:", error);
+      }
+    };
 
+    run32MatrixTestData();
+  }, [initialInputData]);
 
 
     useEffect(() => {
-        const rungcdTestData = async () => {
-            try {
-                const response = await axios.get(
-                    `http://localhost:8000/run_gcd_test/?binary_data=${initialInputData}`
-                );
-                setrungcdTestResponse(response.data);
-            } catch (error) {
-                console.error("Error executing frequency test:", error);
-            }
-        };
+    const runCrapsTestData = async () => {
+      try {
+        const response = await axios.post(
+          'http://localhost:8000/run_craps_test/',
+          { binary_data: initialInputData }
+        );
+        setrunCrapsTestResponse(response.data);
+      } catch (error) {
+        console.error("Error executing craps test:", error);
+      }
+    };
 
-        rungcdTestData();
-    }, [initialInputData]);
-
-
-
-    useEffect(() => {
-        const runopsoTestData = async () => {
-            try {
-                const response = await axios.get(
-                    `http://localhost:8000/run_opso_test/?binary_data=${initialInputData}`
-                );
-                setrunopsoTestResponse(response.data);
-            } catch (error) {
-                console.error("Error executing frequency test:", error);
-            }
-        };
-
-        runopsoTestData();
-    }, [initialInputData]);
-
-    useEffect(() => {
-        const runoqsoTestData = async () => {
-            try {
-                const response = await axios.get(
-                    `http://localhost:8000/run_oqso_test/?binary_data=${initialInputData}`
-                );
-                setrunoqsoTestResponse(response.data);
-            } catch (error) {
-                console.error("Error executing frequency test:", error);
-            }
-        };
-
-        runoqsoTestData();
-    }, [initialInputData]);
-
-    useEffect(() => {
-        const runoneStreamTestData = async () => {
-            try {
-                const response = await axios.get(
-                    `http://localhost:8000/run_count_one_test/?binary_data=${initialInputData}`
-                );
-                setrunoneStreamTestResponse(response.data);
-            } catch (error) {
-                console.error("Error executing frequency test:", error);
-            }
-        };
-
-        runoneStreamTestData();
-    }, [initialInputData]);
-
-
-    useEffect(() => {
-        const rundnaTestData = async () => {
-            try {
-                const response = await axios.get(
-                    `http://localhost:8000/run_dna_test/?binary_data=${initialInputData}`
-                );
-                setrundnaTestResponse(response.data);
-            } catch (error) {
-                console.error("Error executing frequency test:", error);
-            }
-        };
-
-        rundnaTestData();
-    }, [initialInputData]);
-
-
-
-    useEffect(() => {
-        const runoneByteTestData = async () => {
-            try {
-                const response = await axios.get(
-                    `http://localhost:8000/run_count_one_byte_test/?binary_data=${initialInputData}`
-                );
-                setrunoneByteTestResponse(response.data);
-            } catch (error) {
-                console.error("Error executing frequency test:", error);
-            }
-        };
-
-        runoneByteTestData();
-    }, [initialInputData]);
-
-
-
-    useEffect(() => {
-        const rungcdSimpleTestData = async () => {
-            try {
-                const response = await axios.get(
-                    `http://localhost:8000/run_simple_gcd_test/?binary_data=${initialInputData}`
-                );
-                setrungcdSimpleTestResponse(response.data);
-            } catch (error) {
-                console.error("Error executing frequency test:", error);
-            }
-        };
-
-        rungcdSimpleTestData();
-    }, [initialInputData]);
-
-
-
-    useEffect(() => {
-        const rungeneralisedMinimumDistanceTestData = async () => {
-            try {
-                const response = await axios.get(
-                    `http://localhost:8000/run_general_minimum_distance_test/?binary_data=${initialInputData}`
-                );
-                setrungeneralisedMinimumTestResponse(response.data);
-            } catch (error) {
-                console.error("Error executing frequency test:", error);
-            }
-        };
-
-        rungeneralisedMinimumDistanceTestData();
-    }, [initialInputData]);
-
-
-
-    useEffect(() => {
-        const runu01LinearComplexityTestData = async () => {
-            try {
-                const response = await axios.get(
-                    `http://localhost:8000/run_u01_linear_complexity_test/?binary_data=${initialInputData}`
-                );
-                setrunu01LinearComplexityTestResponse(response.data);
-            } catch (error) {
-                console.error("Error executing frequency test:", error);
-            }
-        };
-
-        runu01LinearComplexityTestData();
-    }, [initialInputData]);
+    runCrapsTestData();
+  }, [initialInputData]);
 
 
 
 
-    useEffect(() => {
-        const runu01LongestSubstringTestData = async () => {
-            try {
-                const response = await axios.get(
-                    `http://localhost:8000/run_u01_longest_repeated_substring_test/?binary_data=${initialInputData}`
-                );
-                setrunu01LongestSubstringTestResponse(response.data);
-            } catch (error) {
-                console.error("Error executing frequency test:", error);
-            }
-        };
 
-        runu01LongestSubstringTestData();
-    }, [initialInputData]);
+  useEffect(() => {
+    const runBitstreamTestData = async () => {
+      try {
+        const response = await axios.post(
+          'http://localhost:8000/run_bitstream_test/',
+          { binary_data: initialInputData }
+        );
+        setrunBitstreamTestResponse(response.data);
+      } catch (error) {
+        console.error("Error executing bitstream test:", error);
+      }
+    };
 
-
-
-
-    useEffect(() => {
-        const runmatrixRankTestData = async () => {
-            try {
-                const response = await axios.get(
-                    `http://localhost:8000/run_matrix_rank_test/?binary_data=${initialInputData}`
-                );
-                setrunmatrixRankTestResponse(response.data);
-            } catch (error) {
-                console.error("Error executing frequency test:", error);
-            }
-        };
-
-        runmatrixRankTestData();
-    }, [initialInputData]);
+    runBitstreamTestData();
+  }, [initialInputData]);
 
 
+
+  useEffect(() => {
+    const rungcdTestData = async () => {
+      try {
+        const response = await axios.post(
+          'http://localhost:8000/run_gcd_test/',
+          { binary_data: initialInputData }
+        );
+        setrungcdTestResponse(response.data);
+      } catch (error) {
+        console.error("Error executing gcd test:", error);
+      }
+    };
+
+    rungcdTestData();
+  }, [initialInputData]);
+
+
+
+
+  useEffect(() => {
+    const runopsoTestData = async () => {
+      try {
+        const response = await axios.post(
+          'http://localhost:8000/run_opso_test/',
+          { binary_data: initialInputData }
+        );
+        setrunopsoTestResponse(response.data);
+      } catch (error) {
+        console.error("Error executing opso test:", error);
+      }
+    };
+
+    runopsoTestData();
+  }, [initialInputData]);
+
+  useEffect(() => {
+    const runoqsoTestData = async () => {
+      try {
+        const response = await axios.post(
+          'http://localhost:8000/run_oqso_test/',
+          { binary_data: initialInputData }
+        );
+        setrunoqsoTestResponse(response.data);
+      } catch (error) {
+        console.error("Error executing oqso test:", error);
+      }
+    };
+
+    runoqsoTestData();
+  }, [initialInputData]);
+
+  useEffect(() => {
+    const runoneStreamTestData = async () => {
+      try {
+        const response = await axios.post(
+          'http://localhost:8000/run_count_one_test/',
+          { binary_data: initialInputData }
+        );
+        setrunoneStreamTestResponse(response.data);
+      } catch (error) {
+        console.error("Error executing one stream test:", error);
+      }
+    };
+
+    runoneStreamTestData();
+  }, [initialInputData]);
+
+
+  useEffect(() => {
+    const rundnaTestData = async () => {
+      try {
+        const response = await axios.post(
+          'http://localhost:8000/run_dna_test/',
+          { binary_data: initialInputData }
+        );
+        setrundnaTestResponse(response.data);
+      } catch (error) {
+        console.error("Error executing dna test:", error);
+      }
+    };
+
+    rundnaTestData();
+  }, [initialInputData]);
+
+
+
+  useEffect(() => {
+    const runoneByteTestData = async () => {
+      try {
+        const response = await axios.post(
+          'http://localhost:8000/run_count_one_byte_test/',
+          { binary_data: initialInputData }
+        );
+        setrunoneByteTestResponse(response.data);
+      } catch (error) {
+        console.error("Error executing one byte test:", error);
+      }
+    };
+
+    runoneByteTestData();
+  }, [initialInputData]);
+
+
+
+  useEffect(() => {
+    const rungcdSimpleTestData = async () => {
+      try {
+        const response = await axios.post(
+        'http://localhost:8000/run_simple_gcd_test/',
+        { binary_data: initialInputData }
+        );
+        setrungcdSimpleTestResponse(response.data);
+      } catch (error) {
+        console.error("Error executing gcd simple test:", error);
+      }
+    };
+
+    rungcdSimpleTestData();
+  }, [initialInputData]);
+
+
+
+
+  useEffect(() => {
+    const rungeneralisedMinimumDistanceTestData = async () => {
+      try {
+        const response = await axios.post(
+          'http://localhost:8000/run_general_minimum_distance_test/',
+          { binary_data: initialInputData }
+        );
+        setrungeneralisedMinimumTestResponse(response.data);
+      } catch (error) {
+        console.error("Error executing generalised minimum test:", error);
+      }
+    };
+
+    rungeneralisedMinimumDistanceTestData();
+  }, [initialInputData]);
+
+
+
+
+  useEffect(() => {
+    const runu01LinearComplexityTestData = async () => {
+      try {
+        const response = await axios.post(
+          'http://localhost:8000/run_u01_linear_complexity_test/',
+          { binary_data: initialInputData }
+        );
+        setrunu01LinearComplexityTestResponse(response.data);
+      } catch (error) {
+        console.error("Error executing linear complexity test:", error);
+      }
+    };
+
+    runu01LinearComplexityTestData();
+  }, [initialInputData]);
+
+
+
+
+
+  useEffect(() => {
+    const runu01LongestSubstringTestData = async () => {
+      try {
+        const response = await axios.post(
+          'http://localhost:8000/run_u01_longest_repeated_substring_test/',
+          { binary_data: initialInputData }
+        );
+        setrunu01LongestSubstringTestResponse(response.data);
+      } catch (error) {
+        console.error("Error executing longest substring test:", error);
+      }
+    };
+
+    runu01LongestSubstringTestData();
+  }, [initialInputData]);
+
+
+
+
+  useEffect(() => {
+    const runmatrixRankTestData = async () => {
+      try {
+        const response = await axios.post(
+          'http://localhost:8000/run_matrix_rank_test/',
+          { binary_data: initialInputData }
+        );
+        setrunmatrixRankTestResponse(response.data);
+      } catch (error) {
+        console.error("Error executing matrix rank test:", error);
+      }
+    };
+
+    runmatrixRankTestData();
+  }, [initialInputData]);
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -578,229 +613,252 @@ const ServerLink = ({ getData, onBinaryDataChange }) => {
 
     useEffect(() => {
         const fetchFrequencyTestData = async () => {
-            try {
-                const response = await axios.get(
-                    `http://localhost:8000/run_frequency_test/?binary_data=${initialInputData}`
-                );
-                setFrequencyTestResponse(response.data);
-            } catch (error) {
-                console.error("Error executing frequency test:", error);
-            }
+          try {
+            const response = await axios.post(
+              'http://localhost:8000/run_frequency_test/', 
+              { binary_data: initialInputData }  // Send the binary data in the request body
+            );
+            console.log(response)
+            setFrequencyTestResponse(response.data);
+          } catch (error) {
+            console.error("Error executing frequency test:", error);
+          }
         };
-
+      
         fetchFrequencyTestData();
-    }, [initialInputData]);
-
-    useEffect(() => {
+      }, [initialInputData]);
+      
+      useEffect(() => {
         const fetchFrequencyBlockTestData = async () => {
-            try {
-                const response = await axios.get(
-                    `http://localhost:8000/run_frequency_block_test/?binary_data=${initialInputData}`
-                );
-                setFrequencyBlockTestResponse(response.data);
-            } catch (error) {
-                console.error("Error executing frequency block test:", error);
-            }
+          try {
+            const response = await axios.post(
+              'http://localhost:8000/run_frequency_block_test/',
+              { binary_data: initialInputData }
+            );
+            setFrequencyBlockTestResponse(response.data);
+          } catch (error) {
+            console.error("Error executing frequency block test:", error);
+          }
         };
-
+    
         fetchFrequencyBlockTestData();
-    }, [initialInputData]);
+      }, [initialInputData]);
 
-    useEffect(() => {
+      useEffect(() => {
         const fetchrunTestData = async () => {
-            try {
-                const response = await axios.get(
-                    `http://localhost:8000/run_runs_test/?binary_data=${initialInputData}`
-                );
-                setrunTestResponse(response.data);
-            } catch (error) {
-                console.error("Error executing run test:", error);
-            }
+          try {
+            const response = await axios.post(
+              'http://localhost:8000/run_runs_test/',
+              { binary_data: initialInputData }
+            );
+            setrunTestResponse(response.data);
+          } catch (error) {
+            console.error("Error executing run test:", error);
+          }
         };
-
+    
         fetchrunTestData();
-    }, [initialInputData]);
+      }, [initialInputData]);
 
-    useEffect(() => {
+      useEffect(() => {
         const fetchrunlongestOneBlockTestData = async () => {
-            try {
-                const response = await axios.get(
-                    `http://localhost:8000/run_longest_one_block_test/?binary_data=${initialInputData}`
-                );
-                setrunlongestOneBlockTestResponse(response.data);
-            } catch (error) {
-                console.error("Error executing run test:", error);
-            }
+          try {
+            const response = await axios.post(
+              'http://localhost:8000/run_longest_one_block_test/',
+              { binary_data: initialInputData }
+            );
+            setrunlongestOneBlockTestResponse(response.data);
+          } catch (error) {
+            console.error("Error executing run test:", error);
+          }
         };
-
+    
         fetchrunlongestOneBlockTestData();
-    }, [initialInputData]);
-    useEffect(() => {
-        const fetchApproximateEntropyTestData = async () => {
-            try {
-                const response = await axios.get(
-                    `http://localhost:8000/run_approximate_entropy_test/?binary_data=${initialInputData}`
-                );
-                setApproximateEntropyTestResponse(response.data);
-            } catch (error) {
-                console.error("Error executing Approximate Entropy test:", error);
-            }
-        };
-        fetchApproximateEntropyTestData();
-    }, [initialInputData]);
+      }, [initialInputData]);
+
 
     useEffect(() => {
-        const fetchrunLinearComplexityTestData = async () => {
-            try {
-                const response = await axios.get(
-                    `http://localhost:8000/run_linear_complexity_test/?binary_data=${initialInputData}`
-                );
-                setrunLinearComplexityTestResponse(response.data);
-            } catch (error) {
-                console.error("Error executing linear complexity test:", error);
-            }
-        };
-        fetchrunLinearComplexityTestData();
-    }, [initialInputData]);
-    useEffect(() => {
-        const fetchrunNonOverlappingTestData = async () => {
-            try {
-                const response = await axios.get(
-                    `http://localhost:8000/run_non_overlapping_test/?binary_data=${initialInputData}`
-                );
-                setrunNonOverlappingTestResponse(response.data);
-            } catch (error) {
-                console.error("Error executing Non-overlapping test:", error);
-            }
-        };
-        fetchrunNonOverlappingTestData();
-    }, [initialInputData]);
+    const fetchApproximateEntropyTestData = async () => {
+      try {
+        const response = await axios.post(
+          'http://localhost:8000/run_approximate_entropy_test/',
+          { binary_data: initialInputData }
+        );
+        setApproximateEntropyTestResponse(response.data);
+      } catch (error) {
+        console.error("Error executing Approximate Entropy test:", error);
+      }
+    };
+    fetchApproximateEntropyTestData();
+  }, [initialInputData]);
+
+  useEffect(() => {
+    const fetchrunLinearComplexityTestData = async () => {
+      try {
+        const response = await axios.post(
+          'http://localhost:8000/run_linear_complexity_test/',
+          { binary_data: initialInputData }
+        );
+        setrunLinearComplexityTestResponse(response.data);
+      } catch (error) {
+        console.error("Error executing linear complexity test:", error);
+      }
+    };
+    fetchrunLinearComplexityTestData();
+  }, [initialInputData]);
+
 
     useEffect(() => {
-        const fetchrunOverlappingTestData = async () => {
-            try {
-                const response = await axios.get(
-                    `http://localhost:8000/run_overlapping_test/?binary_data= ${initialInputData}`
-                );
-                setrunOverlappingTestResponse(response.data);
-            } catch (error) {
-                console.error("Error executing Overlapping test:", error);
-            }
-        };
-        fetchrunOverlappingTestData();
-    }, [initialInputData]);
+    const fetchrunNonOverlappingTestData = async () => {
+      try {
+        const response = await axios.post(
+          'http://localhost:8000/run_non_overlapping_test/',
+          { binary_data: initialInputData }
+        );
+        setrunNonOverlappingTestResponse(response.data);
+      } catch (error) {
+        console.error("Error executing Non-overlapping test:", error);
+      }
+    };
+    fetchrunNonOverlappingTestData();
+  }, [initialInputData]);
+
+  useEffect(() => {
+    const fetchrunOverlappingTestData = async () => {
+      try {
+        const response = await axios.post(
+          'http://localhost:8000/run_overlapping_test/',
+          { binary_data: initialInputData }
+        );
+        setrunOverlappingTestResponse(response.data);
+      } catch (error) {
+        console.error("Error executing Overlapping test:", error);
+      }
+    };
+    fetchrunOverlappingTestData();
+  }, [initialInputData]);
+
+  useEffect(() => {
+    const fetchrunUniversalTestData = async () => {
+      try {
+        const response = await axios.post(
+          'http://localhost:8000/run_statistical_test/',
+          {binary_data: initialInputData}
+        );
+        setrunUniversalTestResponse(response.data);
+      } catch (error) {
+        console.error("Error executing Universal test:", error);
+      }
+    };
+    fetchrunUniversalTestData();
+  }, [initialInputData]);
+
+  useEffect(() => {
+    const fetchrunSerialTestData = async () => {
+      try {
+        const response = await axios.post(
+          'http://localhost:8000/run_serial_test/',
+          {binary_data: initialInputData}
+        );
+        setrunSerialTestResponse(response.data);
+      } catch (error) {
+        console.error("Error executing Serial test:", error);
+      }
+    };
+    fetchrunSerialTestData();
+  }, [initialInputData]);
+
 
     useEffect(() => {
-        const fetchrunUniversalTestData = async () => {
-            try {
-                const response = await axios.get(
-                    `http://localhost:8000/run_statistical_test/?binary_data=${initialInputData}`
-                );
-                setrunUniversalTestResponse(response.data);
-            } catch (error) {
-                console.error("Error executing Universal test:", error);
-            }
-        };
-        fetchrunUniversalTestData();
-    }, [initialInputData]);
+    const fetchrunCumulativeSumsTestData = async () => {
+      try {
+        const response = await axios.post(
+          'http://localhost:8000/run_cumulative_sums_test/',
+          {binary_data: initialInputData}
+        );
+        setrunCumulativeSumsTestResponse(response.data);
+      } catch (error) {
+        console.error("Error executing Cumulative Sums test:", error);
+      }
+    };
+    fetchrunCumulativeSumsTestData();
+  }, [initialInputData]);
+
+  useEffect(() => {
+    const fetchrunBinaryMatrixRankTestData = async () => {
+      try {
+        const response = await axios.post(
+          'http://localhost:8000/run_binary_matrix_rank_text/',
+          {binary_data: initialInputData}
+        );
+        setrunBinaryMatrixRankTestResponse(response.data);
+      } catch (error) {
+        console.error("Error executing Cumulative Sums test:", error);
+      }
+    };
+    fetchrunBinaryMatrixRankTestData();
+  }, [initialInputData]);
+
+  useEffect(() => {
+    const fetchrunSpectralTestData = async () => {
+      try {
+        const response = await axios.post(
+          'http://localhost:8000/run_spectral_test/',
+          {binary_data: initialInputData}
+        );
+        setrunSpectralTestResponse(response.data);
+      } catch (error) {
+        console.error("Error executing Cumulative Sums test:", error);
+      }
+    };
+    fetchrunSpectralTestData();
+  }, [initialInputData]);
+
+  useEffect(() => {
+    const fecthrunAutoCorrelationtData = async () => {
+      try {
+        const response = await axios.post(
+          'http://localhost:8000/run_autocorrelation_test/',
+          {binary_data: initialInputData}
+        );
+        setrunAutoCorrelationtResponse(response.data);
+      } catch (error) {
+        console.error("Error executing auto correlation test:", error);
+      }
+    };
+    fecthrunAutoCorrelationtData();
+  }, [initialInputData]);
+
 
     useEffect(() => {
-        const fetchrunSerialTestData = async () => {
-            try {
-                const response = await axios.get(
-                    `http://localhost:8000/run_serial_test/?binary_data=${initialInputData}`
-                );
-                setrunSerialTestResponse(response.data);
-            } catch (error) {
-                console.error("Error executing Serial test:", error);
-            }
-        };
-        fetchrunSerialTestData();
-    }, [initialInputData]);
+    const fetchrunSpectralTestData = async () => {
+      try {
+        const response = await axios.post(
+          'http://localhost:8000/run_spectral_test/',
+          {binary_data: initialInputData}
+        );
+        setrunSpectralTestResponse(response.data);
+      } catch (error) {
+        console.error("Error executing Cumulative Sums test:", error);
+      }
+    };
+    fetchrunSpectralTestData();
+  }, [initialInputData]);
 
     useEffect(() => {
-        const fetchrunCumulativeSumsTestData = async () => {
-            try {
-                const response = await axios.get(
-                    `http://localhost:8000/run_cumulative_sums_test/?binary_data=${initialInputData}`
-                );
-                setrunCumulativeSumsTestResponse(response.data);
-            } catch (error) {
-                console.error("Error executing Cumulative Sums test:", error);
-            }
-        };
-        fetchrunCumulativeSumsTestData();
-    }, [initialInputData]);
-
-    useEffect(() => {
-        const fetchrunBinaryMatrixRankTestData = async () => {
-            try {
-                const response = await axios.get(
-                    `http://localhost:8000/run_binary_matrix_rank_text/?binary_data=${initialInputData}`
-                );
-                setrunBinaryMatrixRankTestResponse(response.data);
-            } catch (error) {
-                console.error("Error executing Cumulative Sums test:", error);
-            }
-        };
-        fetchrunBinaryMatrixRankTestData();
-    }, [initialInputData]);
-
-    useEffect(() => {
-        const fetchrunSpectralTestData = async () => {
-            try {
-                const response = await axios.get(
-                    `http://localhost:8000/run_spectral_test/?binary_data= ${initialInputData}`
-                );
-                setrunSpectralTestResponse(response.data);
-            } catch (error) {
-                console.error("Error executing Cumulative Sums test:", error);
-            }
-        };
-        fetchrunSpectralTestData();
-    }, [initialInputData]);
-
-    useEffect(() => {
-        const fecthrunAutoCorrelationtData = async () => {
-            try {
-                const response = await axios.get(
-                    `http://localhost:8000/run_autocorrelation_test/?binary_data= ${initialInputData}`
-                );
-                setrunAutoCorrelationtResponse(response.data);
-            } catch (error) {
-                console.error("Error executing auto correlation test:", error);
-            }
-        };
-        fecthrunAutoCorrelationtData();
-    }, [initialInputData]);
-
-    useEffect(() => {
-        const fetchrunSpectralTestData = async () => {
-            try {
-                const response = await axios.get(
-                    `http://localhost:8000/run_spectral_test/?binary_data= ${initialInputData}`
-                );
-                setrunSpectralTestResponse(response.data);
-            } catch (error) {
-                console.error("Error executing Cumulative Sums test:", error);
-            }
-        };
-        fetchrunSpectralTestData();
-    }, [initialInputData]);
-
-    useEffect(() => {
-        const fetchrunAdaptiveStatisticalTestData = async () => {
-            try {
-                const response = await axios.get(
-                    `http://localhost:8000/run_adaptive_statistical_test/?binary_data= ${initialInputData}`
-                );
-                setrunAdaptiveStatisticalTestResponse(response.data);
-            } catch (error) {
-                console.error("Error executing adaptive statistical test:", error);
-            }
-        };
-        fetchrunAdaptiveStatisticalTestData();
-    }, [initialInputData]);
+    const fetchrunAdaptiveStatisticalTestData = async () => {
+      try {
+        const response = await axios.post(
+          'http://localhost:8000/run_adaptive_statistical_test/',
+          {binary_data: initialInputData}
+        );
+        setrunAdaptiveStatisticalTestResponse(response.data);
+      } catch (error) {
+        console.error("Error executing adaptive statistical test:", error);
+      }
+    };
+    fetchrunAdaptiveStatisticalTestData();
+  }, [initialInputData]);
 
 
     return (
@@ -816,7 +874,7 @@ const ServerLink = ({ getData, onBinaryDataChange }) => {
                 />
                 <button onClick={startFetching}>Start Generating</button>
                 <button onClick={stopFetching} disabled={!isFetching}>Stop Generating</button>
-                <h3>Generated Binary Number: {initialInputData}</h3>
+                <h3>Binary Number: {initialInputData}</h3>
             </div>
 
 
