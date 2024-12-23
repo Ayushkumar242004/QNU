@@ -1,0 +1,137 @@
+
+body, html {
+  height: 100%;  /* Ensures the body and html take full height */
+  width:100%;     /* Removes default margin */
+  
+}
+
+.register-container {
+  width: 100%;
+  max-width: 500px;
+  padding: 20px;
+  box-sizing: border-box;
+  
+  /* Positioning it relative to its parent (typically the body) */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+  
+  .register-card {
+    background: black;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  }
+  
+  .register-title {
+    font-size: 1.8em;
+    margin-bottom: 20px;
+    text-align: center;
+    color: white;
+  }
+  
+  .register-form label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 1em;
+    color: white;
+  }
+  
+  .register-form input::placeholder {
+    color: white; /* Change placeholder text color to white */
+    opacity: 1;   /* Ensure the placeholder is fully visible */
+  }
+  
+  .register-form input {
+    background-color: #333; /* Optional: Add a dark background to make the white placeholder more visible */
+    color: white;           /* Input text color */
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1em;
+    transition: border-color 0.3s ease-in-out;
+  }
+  
+  .register-form input:focus {
+    border-color: #6a11cb;
+    outline: none;
+  }
+  
+  .register-button {
+    width: 100%;
+    padding: 10px;
+    background: #6a11cb;
+    color: white;
+    font-size: 1em;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out;
+  }
+  
+  
+  
+  .success-message {
+    color: green;
+    font-size: 0.9em;
+    margin-bottom: 15px;
+    text-align: center;
+  }
+  
+  .error-message {
+    color: red;
+    font-size: 0.9em;
+    margin-bottom: 15px;
+    text-align: center;
+  }
+  
+  @media (max-width: 768px) {
+    .register-card {
+      padding: 20px;
+    }
+  
+    .register-title {
+      font-size: 1.5em;
+    }
+  
+    .register-form input {
+      padding: 8px;
+      font-size: 0.9em;
+    }
+  
+    .register-button {
+      padding: 8px;
+      font-size: 0.9em;
+    }
+  }
+  
+  .login-redirect-container {
+    text-align: center;
+    margin-top: 1rem;
+  }
+  
+  .login-redirect-container p {
+    color: #ffffff; /* Set text color to white */
+    font-size: 1rem; /* Optional: Adjust the font size */
+  }
+  
+  .login-button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .login-button:hover {
+    background-color: #0056b3;
+  }
+  
