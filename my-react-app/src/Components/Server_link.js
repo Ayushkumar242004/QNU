@@ -1,62 +1,85 @@
 import './GridContainerUp.css'; // Import CSS file for styling
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import { TestContext, TestContextProvider } from './TestContext';
-import End from "./End";
+
 const MAX_STACK_SIZE_ESTIMATE = 1 * 1024 * 1024;
-const ServerLink = ({ getData, onBinaryDataChange }) => {
-    //   const [initialInputData, setInitialInputData] = useState(['', '', '']); // Initialize with 3 empty strings
-    const fileInputRefs = useRef([null, null, null]);
-
-    const handleInputChange = (index, value) => {
-        const newData = [...initialInputData]; // Create a copy of the current state
-        newData[index] = value; // Update the value at the specified index
-        setInitialInputData(newData); // Update the state
-        // Pass the binary data to the parent component
-        if (onBinaryDataChange && index === 0) {
-            onBinaryDataChange(value);
-            getData(value);
-        }
-    };
-
-    const handleButtonClick = (index) => {
-        // Trigger click on the respective file input
-        if (index === 1 || index === 2) {
-            fileInputRefs.current[index].click();
-        }
-    };
-
-    const handleFileInputChange = (event, index) => {
-        const selectedFile = event.target.files[0];
-        if (selectedFile.size > MAX_STACK_SIZE_ESTIMATE) {
-            // Display a warning message to the user
-            alert('Warning: The selected file is too large. Please choose a smaller file.');
-            return;
-        }
-        // Do something with the selected file
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            const binaryData = e.target.result;
-            handleInputChange(index, binaryData); // Update the input value with the binary data
-        };
-        reader.readAsArrayBuffer(selectedFile);
-    };
-
-
+const ServerLink = () => {
+  
+   
 
     ////////////////////////////////////////////////////////
 
+    // const [initialInputData, setInitialInputData] = useState(""); // Stores the binary number from API
+    // const [url, setUrl] = useState(""); // Stores the input URL
+    // const [isFetching, setIsFetching] = useState(false); // Track if API fetching is active
+    // const [intervalId, setIntervalId] = useState(null); // Stores the interval ID to clear it later
+
+    // // Function to handle URL input change
+    // const handleUrlChange = (e) => {
+    //     setUrl(e.target.value);
+    // };
+
+    // // Function to start fetching random numbers
+    // const startFetching = () => {
+    //     if (url.trim() === "") {
+    //         alert("Please enter a valid URL");
+    //         return;
+    //     }
+    //     setIsFetching(true);
+    // };
+
+    // const stopFetching = () => {
+    //     if (isFetching && intervalId) {
+    //         clearInterval(intervalId); // Clear the interval to stop fetching
+    //         setIsFetching(false);
+    //     }
+    // };
+
+
+    // const fetchRandomNumber = async () => {
+    //     try {
+    //         const response = await fetch(url);
+
+    //         if (!response.ok) {
+    //             throw new Error("Network response was not ok");
+    //         }
+
+    //         const data = await response.json();
+    //         // console.log(' hi fetching dudes',data);
+    //         // Handle the specific API response format
+    //         if (data && data.binary_data) {
+    //             setInitialInputData(data.binary_data); // Update the binary value
+    //         } else {
+    //             throw new Error("Invalid API response format");
+    //         }
+    //     } catch (error) {
+    //         console.error("Error fetching the random number:", error);
+    //         setInitialInputData("Error fetching data");
+    //     }
+    // };
+
+    // // useEffect to fetch number every 2 seconds when fetching is active
+    // useEffect(() => {
+    //     if (isFetching && url) {
+    //         const id = setInterval(fetchRandomNumber, 2000); // Fetch every 2 seconds
+    //         setIntervalId(id); // Save the interval ID
+    //     }
+    //     return () => clearInterval(intervalId); // Clear interval on cleanup
+    // }, [isFetching, url]);
+
+
+
     const [initialInputData, setInitialInputData] = useState(""); // Stores the binary number from API
-    const [url, setUrl] = useState(""); // Stores the input URL
+    const [url, setUrl] = useState("http://localhost:3003/proxy"); // Default URL for the Proxy API (update to your proxy server URL)
     const [isFetching, setIsFetching] = useState(false); // Track if API fetching is active
     const [intervalId, setIntervalId] = useState(null); // Stores the interval ID to clear it later
 
-    // Function to handle URL input change
+    // Function to handle URL input change (if you want to allow custom URLs)
     const handleUrlChange = (e) => {
         setUrl(e.target.value);
     };
 
-    // Function to start fetching random numbers
+    // Function to start fetching random binary data
     const startFetching = () => {
         if (url.trim() === "") {
             alert("Please enter a valid URL");
@@ -72,48 +95,30 @@ const ServerLink = ({ getData, onBinaryDataChange }) => {
         }
     };
 
-    // Fetch random number from API and convert it to binary
-    // const fetchRandomNumber = async () => {
-    //     try {
-    //         const response = await fetch(url);
-
-    //         if (!response.ok) {
-    //             throw new Error("Network response was not ok");
-    //         }
-
-    //         const contentType = response.headers.get("content-type");
-    //         let data;
-
-    //         // Check if the response is JSON or plain text
-    //         if (contentType && contentType.includes("application/json")) {
-    //             data = await response.json();
-    //             const number = data[0]; // Assuming the API returns an array with the first number
-    //             setInitialInputData(Number(number).toString(2)); // Convert to binary
-    //         } else {
-    //             // Handle plain text response
-    //             data = await response.text();
-    //             setInitialInputData(Number(data).toString(2)); // Convert to binary
-    //         }
-    //     } catch (error) {
-    //         console.error("Error fetching the random number:", error);
-    //         setInitialInputData("Error fetching data");
-    //     }
-    // };
-
-    ///
+    // Function to fetch random binary data from the proxy server
     const fetchRandomNumber = async () => {
         try {
-            const response = await fetch(url);
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    API_Key: "6625a404-fcf7-aa22-595f-1ce908fc5ebb",
+                    APISalt: "$2a$04$nArWqsGVKLmYJ3ob48c2/.fL8hULjZTJLWdtTEstM4Ss8oqagInmu",
+                    Rand_type: 1, // Request binary data
+                    Length: 64, // Example length of binary data (you can customize)
+                }),
+            });
 
+            console.log("Server response:", response);
             if (!response.ok) {
                 throw new Error("Network response was not ok");
             }
 
             const data = await response.json();
-            // console.log(' hi fetching dudes',data);
-            // Handle the specific API response format
-            if (data && data.binary_data) {
-                setInitialInputData(data.binary_data); // Update the binary value
+            if (data && data.random) {
+                setInitialInputData(data.random); // Update with fetched binary data
             } else {
                 throw new Error("Invalid API response format");
             }
@@ -123,22 +128,14 @@ const ServerLink = ({ getData, onBinaryDataChange }) => {
         }
     };
 
-    // useEffect to fetch number every 2 seconds when fetching is active
+    // useEffect to fetch data every 2 seconds when fetching is active
     useEffect(() => {
         if (isFetching && url) {
             const id = setInterval(fetchRandomNumber, 2000); // Fetch every 2 seconds
             setIntervalId(id); // Save the interval ID
         }
-        return () => clearInterval(intervalId); // Clear interval on cleanup
+        return () => clearInterval(intervalId); // Cleanup the interval on unmount
     }, [isFetching, url]);
-
-    const [binaryDataFile, setBinaryDataFile] = useState(null);//
-    const [checkedTests, setCheckedTests] = useState([]);
-    
-    
-    // extra functions for new tests
-    /////////////////////////////////////
-    const [frequencyTestChecked, setFrequencyTestChecked] = useState(false);
 
     const [runBinarySpacingsTestResponse, setrunBinarySpacingsTestResponse] = useState("");
     const [runParkingLotTestResponse, setrunParkingLotTestResponse] = useState("");
@@ -187,12 +184,6 @@ const ServerLink = ({ getData, onBinaryDataChange }) => {
     const [runAutoCorrelationtResponse, setrunAutoCorrelationtResponse] = useState("");
 
     const [runAdaptiveStatisticalTestResponse, setrunAdaptiveStatisticalTestResponse] = useState("");
-
-    // Function to handle checkbox change
-    const handleFrequencyTestCheckboxChange = () => {
-        setFrequencyTestChecked(!frequencyTestChecked);
-    };
-
 
 
     const [runRandomExcursionsTestResponse, setrunRandomExcursionsTestResponse] = useState('');
